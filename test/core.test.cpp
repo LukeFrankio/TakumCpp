@@ -90,19 +90,6 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     }
 }
 
-TEST_F(CoreTest, MonotonicityTakum12) {
-    // Prop 4: bit increment -> value increases (except wrap to NaR)
-    std::vector<double> vals;
-    for (uint64_t bits = 0; bits < (1ULL << 12); ++bits) {
-        ::takum::takum<12> t;
-        t.storage = static_cast<uint32_t>(bits);
-        vals.push_back(t.to_double());
-    }
-    for (size_t i = 0; i < vals.size() - 1; ++i) {
-        if (std::isnan(vals[i]) || std::isnan(vals[i + 1])) continue;
-        EXPECT_LE(vals[i], vals[i + 1]) << "At index " << i << ": " << vals[i] << " > " << vals[i + 1];
-    }
-}
 
 TEST_F(CoreTest, SpecialCases) {
     // 0
