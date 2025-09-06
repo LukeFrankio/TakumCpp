@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(TakumCpp LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(googletest)
 # Provide an INTERFACE target for header-only library usage
 add_library(TakumCpp INTERFACE)
 target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
-target_compile_features(TakumCpp INTERFACE cxx_std_23)
+target_compile_features(TakumCpp INTERFACE cxx_std_26)
 
 # Tests
 add_subdirectory(test)

@@ -3,8 +3,8 @@
 This document outlines the coding standards for the Takum library project. The goal is to ensure code is readable, maintainable, performant, and aligned with functional programming (FP) principles (immutability, purity, composability). Standards are based on the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) with adaptations for FP (e.g., no in-place mutation) and Takum specifics (logarithmic arithmetic, NaR handling). Violations should be justified in comments. Use clang-format for auto-formatting (`.clang-format` file in repo root).
 
 ## 1. Language and Compiler
-- **C++ Standard**: C++23 (or later; use `-std=c++23`). Fallback to C++20 for MSVC (via SFINAE for concepts).
-- **Compiler**: GCC/Clang 14+ (full C++23); MSVC 2022+ (preview). Warn on non-compliant features.
+- **C++ Standard**: C++26 (or later; use `-std=c++26`). Fallback to C++20 for MSVC (via SFINAE for concepts).
+- **Compiler**: GCC/Clang 14+ (full C++26 where available); MSVC 2022+ (preview). Warn on non-compliant features.
 - **Build**: CMake 3.20+. No external deps except standard lib; optional MPFR for validation.
 - **Warnings**: Treat as errors (`-Wall -Wextra -Werror -pedantic`). Enable sanitizers (ASan/UBSan) in debug.
 
@@ -29,7 +29,7 @@ This document outlines the coding standards for the Takum library project. The g
 - **Immutability**: All Takum types immutable (const members; no setters). Ops return new instances (e.g., `takum add(takum a, takum b);` not `a += b;`).
 - **Purity**: All functions pure: No side effects, globals, I/O (except explicit io.h). Deterministic (same input → same output; handle NaR consistently).
 - **Composition**: Prefer lambdas/ranges (e.g., `x | std::views::transform(sin)`). Higher-order funcs (e.g., `map_f<F>(F f)`). No recursion unless tail (avoid stack overflow).
-- **Error Handling**: Use `std::expected<takum<N>, na_r_error>` for NaR (C++23); fallback `std::optional` (C++17). No exceptions (throw only in unrecoverable, e.g., invalid N<12).
+- **Error Handling**: Use `std::expected<takum<N>, na_r_error>` for NaR (C++26); fallback `std::optional` (C++17). No exceptions (throw only in unrecoverable, e.g., invalid N<12).
 - **Monads/Applicatives**: For NaR/state: `takum_maybe` with bind/map. Test monad laws.
 - **Deprecated Shims**: Prefix "shim_" (e.g., `shim_sinf`); #pragma message("Deprecated: Use takum_sin").
 
@@ -43,7 +43,7 @@ This document outlines the coding standards for the Takum library project. The g
 
 ## 6. Performance and Safety
 - **Inlining**: Inline small pure funcs (constexpr); use [[nodiscard]] for returns.
-- **Constexpr**: All pure math/arithmetic constexpr (C++23 relaxations for logs).
+- **Constexpr**: All pure math/arithmetic constexpr (C++26 relaxations for logs).
 - **SIMD/Opt**: Use intrinsics in optimized.h; profile with -O3. Avoid branches for NaR (bit checks).
 - **Security**: Bound loops (no infinite); fuzz inputs. No UB (e.g., log(0) → NaR, not -inf).
 - **Portability**: No asm/arch-specific except optional (e.g., #ifdef __AVX2__); test x86/ARM/Windows/Linux.

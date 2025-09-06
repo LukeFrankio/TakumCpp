@@ -1,6 +1,6 @@
 # TakumCpp: A Logarithmic Tapered Floating-Point Arithmetic Library
 
-TakumCpp is a C++ library implementing the Takum arithmetic format as described in the research paper. It provides a high-performance, logarithmic tapered floating-point system with properties like monotonicity, total-ordering, and NaR (Not a Real) handling. The library supports C++23 and leverages `std::expected` for error propagation, packed integer storage for efficiency, and full coverage of C++ floating-point features including deprecations.
+TakumCpp is a C++ library implementing the Takum arithmetic format as described in the research paper. It provides a high-performance, logarithmic tapered floating-point system with properties like monotonicity, total-ordering, and NaR (Not a Real) handling. The library prefers C++26 and leverages `std::expected` for error propagation, packed integer storage for efficiency, and full coverage of C++ floating-point features including deprecations; guarded fallbacks keep the project usable on C++23 toolchains.
 
 ## Features
 - Template-based precision: `takum<N>` for N ≥ 12 bits.
@@ -11,7 +11,7 @@ TakumCpp is a C++ library implementing the Takum arithmetic format as described 
 - `<stdfloat>` interop where available.
 
 ## Requirements
-- C++23 compliant compiler (GCC/Clang 14+, MSVC 2022+).
+- C++26 capable compiler recommended (GCC/Clang recent, MSVC 2022+); guarded fallbacks support C++23 toolchains.
 - CMake 3.20+.
 
 ## Build Instructions

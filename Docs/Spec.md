@@ -4,9 +4,9 @@ This document completes Phase 1 of the TakumCpp plan: research and specification
 
 ## Summary
 
-- Project: TakumCpp — a C++23 library implementing the Takum (tapered logarithmic) numeric formats.
+- Project: TakumCpp — a C++26 library implementing the Takum (tapered logarithmic) numeric formats.
 - Phase 1 goal: Produce a clear, implementation-ready specification (`Docs/spec.md`) that all subsequent phases implement against.
-- Assumptions: minimum C++ standard is C++23, optional `<stdfloat>` availability, target platforms: x86_64 and common compilers (MSVC/GCC/Clang).
+- Assumptions: minimum C++ standard is C++26 (with guarded fallbacks for C++23 compilers), optional `<stdfloat>` availability, target platforms: x86_64 and common compilers (MSVC/GCC/Clang).
 
 ## Phase 1 checklist (requirements and status)
 
@@ -28,7 +28,7 @@ If anything below is under-specified, the implementation will note assumptions e
 
 ## Key assumptions (inferred)
 
-1. C++23 is available; `std::expected` is available (or a thin shim will be provided if not).
+1. C++26 is available; `std::expected` is available (or a thin shim will be provided if not).
 2. `<stdfloat>` may not be present on all compilers; interop is optional and guarded by feature-test macros.
 3. Targeted numeric range and properties follow the Takum paper (tapered logarithmic LNS) — dynamic range and tapering parameters will be constants in the implementation and documented here.
 4. NaR behaves as an orthogonal non-value that propagates through operations unless explicitly handled via `std::expected` APIs.
@@ -224,6 +224,22 @@ Smoke tests for Phase 1:
 - Implement storage selector metafunction (N -> storage_t).
 - Implement `is_nar()` and `nar()` pattern constant.
 - Implement a small reference `tau` / `tau_inv` in `include/takum/internal/ref/tau_ref.h` for unit testing.
+
+## Appendix: C++26 features used and fallback strategy
+
+This project prefers C++26 features where they simplify implementation and enable stronger compile-time guarantees. The following features are used when available; all uses are guarded with feature-test macros and have fallbacks to keep the project usable with C++23 toolchains.
+
+- Reflection / std::meta: Used to generate per-precision metadata and to assist in compile-time LUT/polynomial generation. Fallback: offline code generation (`scripts/gen_poly_coeffs.py`) producing `include/takum/internal/generated/*`.
+- Extended NTTPs and library approaches to constant template parameters: used to encode LUTs/coeffs as NTTPs for faster compile-time access. Fallback: pregenerated constexpr arrays included from `include/takum/internal/generated/`.
+- Stronger constexpr/consteval math facilities: prefer compile-time poly generation and evaluation. Fallback: runtime evaluation or pregenerated coefficients.
+- `std::format` / `std::runtime_format` improvements: used for improved IO and `to_string` behavior in `include/takum/io.h`. Fallback: use existing `std::to_chars`/`std::ostringstream` with documented differences.
+
+Build flags and CMake options (recommended):
+
+- `-DTAKUM_REQUIRE_CXX26=ON` — fail configuration if compiler does not support required C++26 features.
+- `-DTAKUM_USE_COMPILETIME_COEFFS=ON` — enable compile-time LUT/poly generation (requires reflection/consteval support); otherwise the build uses pregenerated tables.
+
+The repository keeps an offline script (`scripts/gen_poly_coeffs.py`) and checked-in generated headers so the library remains usable on older toolchains.
 
 ---
 

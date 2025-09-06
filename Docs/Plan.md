@@ -1,11 +1,11 @@
 ### Extensive Incremental Phased Plan for Creating a Takum Arithmetic Library in C++ (Updated with Constraints and Technical Decisions)
 
-This updated plan incorporates the specified constraints and technical decisions for the **TakumCpp** library (GitHub repo: TakumCpp). Minimum C++ standard is C++23, leveraging `std::expected` for error handling (NaR propagation), `<stdfloat>` interop where available, and full constexpr support. Gaussian-log (Φ_b^±) uses LUT + interpolation for takum16/takum32 (sizes: 1024/4096 entries, linear/cubic fixed-point interp). For takum64+, hybrid: coarse LUT (256 entries) + degree-5..7 minimax polynomials (pre-generated coeffs via offline script). Storage: Packed integers (uint32_t/uint64_t/array<uint64_t,K> for N>64) for speed/SIMD; optional debug std::bitset<N> view. NaR handling: `std::expected<takum<N>, takum_error>` APIs with optional fallback; helpers `is_nar()`/`to_expected()`. Compatibility: `include/takum/compatibility.h` with shims emitting compile-time warnings (e.g., #pragma message).
+This updated plan incorporates the specified constraints and technical decisions for the **TakumCpp** library (GitHub repo: TakumCpp). Minimum C++ standard is C++26, leveraging `std::expected` for error handling (NaR propagation), `<stdfloat>` interop where available, and full constexpr support. Gaussian-log (Φ_b^±) uses LUT + interpolation for takum16/takum32 (sizes: 1024/4096 entries, linear/cubic fixed-point interp). For takum64+, hybrid: coarse LUT (256 entries) + degree-5..7 minimax polynomials (pre-generated coeffs via offline script). Storage: Packed integers (uint32_t/uint64_t/array<uint64_t,K> for N>64) for speed/SIMD; optional debug std::bitset<N> view. NaR handling: `std::expected<takum<N>, takum_error>` APIs with optional fallback; helpers `is_nar()`/`to_expected()`. Compatibility: `include/takum/compatibility.h` with shims emitting compile-time warnings (e.g., #pragma message).
 
-The plan ensures 100% coverage of C++ floating-point features up to C++23 (including deprecations like `<math.h>` aliases, reverted `<cmath>` NaN behaviors). Takum follows the paper: logarithmic tapered format, base √e, dynamic range [√e^{-255}, √e^{255}], bitwise props (Props 3-11), NaR (Definition 7), saturation (Algorithm 1). FP principles: Immutability, purity, composability (lambdas/ranges). Timeline: 6-12 months. Tools: CMake, Google Test, Doxygen. LNS refs: [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/8268821/) for Φ approx, [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/9458421) for low-precision.
+The plan ensures 100% coverage of C++ floating-point features up to C++26 (including deprecations like `<math.h>` aliases, reverted `<cmath>` NaN behaviors). Takum follows the paper: logarithmic tapered format, base √e, dynamic range [√e^{-255}, √e^{255}], bitwise props (Props 3-11), NaR (Definition 7), saturation (Algorithm 1). FP principles: Immutability, purity, composability (lambdas/ranges). Timeline: 6-12 months. Tools: CMake, Google Test, Doxygen. LNS refs: [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/8268821/) for Φ approx, [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/9458421) for low-precision.
 
 #### Phase 1: Research and Specification (2-4 weeks, Low Effort)
-   - **Goals**: Deepen understanding of Takum from the paper and map to C++ floating-point features (from prior responses: types, operators, `<cmath>`, etc.). Define library scope, FP constraints, and edge cases (e.g., NaR propagation per Gustafson criteria). Ensure 100% coverage by auditing all features, including deprecations (e.g., `<math.h>` aliases, C++23 reverted deprecations like certain `<cmath>` quiet NaN behaviors). Incorporate constraints: C++23 min, packed storage rationale, Φ approaches (LUT for <64-bit, hybrid for >32-bit), `std::expected` for NaR, compatibility shims with warnings.
+  - **Goals**: Deepen understanding of Takum from the paper and map to C++ floating-point features (from prior responses: types, operators, `<cmath>`, etc.). Define library scope, FP constraints, and edge cases (e.g., NaR propagation per Gustafson criteria). Ensure 100% coverage by auditing all features, including deprecations (e.g., `<math.h>` aliases, C++26 reverted deprecations like certain `<cmath>` quiet NaN behaviors). Incorporate constraints: C++26 min, packed storage rationale, Φ approaches (LUT for <64-bit, hybrid for >32-bit), `std::expected` for NaR, compatibility shims with warnings.
    - **Steps**:
      1. Review Takum encoding/decoding (Definition 2 in paper): Implement pseudocode for `tau_inv` (encoding) and `tau` (decoding) using fixed-point logs for ℓ (logarithmic value). Specify packed storage (uint32_t etc.) and debug bitset view.
      2. Analyze LNS alternatives: Study logarithmic converters [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/8268821/) for Gaussian log approximations (Φ_b^± for addition/subtraction) and [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/9458421) for low-precision LNS in edge devices. Detail LUT params (1024/4096 sizes, fixed-point interp) and hybrid poly (degree-5..7 minimax, pre-gen coeffs).
@@ -13,13 +13,13 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
      4. Specify variants: Logarithmic (default, per paper) and linear Takum (Definition 8) as templates. Define NaR: `std::expected<takum<N>, takum_error>` with `is_nar()` helper.
      5. Define precision templates: `template<size_t N> struct takum;` (N ≥ 12 bits; packed storage policy: uint32_t for N<=32, uint64_t for <=64, array<uint64_t,K> for larger).
      6. Handle special cases: 0, NaR (per Definition 7: total-ordering), saturation (Algorithm 1). Add deprecation handling: Shims with #pragma warnings in compatibility.h.
-     7. Exhaustive audit: Chronological list by standard (C++98 to C++23), covering deprecations (e.g., C++11 deprecated some old rounding, C++23 reverts `<cmath>` NaN pow(NaN,0)=1). Include <stdfloat> interop (e.g., float16_t → takum16).
-   - **Dependencies**: C++23 standard, paper PDF.
+    7. Exhaustive audit: Chronological list by standard (C++98 to C++26), covering deprecations (e.g., C++11 deprecated some old rounding, C++26 reverts `<cmath>` NaN pow(NaN,0)=1). Include <stdfloat> interop (e.g., float16_t → takum16).
+    - **Dependencies**: C++26 standard, paper PDF.
    - **Milestones**: Requirements doc (Markdown/PDF) with UML diagrams for types/ops; pseudocode for core encoding; full 100% coverage matrix (table of features → replacements); LUT/poly specs.
    - **Deliverables**: `spec.md` (Takum traits like `std::numeric_limits` analogs); initial CMakeLists.txt.
    - **Files Created**:
      - `docs/spec.md`: Full requirements doc with UML, pseudocode for encoding/decoding, FP constraints, exhaustive coverage matrix (all features/deprecations), and mapping to C++ features; include storage/Φ/NaR/compat details.
-     - `CMakeLists.txt`: Initial root CMake setup (enable C++23, add subdirs; target_compile_features PUBLIC cxx_std_23).
+  - `CMakeLists.txt`: Initial root CMake setup (enable C++26, add subdirs; target_compile_features PUBLIC cxx_std_26).
      - `README.md`: High-level overview, build instructions.
      - `test/placeholder.test.cpp`: Empty test skeleton for future phases.
 
@@ -63,7 +63,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
      - `docs/arithmetic.md`: Docs with FP composition examples, deprecation warnings, packed storage notes.
 
 #### Phase 4: Mathematical Functions (6-8 weeks, High Effort)
-   - **Goals**: FP-style overloads for `<cmath>` equivalents, using Takum for args/results. Full coverage of all `<cmath>` funcs, including deprecated (e.g., `<math.h>` C-style like `sinf`, `logl`; C++23 reverted deprecations like `pow(1, NaN)=1` → NaR prop). Implement Gaussian-log (Φ) as specified: LUT+interp for takum16/32 (1024/4096 entries, fixed-point linear/cubic); hybrid for takum64+ (256-entry coarse LUT + minimax poly degree-5..7, pre-gen coeffs). Use packed storage; `std::expected` for NaR-prone funcs.
+   - **Goals**: FP-style overloads for `<cmath>` equivalents, using Takum for args/results. Full coverage of all `<cmath>` funcs, including deprecated (e.g., `<math.h>` C-style like `sinf`, `logl`; C++26 reverted deprecations like `pow(1, NaN)=1` → NaR prop). Implement Gaussian-log (Φ) as specified: LUT+interp for takum16/takum32 (1024/4096 entries, fixed-point linear/cubic); hybrid for takum64+ (256-entry coarse LUT + minimax poly degree-5..7, pre-gen coeffs). Use packed storage; `std::expected` for NaR-prone funcs.
    - **Steps**:
      1. Trig/Hyperbolic: `takum sin(takum x);` via series in log domain or table lookup (adapt from LNS [dl.acm.org](https://dl.acm.org/doi/10.1145/3461699)); use Φ for add/sub in compound funcs. Overload all variants (sinf/sind/sinl shims with warnings). LUT for low N, poly for high.
      2. Exp/Log: `takum exp(takum x);` (direct from ℓ: √e^ℓ); `takum log(takum x);` (ℓ extraction). Cover deprecated log(0)= -inf → saturation with `std::expected`.
@@ -73,7 +73,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
      6. FP: Monadic `std::expected<takum, takum_error> safe_sin(takum x);` for NaR propagation; optional fallback.
      7. Constants: `<numbers>`-like `std::numbers::pi_v<takum<32>>` (compile-time via constexpr logs, C++20+). Shim deprecated M_PI with warning.
      8. Tapered analysis: Bounds via Proposition 11 (λ(p) < 2/3 ε(p)). Cover deprecated subnormals (no support, saturate with `std::expected`).
-     9. Deprecations: Shims for all C-style funcs (e.g., #define sinf takum_sin_f with #pragma message); reverted C++23 (e.g., pow(NaN,0)=NaR). Pre-gen poly coeffs script for hybrid Φ.
+  9. Deprecations: Shims for all C-style funcs (e.g., #define sinf takum_sin_f with #pragma message); reverted C++26 (e.g., pow(NaN,0)=NaR). Pre-gen poly coeffs script for hybrid Φ.
      10. Gaussian-log Impl: LUT (1024/4096, 4-byte fixed-point entries, linear/cubic interp) for <64-bit; hybrid (256 LUT + minimax poly) for 64+; constexpr arrays for coeffs.
    - **Dependencies**: Phase 3 ops; LNS tables [mdpi.com](https://www.mdpi.com/2073-8994/16/9/1138).
    - **Milestones**: Match IEEE 754 accuracy within Takum's range; closure tests (Section 5.6); validate all deprecated funcs (e.g., sinf(float) → sin(takum32)); benchmark Φ latency (LUT vs. poly).
@@ -91,7 +91,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
      1. Complex: `template<size_t N> struct complex_takum { takum<N> real, imag; };` with ops (e.g., `complex_takum<N> sin(complex_takum<N> z);` using packed). Shim deprecated real/imag accessors with warnings.
      2. Random: `std::uniform_real_distribution<takum<N>>`, `std::normal_distribution<takum<N>>` (log-adapted with Φ hybrid). Cover deprecated engines (e.g., minstd_rand indirect); `std::expected` for invalid gen.
      3. Numerics: `std::accumulate<std::vector<takum<N>>>` (pure reduce with + on packed). All algos including deprecated partial_sum variants; parallel with execution.
-     4. I/O/Format: `std::format("{:.2t}", takum x);` (C++20+); overload `operator<<` for `std::ostream`. Cover deprecated iomanip (e.g., old setprecision for long double with shims); <print> (C++23) overloads.
+  4. I/O/Format: `std::format("{:.2t}", takum x);` (C++20+); overload `operator<<` for `std::ostream`. Cover deprecated iomanip (e.g., old setprecision for long double with shims); <print> (C++26) overloads.
      5. Ranges/Algorithms: FP views e.g., `std::views::iota(takum{0}, takum{10}) | std::views::transform(sin);`. Cover deprecated algorithm overloads (e.g., C++98 sort on floats); `std::expected` for transform errors.
      6. Chrono/Atomics: `std::chrono::duration<takum<N>>` (fractional on packed); `std::atomic<takum<N>>`. Shim deprecated chrono (pre-C++11 fractional).
      7. Valarray: `std::valarray<takum<N>>` with slice/apply as pure funcs on packed. Cover all deprecated valarray ops (e.g., old sum with warnings).
@@ -108,7 +108,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
      - `include/takum/complex.h`: `template<size_t N> struct complex_takum;` with ops (e.g., `complex_takum<N> sin(complex_takum<N> z);` on packed); deprecated shims (e.g., old conj with warning).
      - `include/takum/random.h`: `std::uniform_real_distribution<takum<N>>`, `std::normal_distribution<takum<N>>` (log-adapted with Φ); deprecated engine shims; `std::expected` for gen.
      - `include/takum/numeric.h`: `<numeric>` overloads (`accumulate`, `reduce`, `partial_sum` on packed); deprecated algos.
-     - `include/takum/io.h`: `<format>`/`iostream` overloads (`std::format("{:.2t}", takum<N> x);`, `operator<<`); `<charconv>` (`to_chars(takum<N> x, char*);`); <print> (C++23); deprecated sprintf shim with warning.
+  - `include/takum/io.h`: `<format>`/`iostream` overloads (`std::format("{:.2t}", takum<N> x);`, `operator<<`); `<charconv>` (`to_chars(takum<N> x, char*);`); <print> (C++26); deprecated sprintf shim with warning.
      - `include/takum/ranges.h`: Ranges views/algos for Takum (e.g., `iota(takum<N>{0}, takum<N>{10})`); deprecated C++98 algos; `std::expected` transforms.
      - `include/takum/other.h`: Chrono (`duration<takum<N>>`), atomics (`std::atomic<takum<N>>`), valarray (`std::valarray<takum<N>>` on packed), bit (`bit_cast`), execution policies; deprecated chrono/valarray shims with warnings.
      - `include/takum/integrations/coroutines.h`: Coroutine support (e.g., co_yield takum<N>); deprecated async patterns shims.
@@ -122,7 +122,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
    - **Steps**:
      1. Functors: `template<class Op> struct takum_op { Op op; takum apply(takum x, takum y) const; };` (on packed).
      2. Monads: `template<size_t N> struct takum_maybe { std::optional<takum<N>> val; };` for NaR (bind with pure funcs). Primary: `std::expected<takum<N>, takum_error>` with fallback (macro TAKUM_USE_OPTIONAL); `is_nar()`/`to_expected()` helpers.
-     3. Pipelines: Use `std::ranges::pipeable` (C++23) for `takum x | sin | exp;`.
+  3. Pipelines: Use `std::ranges::pipeable` (C++26) for `takum x | sin | exp;`.
      4. Higher-order: `template<class F> auto map_f(F f) { return [f](auto cont) { return cont | std::views::transform([f](takum t){ return f(t); }); }; }`.
      5. Currying/Partial: Lambdas for partial app e.g., `auto add_five = std::bind(add, std::placeholders::_1, takum{5});`. Shim deprecated binders (bind1st) with warnings.
      6. Immutable containers: `std::vector<takum<N>>` with pure transforms on packed.
@@ -165,7 +165,7 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
    - **Steps**:
      1. LUTs: 16-byte table for regime parsing (3 entries/state on packed); Φ LUTs (1024/4096, fixed-point linear/cubic interp).
      2. SIMD: AVX intrinsics for vectorized add/mul (log domain shifts on uint64_t packed); optimize deprecated float ops.
-     3. Inline/Constexpr: Mark pure funcs constexpr (C++23 relaxations for logs/polys).
+  3. Inline/Constexpr: Mark pure funcs constexpr (C++26 relaxations for logs/polys).
      4. LNS Opts: Piecewise approx for Φ [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/8268821/); base √e shifts (Section 4.4); hybrid poly (256 LUT + minimax, constexpr coeffs).
      5. Profile: Compare latency/power vs. float64 (expect < IEEE for mul/div [mdpi.com](https://www.mdpi.com/2073-8994/16/9/1138)); include deprecated benchmarks; packed vs. bitset.
      6. Parallel: `<execution>` policies for Takum reductions on packed.
@@ -202,22 +202,22 @@ The plan ensures 100% coverage of C++ floating-point features up to C++23 (inclu
    - **Goals**: Publish and iterate. Cover future deprecations (e.g., C++26 proposals). Maintain packed/Φ/expected; update shims.
    - **Steps**:
      1. Package: CMake install; conan/vcpkg support.
-     2. Extensions: Linear Takum toggle; C++23 `<stdfloat>` interop (full in core); deprecated migration tools (e.g., script to add shims).
+  2. Extensions: Linear Takum toggle; C++26 `<stdfloat>` interop (full in core); deprecated migration tools (e.g., script to add shims).
      3. Community: RFC for standardization; contrib for more funcs (e.g., new Φ approx).
      4. Maintenance: Fix bugs, add C++26 support; monitor deprecations; update poly coeffs script.
    - **Dependencies**: Phase 9.
    - **Milestones**: v1.0 release; paper citation integration.
    - **Deliverables**: Releases; issue tracker.
    - **Files Created**:
-     - `include/takum/extensions.h`: Linear Takum toggle (`template<bool Linear> struct takum_variant;`), `<stdfloat>` interop (C++23, e.g., promote(std::float128_t)); future deprecation shims.
+  - `include/takum/extensions.h`: Linear Takum toggle (`template<bool Linear> struct takum_variant;`), `<stdfloat>` interop (C++26, e.g., promote(std::float128_t)); future deprecation shims.
      - `test/extensions.test.cpp`: Tests for linear variant (Definition 8); deprecated extensions; expected interop.
      - `docs/extensions.md`: Future work (e.g., C++26 support, deprecations); Φ updates.
      - `LICENSE`: MIT/Apache license.
-     - `.github/workflows/ci.yml`: CI for tests/benchmarks (C++23, multi-compiler).
+  - `.github/workflows/ci.yml`: CI for tests/benchmarks (C++26, multi-compiler).
      - `conanfile.txt` / `vcpkg.json`: Packaging.
 
 ### Comprehensive Replacement Mapping
-This section lists **100% of floating-point-related C++ features** (C++98 to C++23, including all deprecations/obsoletes). Chronological by standard for completeness. Replacements are pure/FP (immutable, composable). Organization: Precision files in `types/` (e.g., `takum32.h` for float); groups in subdirs (e.g., `math/trig.h`). Deprecations in `compatibility.h` with shims (e.g., #pragma message("Deprecated: Use takum_sin instead")).
+This section lists **100% of floating-point-related C++ features** (C++98 to C++26, including all deprecations/obsoletes). Chronological by standard for completeness. Replacements are pure/FP (immutable, composable). Organization: Precision files in `types/` (e.g., `takum32.h` for float); groups in subdirs (e.g., `math/trig.h`). Deprecations in `compatibility.h` with shims (e.g., #pragma message("Deprecated: Use takum_sin instead")).
 
 #### Directory Structure Overview
 ```
@@ -294,7 +294,7 @@ include/takum/
   - Coroutines: Yield floats → `integrations/coroutines.h`.
   - Modules: Export float funcs → `integrations/modules.ixx`.
   - Unevaluated Contexts: Full constexpr floats → Extended.
-- **C++23**:
+- **C++26**:
   - <stdfloat>: float16_t/bfloat16_t/etc. → `extensions.h` interop (convert to takum<N>).
   - <print>/println: Print floats → `integrations/io.h`.
   - Enhanced <cmath>/<numeric>/<format>/<charconv>: Overloads for extended types → All .h with Takum.
