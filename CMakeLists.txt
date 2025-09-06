@@ -5,9 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Enable strict compliance
-target_compile_features(TakumCpp PUBLIC cxx_std_23)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -18,7 +15,10 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
-# Add subdirectories
-add_subdirectory(include)
+# Provide an INTERFACE target for header-only library usage
+add_library(TakumCpp INTERFACE)
+target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
+target_compile_features(TakumCpp INTERFACE cxx_std_23)
+
+# Tests
 add_subdirectory(test)
-add_subdirectory(examples)

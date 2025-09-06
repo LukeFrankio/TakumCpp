@@ -1,10 +1,10 @@
 # Test subdirectory
 
 # Add the test executable
-add_executable(tests placeholder.test.cpp)
+add_executable(tests placeholder.test.cpp spec_reference.test.cpp)
 
 # Link GoogleTest libraries
-target_link_libraries(tests gtest gtest_main)
+target_link_libraries(tests PRIVATE TakumCpp gtest gtest_main)
 
 # Discover tests
 include(GoogleTest)
