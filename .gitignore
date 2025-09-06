@@ -1,0 +1,47 @@
+# Build directories
+build/
+out/
+.DS_Store
+
+# Dependencies
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# CMake
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CMakeCache.txt
+CTestTestfile.cmake
+Testing/
+cmake-build-*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Tests
+*.test
+*.out
+
+# Documentation
+*.pdf
+*.docx
+
+# Ignore the spec file
+Docs/Spec.md
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
