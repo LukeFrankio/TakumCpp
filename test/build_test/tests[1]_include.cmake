@@ -1,0 +1,5 @@
+if(EXISTS "C:/Dev/TakumCpp/test/build_test/tests[1]_tests.cmake")
+  include("C:/Dev/TakumCpp/test/build_test/tests[1]_tests.cmake")
+else()
+  add_test(tests_NOT_BUILT tests_NOT_BUILT)
+endif()
