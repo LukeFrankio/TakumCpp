@@ -13,6 +13,8 @@
 #endif
 
 #include "takum/internal/ref/tau_ref.h"
+#include <cmath>
+#include <limits>
 
 namespace takum {
 
@@ -114,6 +116,42 @@ struct takum {
         } else {
             uint64_t bits = storage[0];
             return takum::decode_to_double(bits);
+        }
+    }
+
+    // For testing purposes: decodes to the internal logarithmic value `ℓ`
+    double get_logarithmic_value() const noexcept {
+        if constexpr (N <= 64) {
+            uint64_t bits = uint64_t(storage);
+            if (bits == 0) return 0.0; // Or some other convention for log(0)
+            
+            // Check NaR: S=1 and all other bits=0
+            bool S = (bits >> (N - 1)) & 1ULL;
+            uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
+            if (S && lower == 0) {
+                return std::numeric_limits<double>::quiet_NaN();
+            }
+
+            // Extract D: bit N-2
+            bool D = (bits >> (N - 2)) & 1ULL;
+            // Extract R: bits N-5 to N-3 (R2=N-5, R1=N-4, R0=N-3)
+            uint32_t R = ((bits >> (N - 5)) & 7ULL);
+            uint32_t r = D ? R : (7U - R);
+            // Extract C: next r bits, starting from bit N-6 down to N-5-r
+            uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
+            uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
+            int64_t c = D ? (int64_t(((1ULL << r) - 1ULL) + c_bits)) : (int64_t(-((1LL << (r + 1))) + 1LL + c_bits));
+            // p = N - 5 - r
+            size_t p = N - 5 - r;
+            // M: lowest p bits
+            uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
+            double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
+            
+            // Return ℓ = sign * (c + m)
+            return (S ? -1.0 : 1.0) * (static_cast<double>(c) + m);
+        } else {
+            // Implement for > 64 bits later if needed for testing
+            return 0.0;
         }
     }
 

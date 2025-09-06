@@ -43,21 +43,51 @@ TEST_F(CoreTest, RoundTripTakum64) {
     }
 }
 
-TEST_F(CoreTest, UniquenessTakum12) {
-    // Prop 3: injective τ, all bit patterns map to unique values (except NaR/0 specials)
-    std::set<double> values;
-    for (uint64_t bits = 0; bits < (1ULL << 12); ++bits) {
-        ::takum::takum<12> t;
-        t.storage = static_cast<uint32_t>(bits);
-        double val = t.to_double();
-        if (!values.insert(val).second) {
-if (std::isnan(val)) {
-    std::cout << "NaN for bits " << bits << std::endl;
-}
-            FAIL() << "Duplicate value " << val << " for bits " << bits;
-        }
+TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
+    constexpr unsigned n = 12;
+    const uint32_t num_patterns = 1u << n;
+    const uint32_t nar_index = 1u << (n - 1); // 2048 for n=12
+
+    // 1) Quick NaR check
+    {
+        takum::takum<n> t;
+        t.storage = nar_index;
+        EXPECT_TRUE(std::isnan(t.to_double())) << "NaR bit pattern should produce NaN.";
     }
-    EXPECT_EQ(values.size(), 1ULL << 12);  // All unique
+
+    // 2) Iterate in two's-complement (SI) ascending order:
+    //    unsigned order: nar_index, nar_index+1, ..., num_patterns-1, 0, 1, ..., nar_index-1
+    bool have_prev = false;
+    double prev_v = 0.0;
+
+    for (uint32_t i = 0; i < num_patterns; ++i) {
+        uint32_t ui = (nar_index + i) & (num_patterns - 1); // rotate start
+        takum::takum<n> t;
+        t.storage = ui;
+        double v = t.to_double();
+
+        // skip comparisons involving NaR (NaN)
+        if (std::isnan(v)) {
+            // ensure it's the designated NaR bit pattern (defensive)
+            EXPECT_EQ(ui, nar_index) << "Unexpected NaR location.";
+            have_prev = false; // reset previous so we don't compare across NaR
+            continue;
+        }
+
+        if (have_prev) {
+            // Proposition 4 / proof shows strict increase for consecutive non-NaR bitstrings:
+            EXPECT_LT(prev_v, v) << "Monotonicity failed between UI " << std::hex << (nar_index + i - 1) << " and " << ui;
+        }
+        prev_v = v;
+        have_prev = true;
+    }
+
+    // 3) Check largest-negative is < 0 (Proposition 3)
+    {
+        takum::takum<n> t_maxpos; t_maxpos.storage = num_patterns - 1; // unsigned 4095 -> SI -1
+        double v_last_neg = t_maxpos.to_double();
+        EXPECT_LT(v_last_neg, 0.0) << "Largest-negative (SI=-1) must be < 0.";
+    }
 }
 
 TEST_F(CoreTest, MonotonicityTakum12) {
