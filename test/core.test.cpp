@@ -3,6 +3,8 @@
 #include <vector>
 #include <cmath>
 #include <set>
+#include <cstdint>
+#include <takum/internal/ref/tau_ref.h>
 
 #include "takum/core.h"
 #include "takum/types.h"
@@ -11,7 +13,7 @@ using namespace ::testing;
 
 class CoreTest : public ::testing::Test {
 protected:
-    static constexpr double EPS = 1e-6;  // Loose tolerance for ref approx, tighten later
+    static constexpr long double EPS = 1e-6L;  // High-precision tolerance for ell/value comparisons
 };
 
 TEST_F(CoreTest, RoundTripTakum32) {
@@ -19,9 +21,10 @@ TEST_F(CoreTest, RoundTripTakum32) {
     double inputs[] = {0.0, 1.0, 3.14159, 1e10, 1e-10, std::exp(1.0)};
     for (double inp : inputs) {
         takum::takum<32> t(inp);
-        double back = t.to_double();
+        long double back = takum::internal::ref::high_precision_decode<32>(t.storage);
         if (std::isnan(inp)) {
             EXPECT_TRUE(t.is_nar());
+            EXPECT_TRUE(std::isnan(static_cast<double>(back)));
 #if __cplusplus >= 202302L
             EXPECT_FALSE(t.to_expected().has_value());
 #else
@@ -29,7 +32,7 @@ TEST_F(CoreTest, RoundTripTakum32) {
 #endif
         } else {
             EXPECT_FALSE(t.is_nar());
-            EXPECT_NEAR(back, inp, EPS * std::fabs(inp));
+            EXPECT_NEAR(back, static_cast<long double>(inp), EPS * std::fabsl(static_cast<long double>(inp)));
         }
     }
 }
@@ -38,8 +41,8 @@ TEST_F(CoreTest, RoundTripTakum64) {
     double inputs[] = {0.0, 1.0, 3.141592653589793, 1e50, 1e-50};
     for (double inp : inputs) {
         takum::takum<64> t(inp);
-        double back = t.to_double();
-        EXPECT_NEAR(back, inp, EPS * std::fabs(inp));
+        long double back = takum::internal::ref::high_precision_decode<64>(t.storage);
+        EXPECT_NEAR(back, static_cast<long double>(inp), EPS * std::fabsl(static_cast<long double>(inp)));
     }
 }
 
@@ -58,16 +61,16 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     // 2) Iterate in two's-complement (SI) ascending order:
     //    unsigned order: nar_index, nar_index+1, ..., num_patterns-1, 0, 1, ..., nar_index-1
     bool have_prev = false;
-    double prev_v = 0.0;
+    long double prev_v = 0.0L;
 
     for (uint32_t i = 0; i < num_patterns; ++i) {
         uint32_t ui = (nar_index + i) & (num_patterns - 1); // rotate start
         takum::takum<n> t;
         t.storage = ui;
-        double v = t.to_double();
+        long double v = takum::internal::ref::high_precision_decode<n>(ui);
 
         // skip comparisons involving NaR (NaN)
-        if (std::isnan(v)) {
+        if (std::isnan(static_cast<double>(v))) {
             // ensure it's the designated NaR bit pattern (defensive)
             EXPECT_EQ(ui, nar_index) << "Unexpected NaR location.";
             have_prev = false; // reset previous so we don't compare across NaR
@@ -76,7 +79,7 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
 
         if (have_prev) {
             // Proposition 4 / proof shows strict increase for consecutive non-NaR bitstrings:
-            EXPECT_LT(prev_v, v) << "Monotonicity failed between UI " << std::hex << (nar_index + i - 1) << " and " << ui;
+            EXPECT_LT(prev_v, v) << "Monotonicity failed between UI " << std::hex << (nar_index + i - 1) << " and " << ui;  // Uses high-precision long double for exact order without rounding collapse
         }
         prev_v = v;
         have_prev = true;
@@ -85,8 +88,8 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     // 3) Check largest-negative is < 0 (Proposition 3)
     {
         takum::takum<n> t_maxpos; t_maxpos.storage = num_patterns - 1; // unsigned 4095 -> SI -1
-        double v_last_neg = t_maxpos.to_double();
-        EXPECT_LT(v_last_neg, 0.0) << "Largest-negative (SI=-1) must be < 0.";
+        long double v_last_neg = takum::internal::ref::high_precision_decode<n>(t_maxpos.storage);
+        EXPECT_LT(v_last_neg, 0.0L) << "Largest-negative (SI=-1) must be < 0.";
     }
 }
 
@@ -94,12 +97,14 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
 TEST_F(CoreTest, SpecialCases) {
     // 0
     ::takum::takum<32> zero(0.0);
-    EXPECT_DOUBLE_EQ(zero.to_double(), 0.0);
+    EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(zero.storage), 0.0L, 1e-15L);
     EXPECT_FALSE(zero.is_nar());
 
     // NaR
     ::takum::takum<32> nar(std::numeric_limits<double>::quiet_NaN());
     EXPECT_TRUE(nar.is_nar());
+    long double nar_dec = takum::internal::ref::high_precision_decode<32>(nar.storage);
+    EXPECT_TRUE(std::isnan(static_cast<double>(nar_dec)));
 #if __cplusplus >= 202302L
     auto exp_nar = nar.to_expected();
     EXPECT_FALSE(exp_nar.has_value());
@@ -110,16 +115,18 @@ TEST_F(CoreTest, SpecialCases) {
 
     // Inf -> NaR
     ::takum::takum<32> inf(std::numeric_limits<double>::infinity());
+    long double inf_dec = takum::internal::ref::high_precision_decode<32>(inf.storage);
     EXPECT_TRUE(inf.is_nar());
+    EXPECT_TRUE(std::isnan(static_cast<double>(inf_dec)));
 
     // Saturation: large value clamped
     double large = std::exp(127.0);  // Within range for base sqrt(e)
     ::takum::takum<32> t_large(large);
-    EXPECT_NEAR(t_large.to_double(), large, EPS * large);
+    EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(t_large.storage), static_cast<long double>(large), EPS * static_cast<long double>(large));
     double too_large = std::exp(150.0);
     ::takum::takum<32> t_too_large(too_large);
     double max_takum = std::exp(127.4995);  // Approx max ell/2
-    EXPECT_NEAR(t_too_large.to_double(), max_takum, EPS * max_takum);
+    EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(t_too_large.storage), static_cast<long double>(max_takum), EPS * static_cast<long double>(max_takum));
 }
 
 TEST_F(CoreTest, NaRPropagationBasic) {

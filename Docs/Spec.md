@@ -99,6 +99,8 @@ Terminology used below:
 
 Pseudocode: encoding (tau)
 
+**Warning: ℓ vs τ Confusion**: The full τ = (S, ℓ) where ℓ is the logarithmic value (c + m / 2^p). Injectivity/uniqueness is for τ, not ℓ alone (per Definition 2 and proof). Different signs or (c,m) can yield same ℓ numeric but distinct τ. All tests must compare full τ or canonical decoded form (e.g., to_double()), never ℓ in isolation.
+
 1. If x is NaN or signaling-NaN: return takum::nar().
 2. If x is zero: return canonical zero encoding (sign=0, rest=0).
 3. sign = (x < 0) ? 1 : 0
@@ -116,6 +118,8 @@ Pseudocode: decoding (tau_inv)
 3. Reconstruct ℓ (log-domain value) from fields: ℓ = regime_to_scale(regime) + exponent * exp_unit + fraction * frac_unit.
 4. Compute y = exp_base(ℓ) where exp_base is the inverse of sign_adjusted_log; again compute in a high-precision host type to minimize rounding error.
 5. If sign bit set, return -y, else +y.
+
+**Note on Ordering for Tests**: Two's-complement ordering maps to SI order for ascending τ: iteration should start at nar_index = 1<<(n-1), then nar_index+1 .. 2^n-1, 0 .. nar_index-1. Unsigned 0..2^n-1 does not correspond to ascending τ; reordering is required for monotonicity checks (Prop 4) to avoid false failures.
 
 Implementation notes:
 
@@ -189,7 +193,7 @@ Phase 1 is a spec step; produce tests primarily to verify the reference encoder/
 
 Unit tests to write in Phase 2/Phase 7 (listed here so Phase 2 can rely on them):
 
-1. Encoding/decoding round-trip test: sample set of host floats (edge cases: 0, subnormals, denormals if supported, near-largest, ±Inf, ±NaN) and assert tau_inv(tau(x)) within λ(p) bound.
+1. Encoding/decoding round-trip test: sample set of host floats (edge cases: 0, subnormals, denormals if supported, near-largest, ±Inf, ±NaN) and assert tau_inv(tau(x)) within λ(p) bound using high-precision long double decoded values/ℓ to avoid rounding collapses. **Test Guideline: Full τ Comparison**: Verify round-trip using full τ (including sign), not ℓ; use high-precision long double canonical decoded form for comparison.
 2. Canonical NaR test: ensure NaN host float encodes to `takum::nar()` and decodes back to a canonical NaR branch.
 3. Packing invariants: bit-width, storage_t selection, and debug_view correctness.
 4. Uniqueness properties: check that two distinct canonical real values (within representable set) produce different encodings where the format guarantees uniqueness.
@@ -215,6 +219,7 @@ Smoke tests for Phase 1:
 ## Open decisions (to be finalized before coding)
 
 - NaR vs saturate policy for infinities: recommended default: NaR, but make policy configurable via traits.
+- **Ordering for Monotonicity Tests**: Explicitly document SI reordering in test harnesses (start at 1<<(n-1), wrap); add helper function to generate SI-ordered indices for Prop 4 tests.
 - Exact bit layout and canonical NaR pattern: choose a pattern that is uncommon and simple (e.g., top bits all ones + sign), then document it in `takum_traits`.
 - Base of the logarithm: paper suggests √e; document the choice and keep it as a compile-time constant.
 
