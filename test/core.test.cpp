@@ -14,6 +14,7 @@
 #include "takum/core.h"
 #include "takum/types.h"
 #include <string>
+#include <cstring>
 
 #include "test_helpers.h"
 using namespace ::testing;
@@ -605,22 +606,39 @@ TEST_F(CoreTest, FuzzRoundTripAndMonotonicityTakum32) {
         }
     }
 
-    // Monotonicity check: encode random inputs, sort by tuple ordering for strict monotonicity
-    std::vector<std::tuple<int, int, int, uint64_t>> sorted_tuples;
+    // Monotonicity check: encode random inputs, sort by storage bits (SI order), verify tau increasing
+    std::vector<std::pair<uint64_t, long double>> storage_tau;
     for (double inp : random_inputs) {
         takum::takum<n> t(inp);
         storage_t bits = t.storage;
-        uint32_t u_bits = static_cast<uint32_t>(bits);
-        if (u_bits == static_cast<uint32_t>(nar_index)) continue; // Skip NaR if any
-        auto tuple = decode_tuple<n>(u_bits);
-        sorted_tuples.emplace_back(tuple);
+        uint64_t u_bits = static_cast<uint64_t>(bits);
+        if (u_bits == nar_index) continue; // Skip NaR if any
+        long double tau = takum::internal::ref::high_precision_decode<n>(u_bits);
+        storage_tau.emplace_back(u_bits, tau);
     }
-    std::sort(sorted_tuples.begin(), sorted_tuples.end());  // Sort by tuple (S,c,m_int)
+    std::sort(storage_tau.begin(), storage_tau.end(),
+        [](const auto& a, const auto& b) {
+            bool sign_a = a.first & 0x80000000ULL;
+            int64_t sa = sign_a ? static_cast<int64_t>(a.first | 0xFFFFFFFF00000000ULL) : static_cast<int64_t>(a.first);
+            bool sign_b = b.first & 0x80000000ULL;
+            int64_t sb = sign_b ? static_cast<int64_t>(b.first | 0xFFFFFFFF00000000ULL) : static_cast<int64_t>(b.first);
+            return sa < sb;
+        });
 
-    for (size_t i = 1; i < sorted_tuples.size(); ++i) {
-        auto prev_tuple = sorted_tuples[i-1];
-        auto curr_tuple = sorted_tuples[i];
-        EXPECT_LE(prev_tuple, curr_tuple) << "Monotonicity failed in sorted tuple order at index " << i;
+    // Deduplicate identical storage patterns
+    storage_tau.erase(
+        std::unique(storage_tau.begin(), storage_tau.end(),
+                    [](auto &a, auto &b){ return a.first == b.first; }),
+        storage_tau.end());
+
+    for (size_t i = 1; i < storage_tau.size(); ++i) {
+        auto prev = storage_tau[i-1];
+        auto curr = storage_tau[i];
+        EXPECT_LT(prev.second, curr.second)
+            << "Monotonicity failed at index " << i
+            << " (storage 0x" << std::hex << prev.first
+            << " tau=" << prev.second << " vs storage 0x"
+            << curr.first << " tau=" << curr.second << std::dec << ")";
     }
 
     // Additional uniqueness sample
@@ -713,9 +731,9 @@ TEST_F(CoreTest, BitwiseOperations) {
     T inv_a = ~a;
     EXPECT_EQ(inv_a.raw_bits(), ~a.raw_bits());
 
-    // Test operator- negation using two's complement (~x + 1)
+    // Test operator- for mathematical negation (-x)
     T pos(1.0);
-    T neg = -pos;
+    T neg = -pos; // This should now correctly produce -1.0
     EXPECT_NEAR(neg.to_double(), -1.0, EPS);
     // Check that negation of negative gives positive
     T neg_of_neg = -neg;
@@ -777,4 +795,79 @@ TEST_F(CoreTest, FloatingPointTraits) {
 
     // Test NaN
     EXPECT_TRUE(std::isnan(std::numeric_limits<T32>::quiet_NaN()));
+}
+
+TEST_F(CoreTest, ReciprocalMatchesInversion) {
+    // Helper: ULP-based comparison for doubles
+    auto ulp_equal = [](double a, double b, int maxUlps = 4) {
+        if (std::isnan(a) || std::isnan(b)) return false;
+        if (std::isinf(a) || std::isinf(b)) return a == b;
+        if (a == b) return true;
+
+        int64_t ia, ib;
+        ::memcpy(&ia, &a, sizeof(double));  // use ::memcpy (safe, portable)
+        ::memcpy(&ib, &b, sizeof(double));
+
+        // if signs differ, only consider equality if both are zero
+        if ((ia < 0) != (ib < 0)) return a == b;
+
+        int64_t diff = std::llabs(ia - ib);
+        return diff <= maxUlps;
+    };
+
+    for (int bits = 1; bits < 4096; ++bits) {
+        ::takum::takum<12> t;
+        t.storage = bits;
+        if (t.is_nar() || t.to_double() == 0.0) continue;
+
+        auto r = t.reciprocal();
+        double lhs = r.to_double();
+        double rhs = 1.0 / t.to_double();
+
+        EXPECT_TRUE(ulp_equal(lhs, rhs, 4))
+            << "Reciprocal mismatch: t=" << t.to_double()
+            << " lhs=" << lhs << " rhs=" << rhs;
+    }
+}
+
+TEST_F(CoreTest, Minpos) {
+    using T = ::takum::takum<32>;
+    T mp = T::minpos();
+
+    EXPECT_FALSE(mp.is_nar());
+
+    double val = mp.to_double();
+    EXPECT_GT(val, 0.0);
+    EXPECT_LT(val, 1.0);
+
+    EXPECT_EQ(static_cast<uint32_t>(mp.storage), 1u);
+    EXPECT_FALSE(mp.signbit());
+
+    double ell = mp.get_exact_ell();
+    EXPECT_LT(ell, 0.0);
+
+    // Instead of hardcoding exp(-128), compare against the reference decoder
+    long double ref_val = takum::internal::ref::high_precision_decode<32>(1u);
+    EXPECT_NEAR(val, static_cast<double>(ref_val), std::fabs(val) * 1e-12)
+        << "Minpos τ should match reference decoder.";
+}
+
+TEST_F(CoreTest, Signbit) {
+    using T = ::takum::takum<32>;
+    T pos(1.0);
+    EXPECT_FALSE(pos.signbit());
+    T neg(-1.0);
+    EXPECT_TRUE(neg.signbit());
+    T zero(0.0);
+    EXPECT_FALSE(zero.signbit());
+    T nar = T::nar();
+    EXPECT_TRUE(nar.signbit());
+    // Test minpos
+    T mp = T::minpos();
+    EXPECT_FALSE(mp.signbit());
+    // Test large positive/negative
+    T large_pos(std::exp(100.0));
+    EXPECT_FALSE(large_pos.signbit());
+    T large_neg(-std::exp(100.0));
+    EXPECT_TRUE(large_neg.signbit());
 }

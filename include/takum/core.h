@@ -110,45 +110,109 @@ struct takum {
     bool operator>=(const takum& other) const noexcept { return !(*this < other); }
     bool operator!=(const takum& other) const noexcept { return !(*this == other); }
 
-    // Bitwise inversion on packed storage (Lemma 3: supports inversion-negation patterns)
     takum operator~() const noexcept {
-        takum res = *this;
+        takum res;
         if constexpr (std::is_integral_v<storage_t>) {
-            res.storage = ~res.storage;
+            uint64_t w = ~uint64_t(storage);
+            w &= nbit_mask();
+            res.storage = static_cast<storage_t>(w);
         } else {
-            for (auto& w : res.storage) {
-                w = ~w;
-            }
+            for (size_t i = 0; i < res.storage.size(); ++i) res.storage[i] = ~storage[i];
+            mask_to_N(res.storage);
         }
         return res;
     }
 
-    // Unary negation using two's complement on packed storage (Proposition 6: ~x + 1)
+
+
+    // Smallest representable nonzero takum (positive).
+    static takum minpos() noexcept {
+        takum r;
+        if constexpr (std::is_integral_v<storage_t>) {
+            r.storage = 1; // LSB set → minimal magnitude
+        } else {
+            r.storage.fill(0);
+            r.storage[0] = 1;
+        }
+        return r;
+    }
+
+    // Return true if this number is negative.
+    bool signbit() const noexcept {
+        if constexpr (std::is_integral_v<storage_t>) {
+            return (storage >> (N - 1)) & 1;
+        } else {
+            size_t msb_word = (N - 1) / 64;
+            size_t msb_bit  = (N - 1) % 64;
+            return (storage[msb_word] >> msb_bit) & 1ULL;
+        }
+    }
+
+    // Unary negation by flipping the sign bit (MSB).
     takum operator-() const noexcept {
-        if (is_nar()) return *this;
+        if (is_nar()) return *this; // NaR is its own negation.
+        
         takum res = *this;
-        if constexpr (std::is_integral_v<storage_t>) {
-            res.storage = ~res.storage + 1;
+        if constexpr (N <= 64) {
+            // XOR with a mask for the sign bit (bit N-1)
+            res.storage ^= (storage_t(1) << (N - 1));
         } else {
-            // Multi-word two's complement negation: invert all, then add 1 with carry
-            for (auto& w : res.storage) {
-                w = ~w;
-            }
-            bool carry = true;
-            for (auto& w : res.storage) {
-                if (!carry) break;
-                uint64_t prev = w;
-                w += 1;
-                carry = (w < prev);
-            }
+            // For multi-word, XOR the sign bit in the highest word
+            size_t msb_word = (N - 1) / 64;
+            size_t msb_bit_in_word = (N - 1) % 64;
+            res.storage[msb_word] ^= (uint64_t(1) << msb_bit_in_word);
         }
         return res;
     }
 
-    // Reciprocal (inversion, Proposition 7: mathematical 1/x)
     takum reciprocal() const noexcept {
-        if (is_nar() || to_double() == 0.0) return nar();
-        return takum(1.0 / to_double());
+        if (is_nar()) return nar();
+
+        // Zero → NaR
+        if constexpr (std::is_integral_v<storage_t>) {
+            if (storage == 0) return nar();
+        } else {
+            bool all_zero = true;
+            for (auto w : storage) if (w != 0) { all_zero = false; break; }
+            if (all_zero) return nar();
+        }
+
+        takum res;
+
+        if constexpr (N <= 64) {
+            uint64_t bits = uint64_t(storage);
+
+            // Reciprocal core: ~bits + 1 (mod 2^N)
+            bits = (~bits + 1ULL) & ((N == 64) ? ~0ULL : ((1ULL << N) - 1ULL));
+
+            // *** Fix: flip sign bit back ***
+            bits ^= (1ULL << (N - 1));
+
+            res.storage = static_cast<storage_t>(bits);
+        } else {
+            // multiword version
+            for (size_t i = 0; i < res.storage.size(); ++i) res.storage[i] = ~storage[i];
+
+            // +1 with carry
+            bool carry = true;
+            for (size_t i = 0; i < res.storage.size() && carry; ++i) {
+                uint64_t prev = res.storage[i];
+                res.storage[i] = prev + 1ULL;
+                carry = (res.storage[i] == 0ULL);
+            }
+
+            // mask top word to N bits
+            size_t msb_word = (N - 1) / 64;
+            size_t used_bits = (N - 1) % 64 + 1;
+            uint64_t mask = (used_bits == 64) ? ~0ULL : ((1ULL << used_bits) - 1ULL);
+            res.storage[msb_word] &= mask;
+            for (size_t i = msb_word + 1; i < res.storage.size(); ++i) res.storage[i] = 0;
+
+            // *** Fix: flip sign bit back ***
+            res.storage[msb_word] ^= (1ULL << ((N - 1) % 64));
+        }
+
+        return res;
     }
 
     // Support for bit_cast and deprecated bit patterns
@@ -341,6 +405,24 @@ struct takum {
     }
 
 private:
+    static constexpr uint64_t nbit_mask() noexcept {
+        if constexpr (N >= 64) return ~0ULL;
+        else return (N == 64 ? ~0ULL : ((1ULL << N) - 1ULL));
+    }
+
+    static void mask_to_N(storage_t& s) noexcept {
+        if constexpr (N <= 64) {
+            s = static_cast<storage_t>(uint64_t(s) & nbit_mask());
+        } else {
+            // Zero bits above N in the top word; lower words untouched.
+            size_t msb_word = (N - 1) / 64;
+            size_t used_bits_top = ((N - 1) % 64) + 1;
+            uint64_t top_mask = (used_bits_top == 64) ? ~0ULL : ((1ULL << used_bits_top) - 1ULL);
+            for (size_t i = msb_word + 1; i < s.size(); ++i) s[i] = 0; // safety
+            s[msb_word] &= top_mask;
+        }
+    }
+
     // Decode per Def. 2: unpack S,D,R,C,M then compute value per eq. (24)
     static double decode_to_double(uint64_t bits) noexcept {
         if (bits == 0) return 0.0; // Zero per eq. (24)
