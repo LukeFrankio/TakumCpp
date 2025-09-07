@@ -81,7 +81,14 @@ Design:
 Propagation rules:
 
 - If any operand is NaR, most arithmetic functions return NaR (and in safe APIs return `std::unexpected(takum_error{InvalidOperation})`).
-- Implementations may provide both unchecked APIs (fast, produce NaR or a sentinel) and checked APIs returning `std::expected`.
+- Implementations may provide both unchecked APIs (fast, produce NaR or saturate per policy) and checked APIs returning `std::expected`.
+
+NaR Total-Ordering Policy:
+- The NaR follows a total-ordering convention where NaR = NaR and NaR is the smallest element in comparisons (NaR < x for all real x).
+- Comparison operators ( <, <=, >, >=, ==, != ) treat NaR as smallest: NaR < x = true for real x, x < NaR = false; NaR == NaR true.
+- std::expected wrappers: to_expected() returns unexpected for NaR.
+- Sorting: std::sort on takum vectors places all NaR at the beginning (smallest), reals in monotonic order.
+- This ensures total order for bitwise comparisons as two's complement signed integers, with NaR bit pattern (1 << (N-1)) as smallest.
 
 Design note: `std::expected` lets callers choose to propagate NaR as an error or recover with fallback policies.
 

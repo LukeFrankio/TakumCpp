@@ -5,6 +5,7 @@
 #include <array>
 #include <bitset>
 #include <type_traits>
+#include <bit>
 #include <optional>
 #if __cplusplus >= 202302L
 #include <expected>
@@ -55,7 +56,7 @@ struct takum {
     bool is_nar() const noexcept {
         if constexpr (N <= 64) {
             uint64_t w = uint64_t(storage);
-            uint64_t pat = 1ULL << (N - 1);  // Only sign bit set
+            uint64_t pat = 1ULL << (N - 1);  // Only sign bit set for NaR
             return w == pat;
         } else {
             // Check only sign bit (MSB) set, all else zero
@@ -69,6 +70,35 @@ struct takum {
             return true;
         }
     }
+
+    // Comparison operators following total order: NaR smallest, then negatives to positives monotonic
+    bool operator==(const takum& other) const noexcept {
+        if (is_nar() && other.is_nar()) return true;
+        if (is_nar() || other.is_nar()) return false;
+        return storage == other.storage;  // Bitwise equal for reals
+    }
+
+    bool operator<(const takum& other) const noexcept {
+        if (is_nar() || other.is_nar()) {
+            return is_nar() && !other.is_nar();
+        }
+        // Both real: signed integer compare with sign extension for N bits
+        if constexpr (N > 64) {
+            // Placeholder for multi-word comparison; for now assume lexicographical signed
+            return storage < other.storage;  // TODO: proper multi-word signed compare
+        } else {
+            uint64_t unsigned_val = uint64_t(storage);
+            int64_t signed_val = static_cast<int64_t>( (unsigned_val << (64 - N)) >> (64 - N) );
+            uint64_t other_unsigned_val = uint64_t(other.storage);
+            int64_t other_signed_val = static_cast<int64_t>( (other_unsigned_val << (64 - N)) >> (64 - N) );
+            return signed_val < other_signed_val;
+        }
+    }
+
+    bool operator<=(const takum& other) const noexcept { return !(other < *this); }
+    bool operator>(const takum& other) const noexcept { return other < *this; }
+    bool operator>=(const takum& other) const noexcept { return !(*this < other); }
+    bool operator!=(const takum& other) const noexcept { return !(*this == other); }
 
 #if __cplusplus >= 202302L
     std::expected<takum, takum_error> to_expected() const noexcept {
