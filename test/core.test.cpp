@@ -747,3 +747,34 @@ TEST_F(CoreTest, BitwiseOperations) {
     T nar_recon = T::from_raw_bits(nar_bits);
     EXPECT_TRUE(nar_recon.is_nar());
 }
+TEST_F(CoreTest, FloatingPointTraits) {
+    using T32 = takum::takum<32>;
+
+    // Test takum_floating_point concept satisfaction
+    static_assert(takum::takum_floating_point<T32>, "takum<32> must satisfy takum_floating_point concept");
+
+    // Test numeric_limits specialization
+    EXPECT_TRUE(std::numeric_limits<T32>::is_specialized);
+    EXPECT_FALSE(std::numeric_limits<T32>::is_iec559); // Deprecated trait: not IEC 559 compliant
+    EXPECT_FALSE(std::numeric_limits<T32>::is_modulo);
+
+    // Test epsilon as approximate λ(p) for N=32 (p_min ~20, λ ~ 2*(1-2^{-20}) ~ 1.9e-6)
+    double eps = std::numeric_limits<T32>::epsilon();
+    EXPECT_NEAR(eps, 1.9073486328125e-6, 1e-9); // 2*(1 - 2^{-20})
+
+    // Test round_error ~ 0.5 * epsilon
+    EXPECT_NEAR(std::numeric_limits<T32>::round_error(), eps / 2.0, 1e-12);
+
+    // Test digits10 approximate
+    int digits = std::numeric_limits<T32>::digits10;
+    EXPECT_EQ(digits, 6); // Approximate for p~20
+
+    // Test min/max approximate for N=32
+    double min_val = std::numeric_limits<T32>::min();
+    EXPECT_NEAR(min_val, std::exp(-127.5), 1e-10); // Approximate √e^{-255}/2 or similar
+    double max_val = std::numeric_limits<T32>::max();
+    EXPECT_NEAR(max_val, std::exp(127.5), 1e-10);
+
+    // Test NaN
+    EXPECT_TRUE(std::isnan(std::numeric_limits<T32>::quiet_NaN()));
+}

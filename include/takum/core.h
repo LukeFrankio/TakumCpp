@@ -20,10 +20,20 @@
 
 namespace takum {
 
+// Error type for expected
 struct takum_error {
     enum class Kind { DomainError, Overflow, Underflow, InvalidOperation, Inexact, Internal } kind;
     const char* message = nullptr;
 };
+
+// Concept mirroring std::floating_point for takum<N> (arithmetic disabled until ready)
+template <typename T>
+concept takum_floating_point = requires(T t) {
+    { t < t } -> std::convertible_to<bool>;
+    { t == t } -> std::convertible_to<bool>;
+    { t.to_double() } -> std::convertible_to<double>;
+    { t.is_nar() } -> std::convertible_to<bool>;
+} && sizeof(T) > 0; // Ensure complete type
 
 template <size_t N>
 struct takum {
@@ -199,107 +209,45 @@ struct takum {
     }
 
     // Extract the exact internal logarithmic value: ℓ = (-1)^S * (c + m)
-double get_exact_ell() const noexcept {
-    if (N > 128) return 0.0;  // Placeholder for larger widths
+    double get_exact_ell() const noexcept {
+        if (N > 128) return 0.0;  // Placeholder for larger widths
 
-    uint64_t bits;
-    if constexpr (N <= 64) {
-        bits = uint64_t(storage);
-    } else {
-        bits = 0;  // Placeholder for >64
-    }
-    if (bits == 0) return 0.0;
-
-    // NaR check
-    bool S = (bits >> (N - 1)) & 1ULL;
-    uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
-    if (S && lower == 0) {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-
-    // Extract D and R
-    bool D = (bits >> (N - 2)) & 1ULL;
-    uint32_t R = (bits >> (N - 5)) & 7ULL;
-    uint32_t r = D ? R : (7U - R);
-
-    // Extract C
-    uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
-    uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
-    int64_t c = D
-        ? (int64_t(((1ULL << r) - 1ULL) + c_bits))
-        : (int64_t(-((1LL << (r + 1))) - 1LL + 1LL + c_bits)); // simplifies to -( (1<<(r+1)) - 1 - C )
-
-    // Mantissa
-    size_t p = N - 5 - r;
-    uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
-    double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
-
-    // Return signed ℓ
-    double ell_unsigned = static_cast<double>(c) + m;
-    return (S ? -1.0 : 1.0) * ell_unsigned;
-}
-
-
-static uint64_t encode_from_double(double x) noexcept {
-    if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
-    if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
-
-    bool S = std::signbit(x); // Sign bit per eq. (14)
-    long double abs_x = std::fabsl(x);
-
-    long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
-
-    // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
-    long double clamp_pos = max_ell();
-    if (ell > clamp_pos) ell = clamp_pos;
-    if (ell < -clamp_pos) ell = -clamp_pos;
-
-    // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
-    int64_t c = static_cast<int64_t>(std::floorl(ell));
-    bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
-    int64_t abs_c = D ? c : -c;
-
-    // Regime r per eq. (17): floor(log2(|c| + D))
-    uint32_t r = (abs_c != 0)
-        ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
-        : 0;
-    r = std::min<uint32_t>(7, r); // Clamp to max regime 7
-    uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
-
-    // Characteristic bits C per eq. (18), c per eq. (19)
-    uint64_t c_bits = 0ULL;
-    if (r != 0) {
-        if (D) {
-            c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL)); // D=1 case
+        uint64_t bits;
+        if constexpr (N <= 64) {
+            bits = uint64_t(storage);
         } else {
-            c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL)); // D=0 case
+            bits = 0;  // Placeholder for >64
         }
+        if (bits == 0) return 0.0;
+
+        // NaR check
+        bool S = (bits >> (N - 1)) & 1ULL;
+        uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
+        if (S && lower == 0) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        // Extract D and R
+        bool D = (bits >> (N - 2)) & 1ULL;
+        uint32_t R = (bits >> (N - 5)) & 7ULL;
+        uint32_t r = D ? R : (7U - R);
+
+        // Extract C
+        uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
+        uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
+        int64_t c = D
+            ? (int64_t(((1ULL << r) - 1ULL) + c_bits))
+            : (int64_t(-((1LL << (r + 1))) - 1LL + 1LL + c_bits)); // simplifies to -( (1<<(r+1)) - 1 - C )
+
+        // Mantissa
+        size_t p = N - 5 - r;
+        uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
+        double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
+
+        // Return signed ℓ
+        double ell_unsigned = static_cast<double>(c) + m;
+        return (S ? -1.0 : 1.0) * ell_unsigned;
     }
-
-    // Mantissa m = fractional part of ℓ per eq. (22), p = N - 5 - r per eq. (20)
-    long double m = ell - static_cast<long double>(c);
-    if (m < 0.0L) m = 0.0L;
-    if (m >= 1.0L) m = 0.999999L;  // avoid overflow in scaling
-
-    size_t p = N - 5 - static_cast<size_t>(r);
-    uint64_t m_bits = 0ULL;
-    if (p > 0 && m > 0.0L) {
-        long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
-        long double m_scaled_ld = m * m_power;
-        m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
-        uint64_t max_m = (1ULL << p) - 1ULL;
-        if (m_bits > max_m) m_bits = max_m; // Clamp
-    }
-
-    // Pack bit fields into storage per Def. 2 bit layout: S D R C M
-    uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) | // Sign
-                      (static_cast<uint64_t>(D) << (N - 2)) | // Direction
-                      (static_cast<uint64_t>(R) << (N - 5)); // Regime
-    packed |= (c_bits << p); // Characteristic
-    packed |= m_bits; // Mantissa
-    return packed;
-}
-
 
     // Authoritative maximum representable ell (positive) by decoding the max finite storage
     // Helper to pack the maximum finite positive bit pattern: S=0, D=1, R=max_r, c_bits=max, m=all-ones
@@ -331,6 +279,67 @@ static uint64_t encode_from_double(double x) noexcept {
         temp.storage = static_cast<storage_t>(bits);
         return static_cast<long double>(temp.get_exact_ell());
     }
+
+    static uint64_t encode_from_double(double x) noexcept {
+        if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
+        if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
+
+        bool S = std::signbit(x); // Sign bit per eq. (14)
+        long double abs_x = std::fabsl(x);
+
+        long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
+
+        // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
+        long double clamp_pos = max_ell();
+        if (ell > clamp_pos) ell = clamp_pos;
+        if (ell < -clamp_pos) ell = -clamp_pos;
+
+        // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
+        int64_t c = static_cast<int64_t>(std::floorl(ell));
+        bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
+        int64_t abs_c = D ? c : -c;
+
+        // Regime r per eq. (17): floor(log2(|c| + D))
+        uint32_t r = (abs_c != 0)
+            ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+            : 0;
+        r = std::min<uint32_t>(7, r); // Clamp to max regime 7
+        uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
+
+        // Characteristic bits C per eq. (18), c per eq. (19)
+        uint64_t c_bits = 0ULL;
+        if (r != 0) {
+            if (D) {
+                c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL)); // D=1 case
+            } else {
+                c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL)); // D=0 case
+            }
+        }
+
+        // Mantissa m = fractional part of ℓ per eq. (22), p = N - 5 - r per eq. (20)
+        long double m = ell - static_cast<long double>(c);
+        if (m < 0.0L) m = 0.0L;
+        if (m >= 1.0L) m = 0.999999L;  // avoid overflow in scaling
+
+        size_t p = N - 5 - static_cast<size_t>(r);
+        uint64_t m_bits = 0ULL;
+        if (p > 0 && m > 0.0L) {
+            long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+            long double m_scaled_ld = m * m_power;
+            m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
+            uint64_t max_m = (1ULL << p) - 1ULL;
+            if (m_bits > max_m) m_bits = max_m; // Clamp
+        }
+
+        // Pack bit fields into storage per Def. 2 bit layout: S D R C M
+        uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) | // Sign
+                          (static_cast<uint64_t>(D) << (N - 2)) | // Direction
+                          (static_cast<uint64_t>(R) << (N - 5)); // Regime
+        packed |= (c_bits << p); // Characteristic
+        packed |= m_bits; // Mantissa
+        return packed;
+    }
+
 private:
     // Decode per Def. 2: unpack S,D,R,C,M then compute value per eq. (24)
     static double decode_to_double(uint64_t bits) noexcept {
@@ -366,3 +375,47 @@ private:
 };
 
 } // namespace takum
+
+namespace std {
+
+template <size_t N>
+struct numeric_limits<takum::takum<N>> {
+    static constexpr bool is_specialized = true;
+    static constexpr bool is_signed = true;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = false;
+    static constexpr bool has_infinity = false;
+    static constexpr bool has_quiet_NaN = true;
+    static constexpr bool has_signaling_NaN = false;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+    static constexpr bool is_iec559 = false; // Deprecated traits: not IEC 559 compliant
+    static constexpr bool is_modulo = false;
+    static constexpr bool traps = false;
+    static constexpr bool tinyness_before = false;
+    static constexpr float_round_style round_style = round_toward_zero;
+    static constexpr int digits = N; // Approximate, based on bit width
+    static constexpr size_t p_min = std::max<size_t>(1, N - 12);
+    static constexpr int digits10 = static_cast<int>(p_min * 0.3010);
+    static constexpr int max_digits10 = digits10 + 1;
+    static constexpr bool is_bounded = true;
+
+    static constexpr double epsilon() noexcept {
+        return 2.0 * std::pow(2.0, -static_cast<int>(p_min)); // 2 * ulp(1.0) ≈ machine epsilon
+    }
+    static constexpr double round_error() noexcept { return 0.5 * epsilon(); }
+    static constexpr double min() noexcept { return std::exp(-255.0 * 0.5); } // Approximate min representable
+    static constexpr double max() noexcept { return std::exp(255.0 * 0.5); } // Approximate max representable
+    static constexpr double lowest() noexcept { return -max(); }
+    static constexpr double infinity() noexcept { return std::numeric_limits<double>::infinity(); }
+    static constexpr double quiet_NaN() noexcept { return std::numeric_limits<double>::quiet_NaN(); }
+    static constexpr double signaling_NaN() noexcept { return quiet_NaN(); }
+    static constexpr double denorm_min() noexcept { return min(); } // No subnormals
+    static constexpr bool radix = 2;
+    static constexpr int max_exponent = 128; // Approximate
+    static constexpr int max_exponent10 = 38;
+    static constexpr int min_exponent = -127;
+    static constexpr int min_exponent10 = -37;
+};
+
+} // namespace std
