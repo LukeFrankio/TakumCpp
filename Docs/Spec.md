@@ -126,6 +126,17 @@ Pseudocode: decoding (tau_inv)
 4. Compute y = exp_base(ℓ) where exp_base is the inverse of sign_adjusted_log; again compute in a high-precision host type to minimize rounding error.
 5. If sign bit set, return -y, else +y.
 
+Canonical Decoded Tuple (S, c, r, m_int):
+
+For verification and testing (e.g., uniqueness in Proposition 3, monotonicity in Proposition 4), the decoded bit pattern can be unpacked into the tuple (S, c, r, m_int):
+
+- S: sign bit (0 or 1)
+- c: characteristic (integer part of ℓ, per eq. (19))
+- r: regime value (per eq. (17))
+- m_int: packed mantissa bits (lowest p = N - 5 - r bits, as uint64_t)
+
+This tuple provides an exact, canonical representation of the Takum value for bit-level verification without floating-point rounding issues. The tuple can be used to compute the logarithmic value ℓ = (-1)^S * (c + m_int / 2^p) for high-precision comparisons in tests.
+
 **Note on Ordering for Tests**: Two's-complement ordering maps to SI order for ascending τ: iteration should start at nar_index = 1<<(n-1), then nar_index+1 .. 2^n-1, 0 .. nar_index-1. Unsigned 0..2^n-1 does not correspond to ascending τ; reordering is required for monotonicity checks (Prop 4) to avoid false failures.
 
 Implementation notes:
