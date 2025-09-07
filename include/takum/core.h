@@ -15,6 +15,7 @@
 #include "takum/internal/ref/tau_ref.h"
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 namespace takum {
 
@@ -98,61 +99,157 @@ struct takum {
 
     // Conversions from host double using the simple reference codec (Phase2 ref)
     explicit takum(double x) noexcept {
+        uint64_t bits = takum::encode_from_double(x);
         if constexpr (N <= 64) {
-            uint64_t bits = takum::encode_from_double(x);
             storage = storage_t(bits);
         } else {
-            // naive: store lower 64 bits from reference
-            uint64_t bits = takum::encode_from_double(x);
             storage[0] = bits;
             for (size_t i = 1; i < storage.size(); ++i) storage[i] = 0;
         }
     }
 
     double to_double() const noexcept {
+        uint64_t bits;
         if constexpr (N <= 64) {
-            uint64_t bits = uint64_t(storage);
-            return takum::decode_to_double(bits);
+            bits = uint64_t(storage);
         } else {
-            uint64_t bits = storage[0];
-            return takum::decode_to_double(bits);
+            bits = storage[0];
+        }
+        return takum::decode_to_double(bits);
+    }
+
+    // Extract the exact internal logarithmic value: ℓ = (-1)^S * (c + m)
+double get_exact_ell() const noexcept {
+    if (N > 128) return 0.0;  // Placeholder for larger widths
+
+    uint64_t bits;
+    if constexpr (N <= 64) {
+        bits = uint64_t(storage);
+    } else {
+        bits = 0;  // Placeholder for >64
+    }
+    if (bits == 0) return 0.0;
+
+    // NaR check
+    bool S = (bits >> (N - 1)) & 1ULL;
+    uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
+    if (S && lower == 0) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    // Extract D and R
+    bool D = (bits >> (N - 2)) & 1ULL;
+    uint32_t R = (bits >> (N - 5)) & 7ULL;
+    uint32_t r = D ? R : (7U - R);
+
+    // Extract C
+    uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
+    uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
+    int64_t c = D
+        ? (int64_t(((1ULL << r) - 1ULL) + c_bits))
+        : (int64_t(-((1LL << (r + 1))) - 1LL + 1LL + c_bits)); // simplifies to -( (1<<(r+1)) - 1 - C )
+
+    // Mantissa
+    size_t p = N - 5 - r;
+    uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
+    double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
+
+    // Return signed ℓ
+    double ell_unsigned = static_cast<double>(c) + m;
+    return (S ? -1.0 : 1.0) * ell_unsigned;
+}
+
+
+static uint64_t encode_from_double(double x) noexcept {
+    if (x == 0.0) return 0ULL;
+    if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR
+
+    bool S = std::signbit(x);
+    long double abs_x = std::fabsl(x);
+
+    long double ell = 2.0L * std::logl(abs_x);
+
+    // Clamp
+    long double clamp_pos = max_ell();
+    if (ell > clamp_pos) ell = clamp_pos;
+    if (ell < -clamp_pos) ell = -clamp_pos;
+
+    // Decompose into integer and fractional
+    int64_t c = static_cast<int64_t>(std::floorl(ell));
+    bool D = (c >= 0);
+    int64_t abs_c = D ? c : -c;
+
+    // Regime
+    uint32_t r = (abs_c != 0)
+        ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+        : 0;
+    r = std::min<uint32_t>(7, r);
+    uint32_t R = D ? r : (7U - r);
+
+    // C bits
+    uint64_t c_bits = 0ULL;
+    if (r != 0) {
+        if (D) {
+            c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
+        } else {
+            c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL));
         }
     }
 
-    // For testing purposes: decodes to the internal logarithmic value `ℓ`
-    double get_logarithmic_value() const noexcept {
-        if constexpr (N <= 64) {
-            uint64_t bits = uint64_t(storage);
-            if (bits == 0) return 0.0; // Or some other convention for log(0)
-            
-            // Check NaR: S=1 and all other bits=0
-            bool S = (bits >> (N - 1)) & 1ULL;
-            uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
-            if (S && lower == 0) {
-                return std::numeric_limits<double>::quiet_NaN();
-            }
+    // Fractional
+    long double m = ell - static_cast<long double>(c);
+    if (m < 0.0L) m = 0.0L;
+    if (m >= 1.0L) m = 0.999999L;  // avoid overflow
 
-            // Extract D: bit N-2
-            bool D = (bits >> (N - 2)) & 1ULL;
-            // Extract R: bits N-5 to N-3 (R2=N-5, R1=N-4, R0=N-3)
-            uint32_t R = ((bits >> (N - 5)) & 7ULL);
-            uint32_t r = D ? R : (7U - R);
-            // Extract C: next r bits, starting from bit N-6 down to N-5-r
-            uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
-            uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
-            int64_t c = D ? (int64_t(((1ULL << r) - 1ULL) + c_bits)) : (int64_t(-((1LL << (r + 1))) + 1LL + c_bits));
-            // p = N - 5 - r
-            size_t p = N - 5 - r;
-            // M: lowest p bits
-            uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
-            double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
-            
-            // Return ℓ = sign * (c + m)
-            return (S ? -1.0 : 1.0) * (static_cast<double>(c) + m);
-        } else {
-            // Implement for > 64 bits later if needed for testing
-            return 0.0;
+    size_t p = N - 5 - static_cast<size_t>(r);
+    uint64_t m_bits = 0ULL;
+    if (p > 0 && m > 0.0L) {
+        long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+        long double m_scaled_ld = m * m_power;
+        m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L));
+        uint64_t max_m = (1ULL << p) - 1ULL;
+        if (m_bits > max_m) m_bits = max_m;
+    }
+
+    // Pack
+    uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) |
+                      (static_cast<uint64_t>(D) << (N - 2)) |
+                      (static_cast<uint64_t>(R) << (N - 5));
+    packed |= (c_bits << p);
+    packed |= m_bits;
+    return packed;
+}
+
+
+    // Authoritative maximum representable ell (positive) by decoding the max finite storage
+    // Helper to pack the maximum finite positive bit pattern: S=0, D=1, R=max_r, c_bits=max, m=all-ones
+    static uint64_t max_finite_storage() noexcept {
+        if constexpr (N > 64) {
+            // Placeholder for large N; full multi-word packing later
+            return 0ULL;
         }
+        size_t max_r = std::min<size_t>(7, N - 5);
+        bool S = false;  // positive
+        bool D = true;
+        uint32_t R = static_cast<uint32_t>(max_r);  // r = R since D=1
+        size_t p = N - 5 - max_r;
+        uint64_t c_bits = (max_r == 0) ? 0ULL : ((1ULL << max_r) - 1ULL);
+        uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) |
+                          (static_cast<uint64_t>(D) << (N - 2)) |
+                          (static_cast<uint64_t>(R) << (N - 5)) |
+                          (c_bits << p);
+        uint64_t m_max = (p > 0) ? ((1ULL << p) - 1ULL) : 0ULL;
+        packed |= m_max;
+        return packed;
+    }
+    static long double max_ell() noexcept {
+        if constexpr (N > 64) {
+            return 0.0L;  // Placeholder
+        }
+        uint64_t bits = max_finite_storage();
+        takum temp{};
+        temp.storage = static_cast<storage_t>(bits);
+        return static_cast<long double>(temp.get_exact_ell());
     }
 
   private:
@@ -179,62 +276,13 @@ struct takum {
         // M: lowest p bits
         uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
         double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
-        // ℓ = pow(-1, S) * (c + m)
-        double ell = (S ? -1.0 : 1.0) * (static_cast<double>(c) + m);
-        // value = pow(-1, S) * exp(ell / 2)
+        // ℓ = c + m
+        double ell = static_cast<double>(c) + m;
+        // value = (-1)^S * exp(ℓ / 2)
         double value_sign = S ? -1.0 : 1.0;
         return value_sign * std::exp(ell * 0.5);
     }
 
-    // Accurate encode per Algorithm 2: double -> fields -> pack bits
-    static uint64_t encode_from_double(double x) noexcept {
-        if (x == 0.0) return 0ULL;
-        if (!std::isfinite(x)) return nar().storage;  // NaN/inf -> NaR
-
-        bool S = std::signbit(x);
-        double y = std::fabs(x);
-        double ell = 2.0 * std::log(y);
-        // Saturate ell to (-255, 255)
-        if (ell > 254.999) ell = 254.999;
-        if (ell < -254.999) ell = -254.999;
-        double signed_ell = S ? -ell : ell;
-        int64_t c = static_cast<int64_t>(std::floor(signed_ell));
-        bool D = (c >= 0);
-        uint32_t r;
-        if (D) {
-            r = static_cast<uint32_t>(std::floor(std::log2(static_cast<double>(c + 1))));
-        } else {
-            r = static_cast<uint32_t>(std::floor(std::log2(static_cast<double>(-c))));
-        }
-        if (r > 7) r = 7;  // cap regime
-        uint32_t R = D ? r : (7U - r);
-        uint64_t c_bits;
-        if (r == 0) {
-            c_bits = 0ULL;
-        } else {
-            if (D) {
-                c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
-            } else {
-                c_bits = static_cast<uint64_t>(c + ((1ULL << (r + 1)) - 1ULL));
-            }
-        }
-        double m = signed_ell - static_cast<double>(c);
-        if (m < 0.0) m = 0.0;
-        if (m >= 1.0) m = 0.999999;  // avoid overflow
-        size_t p = N - 5 - r;
-        uint64_t m_bits = 0ULL;
-        if (p > 0 && m > 0.0) {
-            m_bits = static_cast<uint64_t>(std::round(m * static_cast<double>(1ULL << p)));
-            if (m_bits >= (1ULL << p)) m_bits = (1ULL << p) - 1ULL;
-        }
-        // Pack: MSB S (bit N-1), D (N-2), R (N-5 to N-3), C_bits (next r bits), m_bits (lowest p bits)
-        uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) |
-                          (static_cast<uint64_t>(D) << (N - 2)) |
-                          (static_cast<uint64_t>(R) << (N - 5));
-        packed |= (c_bits << p);
-        packed |= m_bits;
-        return packed;
-    }
 };
 
 } // namespace takum

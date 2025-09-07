@@ -43,10 +43,8 @@ inline uint64_t encode_double_to_bits(double x) noexcept {
     double significand = 2.0 * f; // now [1, 2)
     double ln_sig = std::log(significand);
     double ell = 2.0 * (h_exp * ln2 + ln_sig); // ℓ = 2 * ln(|x|)
-
-    double signed_ell = s ? -ell : ell;
-    int64_t c = std::floor(signed_ell);
-    double m = signed_ell - c; // m in [0,1) since floor
+    int64_t c = static_cast<int64_t>(std::floor(ell));
+    double m = ell - static_cast<double>(c);
 
     bool D = (c >= 0);
     int64_t abs_c = std::abs(c);
@@ -138,8 +136,6 @@ inline double decode_bits_to_double(uint64_t bits) noexcept {
     }
 
     double ell = static_cast<double>(c) + m;
-    if (S) ell = -ell;
-
     double y = std::pow(sqrt_e, ell);
     return S ? -y : y;
 }
