@@ -100,6 +100,56 @@ struct takum {
     bool operator>=(const takum& other) const noexcept { return !(*this < other); }
     bool operator!=(const takum& other) const noexcept { return !(*this == other); }
 
+    // Bitwise inversion on packed storage (Lemma 3: supports inversion-negation patterns)
+    takum operator~() const noexcept {
+        takum res = *this;
+        if constexpr (std::is_integral_v<storage_t>) {
+            res.storage = ~res.storage;
+        } else {
+            for (auto& w : res.storage) {
+                w = ~w;
+            }
+        }
+        return res;
+    }
+
+    // Unary negation using two's complement on packed storage (Proposition 6: ~x + 1)
+    takum operator-() const noexcept {
+        if (is_nar()) return *this;
+        takum res = *this;
+        if constexpr (std::is_integral_v<storage_t>) {
+            res.storage = ~res.storage + 1;
+        } else {
+            // Multi-word two's complement negation: invert all, then add 1 with carry
+            for (auto& w : res.storage) {
+                w = ~w;
+            }
+            bool carry = true;
+            for (auto& w : res.storage) {
+                if (!carry) break;
+                uint64_t prev = w;
+                w += 1;
+                carry = (w < prev);
+            }
+        }
+        return res;
+    }
+
+    // Reciprocal (inversion, Proposition 7: mathematical 1/x)
+    takum reciprocal() const noexcept {
+        if (is_nar() || to_double() == 0.0) return nar();
+        return takum(1.0 / to_double());
+    }
+
+    // Support for bit_cast and deprecated bit patterns
+    storage_t raw_bits() const noexcept { return storage; }
+
+    static takum from_raw_bits(storage_t bits) noexcept {
+        takum t{};
+        t.storage = bits;
+        return t;
+    }
+
 #if __cplusplus >= 202302L
     std::expected<takum, takum_error> to_expected() const noexcept {
         if (is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR"});

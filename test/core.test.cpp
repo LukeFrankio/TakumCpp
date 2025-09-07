@@ -705,3 +705,45 @@ TEST_F(CoreTest, BitLayoutRoundTrip) {
         // Similar logic for uint64_t or array packing
     }
 }
+TEST_F(CoreTest, BitwiseOperations) {
+    using T = ::takum::takum<32>;
+
+    // Test operator~ bitwise inversion on packed storage
+    T a(1.0);
+    T inv_a = ~a;
+    EXPECT_EQ(inv_a.raw_bits(), ~a.raw_bits());
+
+    // Test operator- negation using two's complement (~x + 1)
+    T pos(1.0);
+    T neg = -pos;
+    EXPECT_NEAR(neg.to_double(), -1.0, EPS);
+    // Check that negation of negative gives positive
+    T neg_of_neg = -neg;
+    EXPECT_NEAR(neg_of_neg.to_double(), 1.0, EPS);
+
+    // Test reciprocal (mathematical inversion)
+    T one(1.0);
+    T recip_one = one.reciprocal();
+    EXPECT_NEAR(recip_one.to_double(), 1.0, EPS);
+    T two(2.0);
+    T recip_two = two.reciprocal();
+    EXPECT_NEAR(recip_two.to_double(), 0.5, EPS);
+    T zero(0.0);
+    T recip_zero = zero.reciprocal();
+    EXPECT_TRUE(recip_zero.is_nar());
+    T nar = T::nar();
+    T recip_nar = nar.reciprocal();
+    EXPECT_TRUE(recip_nar.is_nar());
+
+    // Test raw_bits and from_raw_bits round-trip
+    T b(3.14159);
+    auto bits = b.raw_bits();
+    T reconstructed = T::from_raw_bits(bits);
+    EXPECT_EQ(reconstructed.raw_bits(), bits);
+    EXPECT_DOUBLE_EQ(reconstructed.to_double(), b.to_double());
+
+    // NaR raw bits
+    auto nar_bits = nar.raw_bits();
+    T nar_recon = T::from_raw_bits(nar_bits);
+    EXPECT_TRUE(nar_recon.is_nar());
+}
