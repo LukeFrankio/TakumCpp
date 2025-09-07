@@ -3,8 +3,10 @@ project(TestNarCheck)
 # Test subdirectory
 
 # Add the test executable
-add_executable(tests placeholder.test.cpp spec_reference.test.cpp core.test.cpp)
+file(GLOB TEST_SOURCES "*.test.cpp")
+add_executable(tests ${TEST_SOURCES})
 add_executable(test_nar_check test_nar_check.cpp)
+target_include_directories(tests PRIVATE ../include)
 target_include_directories(test_nar_check PRIVATE ../include)
 
 # Link GoogleTest libraries
