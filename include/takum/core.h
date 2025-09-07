@@ -87,11 +87,11 @@ struct takum {
             // Placeholder for multi-word comparison; for now assume lexicographical signed
             return storage < other.storage;  // TODO: proper multi-word signed compare
         } else {
-            uint64_t unsigned_val = uint64_t(storage);
-            int64_t signed_val = static_cast<int64_t>( (unsigned_val << (64 - N)) >> (64 - N) );
-            uint64_t other_unsigned_val = uint64_t(other.storage);
-            int64_t other_signed_val = static_cast<int64_t>( (other_unsigned_val << (64 - N)) >> (64 - N) );
-            return signed_val < other_signed_val;
+            // Explicit sign extension for monotonic comparison (Gustafson criterion 6).
+            // Treat the low N bits as a signed integer by shifting to MSB and arithmetic right shift.
+            int64_t self_signed = static_cast<int64_t>(static_cast<uint64_t>(storage) << (64 - N)) >> (64 - N);
+            int64_t other_signed = static_cast<int64_t>(static_cast<uint64_t>(other.storage) << (64 - N)) >> (64 - N);
+            return self_signed < other_signed;
         }
     }
 
@@ -191,62 +191,62 @@ double get_exact_ell() const noexcept {
 
 
 static uint64_t encode_from_double(double x) noexcept {
-    if (x == 0.0) return 0ULL;
-    if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR
+    if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
+    if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
 
-    bool S = std::signbit(x);
+    bool S = std::signbit(x); // Sign bit per eq. (14)
     long double abs_x = std::fabsl(x);
 
-    long double ell = 2.0L * std::logl(abs_x);
+    long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
 
-    // Clamp
+    // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
     long double clamp_pos = max_ell();
     if (ell > clamp_pos) ell = clamp_pos;
     if (ell < -clamp_pos) ell = -clamp_pos;
 
-    // Decompose into integer and fractional
+    // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
     int64_t c = static_cast<int64_t>(std::floorl(ell));
-    bool D = (c >= 0);
+    bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
     int64_t abs_c = D ? c : -c;
 
-    // Regime
+    // Regime r per eq. (17): floor(log2(|c| + D))
     uint32_t r = (abs_c != 0)
         ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
         : 0;
-    r = std::min<uint32_t>(7, r);
-    uint32_t R = D ? r : (7U - r);
+    r = std::min<uint32_t>(7, r); // Clamp to max regime 7
+    uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
 
-    // C bits
+    // Characteristic bits C per eq. (18), c per eq. (19)
     uint64_t c_bits = 0ULL;
     if (r != 0) {
         if (D) {
-            c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
+            c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL)); // D=1 case
         } else {
-            c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL));
+            c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL)); // D=0 case
         }
     }
 
-    // Fractional
+    // Mantissa m = fractional part of ℓ per eq. (22), p = N - 5 - r per eq. (20)
     long double m = ell - static_cast<long double>(c);
     if (m < 0.0L) m = 0.0L;
-    if (m >= 1.0L) m = 0.999999L;  // avoid overflow
+    if (m >= 1.0L) m = 0.999999L;  // avoid overflow in scaling
 
     size_t p = N - 5 - static_cast<size_t>(r);
     uint64_t m_bits = 0ULL;
     if (p > 0 && m > 0.0L) {
         long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
         long double m_scaled_ld = m * m_power;
-        m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L));
+        m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
         uint64_t max_m = (1ULL << p) - 1ULL;
-        if (m_bits > max_m) m_bits = max_m;
+        if (m_bits > max_m) m_bits = max_m; // Clamp
     }
 
-    // Pack
-    uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) |
-                      (static_cast<uint64_t>(D) << (N - 2)) |
-                      (static_cast<uint64_t>(R) << (N - 5));
-    packed |= (c_bits << p);
-    packed |= m_bits;
+    // Pack bit fields into storage per Def. 2 bit layout: S D R C M
+    uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) | // Sign
+                      (static_cast<uint64_t>(D) << (N - 2)) | // Direction
+                      (static_cast<uint64_t>(R) << (N - 5)); // Regime
+    packed |= (c_bits << p); // Characteristic
+    packed |= m_bits; // Mantissa
     return packed;
 }
 
@@ -281,38 +281,38 @@ static uint64_t encode_from_double(double x) noexcept {
         temp.storage = static_cast<storage_t>(bits);
         return static_cast<long double>(temp.get_exact_ell());
     }
-
-  private:
-    // Accurate decode: unpack bits to fields, compute ℓ, then value = sign * exp(ℓ / 2)
+private:
+    // Decode per Def. 2: unpack S,D,R,C,M then compute value per eq. (24)
     static double decode_to_double(uint64_t bits) noexcept {
-        if (bits == 0) return 0.0;
-        // Check NaR: S=1 and all other bits=0
-        bool S = (bits >> (N - 1)) & 1ULL;
+        if (bits == 0) return 0.0; // Zero per eq. (24)
+        // NaR check: S=1 and D=R=C=M=0 per Def. 2
+        bool S = (bits >> (N - 1)) & 1ULL; // Sign per eq. (14)
         uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
         if (S && lower == 0) {
-            return std::numeric_limits<double>::quiet_NaN();
+            return std::numeric_limits<double>::quiet_NaN(); // NaR per eq. (24)
         }
-        // Extract D: bit N-2
+        // Extract D per eq. (15)
         bool D = (bits >> (N - 2)) & 1ULL;
-        // Extract R: bits N-5 to N-3 (R2=N-5, R1=N-4, R0=N-3)
+        // Extract R per eq. (16), compute r per eq. (17)
         uint32_t R = ((bits >> (N - 5)) & 7ULL);
         uint32_t r = D ? R : (7U - R);
-        // Extract C: next r bits, starting from bit N-6 down to N-5-r
+        // Extract C per eq. (18), compute c per eq. (19)
         uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
         uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
-        int64_t c = D ? (int64_t(((1ULL << r) - 1ULL) + c_bits)) : (int64_t(-((1LL << (r + 1))) + 1LL + c_bits));
-        // p = N - 5 - r
+        int64_t c = D
+            ? (int64_t(((1ULL << r) - 1ULL) + c_bits)) // D=1 case eq. (19)
+            : (int64_t(-((1LL << (r + 1))) + 1LL + c_bits)); // D=0 case eq. (19)
+        // p per eq. (20)
         size_t p = N - 5 - r;
-        // M: lowest p bits
+        // Extract M per eq. (21), compute m per eq. (22)
         uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
         double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
-        // ℓ = c + m
+        // ℓ = c + m per eq. (23)
         double ell = static_cast<double>(c) + m;
-        // value = (-1)^S * exp(ℓ / 2)
+        // value = (-1)^S * exp(ℓ / 2) = (-1)^S * √e ^ ℓ per eq. (24)
         double value_sign = S ? -1.0 : 1.0;
         return value_sign * std::exp(ell * 0.5);
     }
-
 };
 
 } // namespace takum
