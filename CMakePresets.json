@@ -2,14 +2,14 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "gcc15-debug",
-      "displayName": "GCC 15 Debug",
+      "name": "gcc-release",
+      "displayName": "GCC 15 + Ninja",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/gcc15-debug",
+      "binaryDir": "${sourceDir}/build/gcc-release",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "C:/Installed Programs/MSYS2/mingw64/bin/gcc.exe",
-        "CMAKE_CXX_COMPILER": "C:/Installed Programs/MSYS2/mingw64/bin/g++.exe",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe",
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ]

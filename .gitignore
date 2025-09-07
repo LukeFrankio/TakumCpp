@@ -2,6 +2,7 @@
 build/
 out/
 .DS_Store
+build-*/
 
 # Dependencies
 *.a

@@ -56,5 +56,9 @@ elseif(CMAKE_CXX_STANDARD EQUAL 20)
   target_compile_features(TakumCpp INTERFACE cxx_std_20)
 endif()
 
+# Enable CTest
+include(CTest)
+enable_testing()
+
 # Tests
 add_subdirectory(test)
