@@ -17,56 +17,83 @@
 
 using namespace ::testing;
 
+// Robust decode_tuple: supports 6 <= N <= 64. Returns (S, c, r, m_int)
+// Note: m_int packs the low p bits into a uint64_t. For p > 64 this function is not sufficient.
 template <size_t N>
 inline auto decode_tuple(uint64_t ui) -> std::tuple<int, int, int, uint64_t> {
-    // N: total bits (e.g., 12, 16, 32)
-    // bit numbering: high bit index N-1 is S, N-2 is D, next bits are regime run.
+    static_assert(N >= 6 && N <= 64, "decode_tuple<N> only supported for 6 <= N <= 64");
+
+    // mask input to low N bits to avoid stray upper bits
+    const uint64_t maskN = (N == 64) ? UINT64_MAX : ((1ull << N) - 1ull);
+    ui &= maskN;
+
+    // S and D (safe: N-1 and N-2 are < 64 because N <= 64)
     const int S = static_cast<int>((ui >> (N - 1)) & 1u);
     const int D = static_cast<int>((ui >> (N - 2)) & 1u);
 
-    // Extract R field: bits N-5 to N-3 (R2 at N-5, R0 at N-3)
-    int R_val = static_cast<int>((ui >> (N - 5)) & 7u);
-    int r = D ? R_val : 7 - R_val;
+    // R field: three bits starting at bit (N-5)
+    const int R_val = static_cast<int>((ui >> (N - 5)) & 7u);
+    const int r = (D == 1) ? R_val : (7 - R_val);
 
-    // p = number of remaining mantissa bits: N - 5 - r
+    // mantissa width
     int p = static_cast<int>(N) - 5 - r;
     if (p < 0) p = 0;
 
-    // C_val: the regime tail bits (r bits immediately after the R field, starting from bit N-6 downwards)
+    // Extract C (r bits) if present: C occupies bits [N-6 .. N-6-(r-1)] -> LSB at (N-5-r)
     uint64_t C_val = 0;
     if (r > 0) {
-        int c_pos = static_cast<int>(N) - 5 - r; // position of LSB of C field
+        int c_pos = static_cast<int>(N) - 5 - r;
         if (c_pos >= 0) {
-            uint64_t mask = (r >= 64) ? ~0ull : ((1ull << r) - 1ull);
-            C_val = (ui >> c_pos) & mask;
+            // build mask safely (avoid 1<<64 UB)
+            const uint64_t maskC = (r >= 64) ? UINT64_MAX : ((1ull << r) - 1ull);
+            C_val = (ui >> c_pos) & maskC;
+        } else {
+            C_val = 0; // defensive: no room for C bits
         }
-        // For very small N where c_pos < 0, C_val remains 0
     }
 
-    // compute c using the canonical formulas from the spec
-    // For D == 1 (regime ones): c = (1<<r) - 1 + C_val
-    // For D == 0 (regime zeros): c = - ( (1<<(r+1)) - 1 - C_val )
-    int c;
-    if (D == 1) {
-        // compute base = (1<<r) - 1; works for r=0 as 0
-        int64_t base = (1ll << r) - 1ll;
-        c = static_cast<int>(base + static_cast<int64_t>(C_val));
+    // compute c (use int64_t for intermediate). Guard against too-large r to avoid UB.
+    int64_t c64 = 0;
+    if (r < 62) {
+        if (D == 1) {
+            int64_t base = (r == 0) ? 0 : ((1ll << r) - 1ll);
+            c64 = base + static_cast<int64_t>(C_val);
+        } else {
+            int64_t base = (1ll << (r + 1)) - 1ll; // safe because r+1 < 63 here
+            c64 = - (base - static_cast<int64_t>(C_val));
+        }
     } else {
-        // negative side
-        int64_t base = (1ll << (r + 1)) - 1ll;
-        c = static_cast<int>( - (base - static_cast<int64_t>(C_val)) );
+        // defensive fallback for extremely large r: avoid UB but also warn (shouldn't occur for normal takum sizes)
+        // build base using a safe loop, but this will saturate for practical int width
+        int64_t base = 0;
+        for (int i = 0; i < r; ++i) {
+            // break if base would overflow; saturate to large value
+            if (base > (INT64_MAX >> 1)) { base = INT64_MAX; break; }
+            base = (base << 1) | 1;
+        }
+        if (D == 1) c64 = base + static_cast<int64_t>(C_val);
+        else {
+            int64_t base2 = base;
+            // extra one bit for r+1 ones
+            if (base2 <= (INT64_MAX >> 1)) base2 = (base2 << 1) | 1;
+            else base2 = INT64_MAX;
+            c64 = - (base2 - static_cast<int64_t>(C_val));
+        }
     }
 
-    // m_int: lowest p bits of ui
+    // final cast to int (caller should ensure c fits in 'int')
+    const int c = static_cast<int>(c64);
+
+    // lowest p bits are mantissa
     uint64_t m_int = 0;
     if (p > 0) {
-        uint64_t mask = (p >= 64) ? ~0ull : ((1ull << p) - 1ull);
-        m_int = ui & mask;
+        const uint64_t maskM = (p >= 64) ? UINT64_MAX : ((1ull << p) - 1ull);
+        m_int = ui & maskM;
     }
 
-    // return S, c, r, m_int
     return {S, c, r, m_int};
 }
+
 
 template <size_t N>
 void dump_ui(uint64_t ui) {
