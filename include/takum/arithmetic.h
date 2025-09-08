@@ -129,6 +129,40 @@ inline std::optional<takum<N>> safe_mul(const takum<N>& a, const takum<N>& b) no
     return r;
 }
 #endif
-//@}
+
+// Safe subtraction and division variants
+#if __cplusplus >= 202302L
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    takum<N> r = a - b;
+    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
+    return r;
+}
+
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    takum<N> r = a / b;
+    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
+    return r;
+}
+#else
+template <size_t N>
+inline std::optional<takum<N>> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::nullopt;
+    takum<N> r = a - b;
+    if (r.is_nar()) return std::nullopt;
+    return r;
+}
+
+template <size_t N>
+inline std::optional<takum<N>> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::nullopt;
+    takum<N> r = a / b;
+    if (r.is_nar()) return std::nullopt;
+    return r;
+}
+#endif
 
 } // namespace takum

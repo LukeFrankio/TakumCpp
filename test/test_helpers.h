@@ -92,6 +92,14 @@ inline auto decode_tuple(uint64_t ui) -> std::tuple<int, int, int, uint64_t> {
     return {S, c, r, m_int};
 }
 
+// Small deterministic failure logger used by tests to emit reproducible
+// failure artifacts to stderr for CI capture. Writes a short JSON-like line.
+inline void emit_failure_log(const char* test_name, size_t idx, uint64_t bits) {
+    std::ostringstream os;
+    os << "{\"test\":\"" << test_name << "\",\"idx\":" << idx << ",\"bits\":\"0x" << std::hex << bits << "\"}";
+    std::cerr << os.str() << std::endl;
+}
+
 
 template <size_t N>
 void dump_ui(uint64_t ui) {
