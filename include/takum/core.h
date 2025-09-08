@@ -460,7 +460,9 @@ struct takum {
     }
     static long double max_ell() noexcept {
         if constexpr (N > 64) {
-            return 0.0L;  // Placeholder for multi-word sizes
+            // For large N use the spec dynamic range bound: |ell| <= 255
+            // (the tapered format limits ℓ to roughly ±255 in the reference spec).
+            return 255.0L;
         } else {
             uint64_t bits = max_finite_storage();
             takum temp{};
@@ -498,8 +500,11 @@ struct takum {
             long double ell = 2.0L * std::logl(abs_x);
 
             long double clamp_pos = max_ell();
-            if (ell > clamp_pos) ell = clamp_pos;
-            if (ell < -clamp_pos) ell = -clamp_pos;
+            // Per spec: values outside representable dynamic range map to NaR
+            if (ell > clamp_pos || ell < -clamp_pos) {
+                out = takum::nar().storage;
+                return out;
+            }
 
             int64_t c = static_cast<int64_t>(std::floorl(ell));
             bool D = (c >= 0);
@@ -705,12 +710,14 @@ private:
                 return acc;
             };
 
-            // Read sign and NaR check
+            // Read sign and NaR/zero checks
             bool S = read_bit(N - 1);
-            // Read lower (N-1) bits to check NaR
+            // Read lower (N-1) bits to check NaR or zero
             bool lower_all_zero = true;
             for (size_t i = 0; i < N - 1; ++i) if (read_bit(i)) { lower_all_zero = false; break; }
             if (S && lower_all_zero) return std::numeric_limits<double>::quiet_NaN();
+            // If sign==0 and all lower bits zero, this is the zero pattern
+            if (!S && lower_all_zero) return 0.0;
 
             bool D = read_bit(N - 2);
             uint32_t R = static_cast<uint32_t>(read_u64_at(N - 5, 3));
