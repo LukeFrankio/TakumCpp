@@ -83,11 +83,27 @@ void run_small_width_tests() {
 }
 
 TEST(ArithmeticExhaustive, RoundTripAndMonotonicitySmallWidths) {
-    run_small_width_tests<6>();
-    run_small_width_tests<7>();
-    run_small_width_tests<8>();
-    run_small_width_tests<9>();
-    run_small_width_tests<10>();
-    run_small_width_tests<11>();
-    run_small_width_tests<12>();
+    // Default exhaustive range: 6..12. Can be extended up to 16 by
+    // defining EXHAUSTIVE_MAX_N at compile time (see test/CMakeLists.txt).
+#ifndef EXHAUSTIVE_MAX_N
+#define EXHAUSTIVE_MAX_N 12
+#endif
+    constexpr int minN = 6;
+    constexpr int maxN = (EXHAUSTIVE_MAX_N > 16) ? 16 : EXHAUSTIVE_MAX_N;
+    for (int n = minN; n <= maxN; ++n) {
+        switch (n) {
+            case 6: run_small_width_tests<6>(); break;
+            case 7: run_small_width_tests<7>(); break;
+            case 8: run_small_width_tests<8>(); break;
+            case 9: run_small_width_tests<9>(); break;
+            case 10: run_small_width_tests<10>(); break;
+            case 11: run_small_width_tests<11>(); break;
+            case 12: run_small_width_tests<12>(); break;
+            case 13: run_small_width_tests<13>(); break;
+            case 14: run_small_width_tests<14>(); break;
+            case 15: run_small_width_tests<15>(); break;
+            case 16: run_small_width_tests<16>(); break;
+            default: break;
+        }
+    }
 }

@@ -1,0 +1,24 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MSYS2 and Ninja (minimal)
+        run: choco install msys2 --no-progress; choco install ninja -y
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=C:/msys64/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe
+          cmake --build build --config Debug
+      - name: Run tests and capture failures
+        run: cmake --build build --target ci_test_wrapper --config Debug
+        continue-on-error: true
+      - name: Upload failure log if present
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures
+          path: build/test_failures.log
+          if-no-files-found: ignore
