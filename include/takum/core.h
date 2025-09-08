@@ -352,6 +352,8 @@ struct takum {
         return t;
     }
 
+    
+
 #if __cplusplus >= 202302L
     /**
      * @brief Convert to std::expected, returning unexpected on NaR.
@@ -580,6 +582,146 @@ struct takum {
             // Mask top bits just in case
             mask_to_N(out);
             return out;
+        }
+    }
+
+    /**
+     * @brief Construct takum storage directly from sign and logarithmic value ℓ.
+     *
+     * This avoids converting via host double when the logarithmic value is
+     * already known (Phase‑4 native encoder). Returns NaR for out-of-range ℓ
+     * (|ℓ| > max_ell()) or when ℓ is NaN.
+     */
+    static takum from_ell(bool S, long double ell_ld) noexcept {
+        // Handle NaR/NaN
+        if (!std::isfinite((double)ell_ld)) return takum::nar();
+
+        long double clamp_pos = max_ell();
+        if (ell_ld > clamp_pos || ell_ld < -clamp_pos) return takum::nar();
+
+        // Zero is represented by an all-zero pattern; interpret very small
+        // negative ell as zero (user-level code should handle exact zeros).
+        // Here, if ell is extremely negative, produce zero.
+        if (ell_ld <= -1e300L) {
+            return takum{}; // zero
+        }
+
+        if constexpr (N <= 64) {
+            // Follow encode_from_double_u64 packing but use provided ell
+            int64_t c = static_cast<int64_t>(std::floorl(ell_ld));
+            bool D = (c >= 0);
+            int64_t abs_c = D ? c : -c;
+            uint32_t r = (abs_c != 0)
+                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                : 0;
+            r = std::min<uint32_t>(7, r);
+            uint32_t R = D ? r : (7U - r);
+
+            uint64_t c_bits = 0ULL;
+            if (r != 0) {
+                if (D) c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
+                else c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL));
+            }
+
+            long double m = ell_ld - static_cast<long double>(c);
+            if (m < 0.0L) m = 0.0L;
+            if (m >= 1.0L) m = 0.999999L;
+
+            size_t p = N - 5 - static_cast<size_t>(r);
+            uint64_t m_bits = 0ULL;
+            if (p > 0 && m > 0.0L) {
+                long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+                long double m_scaled_ld = m * m_power;
+                m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L));
+                uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
+                if (m_bits > max_m) m_bits = max_m;
+            }
+
+            uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) |
+                              (static_cast<uint64_t>(D) << (N - 2)) |
+                              (static_cast<uint64_t>(R) << (N - 5));
+            packed |= (c_bits << p);
+            packed |= m_bits;
+            takum t{};
+            t.storage = static_cast<storage_t>(packed);
+            return t;
+        } else {
+            // Multi-word packing similar to encode_from_double multiword path
+            storage_t out{};
+            out.fill(0);
+
+            bool D;
+            int64_t c;
+            {
+                c = static_cast<int64_t>(std::floorl(ell_ld));
+                D = (c >= 0);
+            }
+            int64_t abs_c = D ? c : -c;
+            uint32_t r = (abs_c != 0)
+                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                : 0;
+            r = std::min<uint32_t>(7, r);
+            uint32_t R = D ? r : (7U - r);
+
+            uint64_t c_bits = 0ULL;
+            if (r != 0) {
+                if (D) c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
+                else c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL));
+            }
+
+            long double m = ell_ld - static_cast<long double>(c);
+            if (m < 0.0L) m = 0.0L;
+            if (m >= 1.0L) m = 0.999999L;
+
+            size_t p = N - 5 - static_cast<size_t>(r);
+
+            auto write_bit = [&](storage_t &dst, size_t bit_index, bool val) {
+                size_t wi = bit_index / 64;
+                size_t bi = bit_index % 64;
+                if (val) dst[wi] |= (1ULL << bi);
+                else dst[wi] &= ~(1ULL << bi);
+            };
+
+            auto write_u64_at = [&](storage_t &dst, size_t bit_index, uint64_t value, size_t len) {
+                size_t remaining = len;
+                size_t pos = 0;
+                while (remaining > 0) {
+                    size_t wi = bit_index / 64;
+                    size_t bi = bit_index % 64;
+                    size_t space = 64 - bi;
+                    size_t take = std::min<size_t>(remaining, space);
+                    uint64_t mask = (take == 64) ? ~0ULL : ((1ULL << take) - 1ULL);
+                    uint64_t chunk = (value >> pos) & mask;
+                    uint64_t dst_mask = ~(mask << bi);
+                    dst[wi] &= dst_mask;
+                    dst[wi] |= (chunk << bi);
+                    bit_index += take;
+                    pos += take;
+                    remaining -= take;
+                }
+            };
+
+            // Place S at N-1
+            write_bit(out, N - 1, S);
+            // D at N-2
+            write_bit(out, N - 2, D);
+            // R: 3 bits at positions [N-5 .. N-3]
+            write_u64_at(out, N - 5, static_cast<uint64_t>(R), 3);
+            // C bits: r bits at offset p
+            if (r > 0) write_u64_at(out, p, c_bits, static_cast<size_t>(r));
+            // M bits: write p bits representing fractional part m; generate bits sequentially
+            long double frac = m;
+            for (size_t i = 0; i < p; ++i) {
+                frac *= 2.0L;
+                bool bit = (frac >= 1.0L);
+                if (bit) frac -= 1.0L;
+                write_bit(out, i, bit);
+            }
+
+            mask_to_N(out);
+            takum t{};
+            t.storage = out;
+            return t;
         }
     }
 
