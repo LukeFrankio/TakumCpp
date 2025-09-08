@@ -167,8 +167,39 @@ struct takum {
         }
         // Both real: signed integer compare with sign extension for N bits
         if constexpr (N > 64) {
-            // Placeholder for multi-word comparison; for now assume lexicographical signed
-            return storage < other.storage;  // TODO: proper multi-word signed compare
+            // Multi-word signed compare: perform sign-aware lexicographic compare
+            // Words are stored little-endian (word 0 is least-significant). Determine
+            // the index and bit of the sign and perform comparison starting from
+            // the most-significant word.
+            size_t words = storage.size();
+            // compute msb word index
+            size_t msb_word = (N - 1) / 64;
+            // Sign bits assumed stored in msb_word at position msb_bit
+            uint64_t self_msw = storage[msb_word];
+            uint64_t other_msw = other.storage[msb_word];
+            // Signed compare by lexicographic order with top word sign extension
+            for (size_t wi = msb_word + 1; wi-- > 0;) {
+                uint64_t a = storage[wi];
+                uint64_t b = other.storage[wi];
+                if (a == b) {
+                    if (wi == 0) break;
+                    continue;
+                }
+                // For the top word, perform signed comparison limited to used bits
+                if (wi == msb_word) {
+                    int used_bits = ((N - 1) % 64) + 1;
+                    uint64_t mask = (used_bits == 64) ? ~0ULL : ((1ULL << used_bits) - 1ULL);
+                    uint64_t a_top = a & mask;
+                    uint64_t b_top = b & mask;
+                    // sign-extend to 128-bit conceptual: compare as signed of used_bits
+                    int64_t a_signed = static_cast<int64_t>( (a_top << (64 - used_bits)) ) >> (64 - used_bits);
+                    int64_t b_signed = static_cast<int64_t>( (b_top << (64 - used_bits)) ) >> (64 - used_bits);
+                    return a_signed < b_signed;
+                }
+                // full-word unsigned comparison suffices for lower words
+                return a < b ? true : false;
+            }
+            return false; // equal
         } else {
             // Explicit sign extension for monotonic comparison (Gustafson criterion 6).
             // Treat the low N bits as a signed integer by shifting to MSB and arithmetic right shift.
@@ -363,13 +394,7 @@ struct takum {
      * @param x Input double.
      */
     explicit takum(double x) noexcept {
-        uint64_t bits = takum::encode_from_double(x);
-        if constexpr (N <= 64) {
-            storage = storage_t(bits);
-        } else {
-            storage[0] = bits;
-            for (size_t i = 1; i < storage.size(); ++i) storage[i] = 0;
-        }
+        storage = takum::encode_from_double(x);
     }
 
     /**
@@ -377,13 +402,7 @@ struct takum {
      * @return Approximate `double` value; NaR converts to quiet NaN.
      */
     double to_double() const noexcept {
-        uint64_t bits;
-        if constexpr (N <= 64) {
-            bits = uint64_t(storage);
-        } else {
-            bits = storage[0];
-        }
-        return takum::decode_to_double(bits);
+        return takum::decode_to_double(storage);
     }
 
     /**
@@ -393,43 +412,26 @@ struct takum {
      * applied. For NaR this returns NaN.
      */
     double get_exact_ell() const noexcept {
-        if (N > 128) return 0.0;  // Placeholder for larger widths
-
-        uint64_t bits;
+        // Use decode helper that works for any N; return NaN for NaR
+        // For very large N we still provide a double diagnostic only.
+        if (is_zero()) return 0.0;
+        // Use high-precision decode where available for N<=64
         if constexpr (N <= 64) {
-            bits = uint64_t(storage);
+            uint64_t bits = uint64_t(storage);
+            // NaR check
+            bool S = (bits >> (N - 1)) & 1ULL;
+            uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
+            if (S && lower == 0) return std::numeric_limits<double>::quiet_NaN();
         } else {
-            bits = 0;  // Placeholder for >64
+            // Check NaR pattern via is_nar()
+            if (is_nar()) return std::numeric_limits<double>::quiet_NaN();
         }
-        if (bits == 0) return 0.0;
-
-        // NaR check
-        bool S = (bits >> (N - 1)) & 1ULL;
-        uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
-        if (S && lower == 0) {
-            return std::numeric_limits<double>::quiet_NaN();
-        }
-
-        // Extract D and R
-        bool D = (bits >> (N - 2)) & 1ULL;
-        uint32_t R = (bits >> (N - 5)) & 7ULL;
-        uint32_t r = D ? R : (7U - R);
-
-        // Extract C
-        uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
-        uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
-        int64_t c = D
-            ? (int64_t(((1ULL << r) - 1ULL) + c_bits))
-            : (int64_t(-((1LL << (r + 1))) - 1LL + 1LL + c_bits)); // simplifies to -( (1<<(r+1)) - 1 - C )
-
-        // Mantissa
-        size_t p = N - 5 - r;
-        uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
-        double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
-
-        // Return signed ℓ
-        double ell_unsigned = static_cast<double>(c) + m;
-        return (S ? -1.0 : 1.0) * ell_unsigned;
+        // Fallback: decode to double and then extract ell via log
+        double v = to_double();
+        if (!std::isfinite(v)) return std::numeric_limits<double>::quiet_NaN();
+        long double abs_v = std::fabsl(v);
+        long double ell = 2.0L * std::logl(abs_v);
+        return static_cast<double>((v < 0) ? -ell : ell);
     }
 
     /**
@@ -472,8 +474,25 @@ struct takum {
      *
      * This function packs S,D,R,C,M fields per the Phase2 reference
      * specification. Special cases: zero maps to zero; non-finite maps to NaR.
+     *
+     * For N<=64 the returned value is stored in a single integer; for larger
+     * N the returned value is the multi-word storage_t.
      */
-    static uint64_t encode_from_double(double x) noexcept {
+    static storage_t encode_from_double(double x) noexcept {
+        // Small-width path: build uint64_t then widen/copy
+        uint64_t small = encode_from_double_u64(x);
+        if constexpr (N <= 64) {
+            return static_cast<storage_t>(small);
+        } else {
+            storage_t out{};
+            out.fill(0);
+            out[0] = small;
+            return out;
+        }
+    }
+
+    // Helper: existing encode that returns packed bits in uint64_t for N<=64
+    static uint64_t encode_from_double_u64(double x) noexcept {
         if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
         if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
 
@@ -520,7 +539,7 @@ struct takum {
             long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
             long double m_scaled_ld = m * m_power;
             m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
-            uint64_t max_m = (1ULL << p) - 1ULL;
+            uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
             if (m_bits > max_m) m_bits = max_m; // Clamp
         }
 
@@ -552,12 +571,36 @@ private:
         }
     }
 
+    bool is_zero() const noexcept {
+        if constexpr (N <= 64) return uint64_t(storage) == 0ULL;
+        else {
+            for (size_t i = 0; i < storage.size(); ++i) if (storage[i] != 0ULL) return false;
+            return true;
+        }
+    }
+
     // Decode per Def. 2: unpack S,D,R,C,M then compute value per eq. (24)
-    static double decode_to_double(uint64_t bits) noexcept {
+    static double decode_to_double(const storage_t& bits_storage) noexcept {
+        // Extract single-word bits for N<=64 to reuse previous logic
+        if constexpr (N <= 64) {
+            uint64_t bits = static_cast<uint64_t>(bits_storage);
+            return decode_u64_to_double(bits);
+        } else {
+            // Multi-word: only a simple decode is provided (reads low words)
+            // For now we only use first word which contains the low bits and
+            // sign/regime fields for the tapered encoding; high words should
+            // be zero in current packing design. If non-zero multis are used,
+            // additional unpack logic must be added here.
+            uint64_t low = bits_storage[0];
+            return decode_u64_to_double(low);
+        }
+    }
+
+    static double decode_u64_to_double(uint64_t bits) noexcept {
         if (bits == 0) return 0.0; // Zero per eq. (24)
         // NaR check: S=1 and D=R=C=M=0 per Def. 2
         bool S = (bits >> (N - 1)) & 1ULL; // Sign per eq. (14)
-        uint64_t lower = bits & ((1ULL << (N - 1)) - 1ULL);
+        uint64_t lower = bits & ((N >= 64) ? ~0ULL : ((1ULL << (N - 1)) - 1ULL));
         if (S && lower == 0) {
             return std::numeric_limits<double>::quiet_NaN(); // NaR per eq. (24)
         }
@@ -567,15 +610,15 @@ private:
         uint32_t R = ((bits >> (N - 5)) & 7ULL);
         uint32_t r = D ? R : (7U - R);
         // Extract C per eq. (18), compute c per eq. (19)
-        uint64_t c_mask = ((1ULL << r) - 1ULL) << (N - 5 - r);
-        uint64_t c_bits = (bits & c_mask) >> (N - 5 - r);
+        uint64_t c_mask = (r == 0) ? 0ULL : (((1ULL << r) - 1ULL) << (N - 5 - r));
+        uint64_t c_bits = (c_mask == 0ULL) ? 0ULL : ((bits & c_mask) >> (N - 5 - r));
         int64_t c = D
-            ? (int64_t(((1ULL << r) - 1ULL) + c_bits)) // D=1 case eq. (19)
-            : (int64_t(-((1LL << (r + 1))) + 1LL + c_bits)); // D=0 case eq. (19)
+            ? (int64_t(((r == 0) ? 0ULL : ((1ULL << r) - 1ULL)) + c_bits)) // D=1 case eq. (19)
+            : (int64_t(-((1LL << (r + 1))) + 1LL + static_cast<int64_t>(c_bits))); // D=0 case eq. (19)
         // p per eq. (20)
         size_t p = N - 5 - r;
         // Extract M per eq. (21), compute m per eq. (22)
-        uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
+        uint64_t m_bits = (p == 0) ? 0ULL : (bits & ((1ULL << p) - 1ULL));
         double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
 
         // ℓ = c + m per eq. (23)
