@@ -460,12 +460,13 @@ struct takum {
     }
     static long double max_ell() noexcept {
         if constexpr (N > 64) {
-            return 0.0L;  // Placeholder
+            return 0.0L;  // Placeholder for multi-word sizes
+        } else {
+            uint64_t bits = max_finite_storage();
+            takum temp{};
+            temp.storage = static_cast<storage_t>(bits);
+            return static_cast<long double>(temp.get_exact_ell());
         }
-        uint64_t bits = max_finite_storage();
-        takum temp{};
-        temp.storage = static_cast<storage_t>(bits);
-        return static_cast<long double>(temp.get_exact_ell());
     }
 
     /**
@@ -479,77 +480,168 @@ struct takum {
      * N the returned value is the multi-word storage_t.
      */
     static storage_t encode_from_double(double x) noexcept {
-        // Small-width path: build uint64_t then widen/copy
-        uint64_t small = encode_from_double_u64(x);
         if constexpr (N <= 64) {
+            // Small-width path: build uint64_t then widen/copy
+            uint64_t small = encode_from_double_u64(x);
             return static_cast<storage_t>(small);
         } else {
+            // Multi-word: write the bit fields across the words using helpers.
             storage_t out{};
             out.fill(0);
-            out[0] = small;
+            // If x is zero or non-finite the small path already encodes it in low bits
+            // but we must still place fields at correct offsets across words.
+            if (x == 0.0) return out;
+            if (!std::isfinite(x)) { out = takum::nar().storage; return out; }
+
+            bool S = std::signbit(x);
+            long double abs_x = std::fabsl(x);
+            long double ell = 2.0L * std::logl(abs_x);
+
+            long double clamp_pos = max_ell();
+            if (ell > clamp_pos) ell = clamp_pos;
+            if (ell < -clamp_pos) ell = -clamp_pos;
+
+            int64_t c = static_cast<int64_t>(std::floorl(ell));
+            bool D = (c >= 0);
+            int64_t abs_c = D ? c : -c;
+            uint32_t r = (abs_c != 0)
+                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                : 0;
+            r = std::min<uint32_t>(7, r);
+            uint32_t R = D ? r : (7U - r);
+
+            uint64_t c_bits = 0ULL;
+            if (r != 0) {
+                if (D) c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL));
+                else c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL));
+            }
+
+            long double m = ell - static_cast<long double>(c);
+            if (m < 0.0L) m = 0.0L;
+            if (m >= 1.0L) m = 0.999999L;
+
+            size_t p = N - 5 - static_cast<size_t>(r);
+
+            // Helper lambdas for multi-word bit writes
+            auto write_bit = [&](storage_t &dst, size_t bit_index, bool val) {
+                size_t wi = bit_index / 64;
+                size_t bi = bit_index % 64;
+                if constexpr (N <= 64) {
+                    // not used here
+                } else {
+                    if (val) dst[wi] |= (1ULL << bi);
+                    else dst[wi] &= ~(1ULL << bi);
+                }
+            };
+
+            auto write_u64_at = [&](storage_t &dst, size_t bit_index, uint64_t value, size_t len) {
+                // Write up to 64 bits of `value` starting at bit_index (LSB-first), crossing words.
+                size_t remaining = len;
+                size_t pos = 0;
+                while (remaining > 0) {
+                    size_t wi = bit_index / 64;
+                    size_t bi = bit_index % 64;
+                    size_t space = 64 - bi;
+                    size_t take = std::min<size_t>(remaining, space);
+                    uint64_t mask = (take == 64) ? ~0ULL : ((1ULL << take) - 1ULL);
+                    uint64_t chunk = (value >> pos) & mask;
+                    // clear destination bits then set
+                    uint64_t dst_mask = ~(mask << bi);
+                    dst[wi] &= dst_mask;
+                    dst[wi] |= (chunk << bi);
+                    bit_index += take;
+                    pos += take;
+                    remaining -= take;
+                }
+            };
+
+            // Place S at N-1
+            write_bit(out, N - 1, S);
+            // D at N-2
+            write_bit(out, N - 2, D);
+            // R: 3 bits at positions [N-5 .. N-3]
+            write_u64_at(out, N - 5, static_cast<uint64_t>(R), 3);
+            // C bits: r bits at offset p
+            if (r > 0) write_u64_at(out, p, c_bits, static_cast<size_t>(r));
+            // M bits: write p bits representing fractional part m; generate bits sequentially
+            long double frac = m;
+            for (size_t i = 0; i < p; ++i) {
+                frac *= 2.0L;
+                bool bit = (frac >= 1.0L);
+                if (bit) frac -= 1.0L;
+                write_bit(out, i, bit);
+            }
+
+            // Mask top bits just in case
+            mask_to_N(out);
             return out;
         }
     }
 
     // Helper: existing encode that returns packed bits in uint64_t for N<=64
     static uint64_t encode_from_double_u64(double x) noexcept {
-        if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
-        if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
+        if constexpr (N <= 64) {
+            if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
+            if (!std::isfinite(x)) return static_cast<uint64_t>(takum::nar().storage);  // NaN/Inf → NaR per NaR convention in Def. 2
 
-        bool S = std::signbit(x); // Sign bit per eq. (14)
-        long double abs_x = std::fabsl(x);
+            bool S = std::signbit(x); // Sign bit per eq. (14)
+            long double abs_x = std::fabsl(x);
 
-        long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
+            long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
 
-        // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
-        long double clamp_pos = max_ell();
-        if (ell > clamp_pos) ell = clamp_pos;
-        if (ell < -clamp_pos) ell = -clamp_pos;
+            // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
+            long double clamp_pos = max_ell();
+            if (ell > clamp_pos) ell = clamp_pos;
+            if (ell < -clamp_pos) ell = -clamp_pos;
 
-        // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
-        int64_t c = static_cast<int64_t>(std::floorl(ell));
-        bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
-        int64_t abs_c = D ? c : -c;
+            // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
+            int64_t c = static_cast<int64_t>(std::floorl(ell));
+            bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
+            int64_t abs_c = D ? c : -c;
 
-        // Regime r per eq. (17): floor(log2(|c| + D))
-        uint32_t r = (abs_c != 0)
-            ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
-            : 0;
-        r = std::min<uint32_t>(7, r); // Clamp to max regime 7
-        uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
+            // Regime r per eq. (17): floor(log2(|c| + D))
+            uint32_t r = (abs_c != 0)
+                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                : 0;
+            r = std::min<uint32_t>(7, r); // Clamp to max regime 7
+            uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
 
-        // Characteristic bits C per eq. (18), c per eq. (19)
-        uint64_t c_bits = 0ULL;
-        if (r != 0) {
-            if (D) {
-                c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL)); // D=1 case
-            } else {
-                c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL)); // D=0 case
+            // Characteristic bits C per eq. (18), c per eq. (19)
+            uint64_t c_bits = 0ULL;
+            if (r != 0) {
+                if (D) {
+                    c_bits = static_cast<uint64_t>(c - ((1ULL << r) - 1ULL)); // D=1 case
+                } else {
+                    c_bits = static_cast<uint64_t>(c + ((1ULL << (r+1)) - 1ULL)); // D=0 case
+                }
             }
+
+            // Mantissa m = fractional part of ℓ per eq. (22), p = N - 5 - r per eq. (20)
+            long double m = ell - static_cast<long double>(c);
+            if (m < 0.0L) m = 0.0L;
+            if (m >= 1.0L) m = 0.999999L;  // avoid overflow in scaling
+
+            size_t p = N - 5 - static_cast<size_t>(r);
+            uint64_t m_bits = 0ULL;
+            if (p > 0 && m > 0.0L) {
+                long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+                long double m_scaled_ld = m * m_power;
+                m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
+                uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
+                if (m_bits > max_m) m_bits = max_m; // Clamp
+            }
+
+            // Pack bit fields into storage per Def. 2 bit layout: S D R C M
+            uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) | // Sign
+                              (static_cast<uint64_t>(D) << (N - 2)) | // Direction
+                              (static_cast<uint64_t>(R) << (N - 5)); // Regime
+            packed |= (c_bits << p); // Characteristic
+            packed |= m_bits; // Mantissa
+            return packed;
+        } else {
+            // For N>64 this helper is not used; provide a safe fallback
+            return 0ULL;
         }
-
-        // Mantissa m = fractional part of ℓ per eq. (22), p = N - 5 - r per eq. (20)
-        long double m = ell - static_cast<long double>(c);
-        if (m < 0.0L) m = 0.0L;
-        if (m >= 1.0L) m = 0.999999L;  // avoid overflow in scaling
-
-        size_t p = N - 5 - static_cast<size_t>(r);
-        uint64_t m_bits = 0ULL;
-        if (p > 0 && m > 0.0L) {
-            long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
-            long double m_scaled_ld = m * m_power;
-            m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
-            uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
-            if (m_bits > max_m) m_bits = max_m; // Clamp
-        }
-
-        // Pack bit fields into storage per Def. 2 bit layout: S D R C M
-        uint64_t packed = (static_cast<uint64_t>(S) << (N - 1)) | // Sign
-                          (static_cast<uint64_t>(D) << (N - 2)) | // Direction
-                          (static_cast<uint64_t>(R) << (N - 5)); // Regime
-        packed |= (c_bits << p); // Characteristic
-        packed |= m_bits; // Mantissa
-        return packed;
     }
 
 private:
@@ -586,13 +678,64 @@ private:
             uint64_t bits = static_cast<uint64_t>(bits_storage);
             return decode_u64_to_double(bits);
         } else {
-            // Multi-word: only a simple decode is provided (reads low words)
-            // For now we only use first word which contains the low bits and
-            // sign/regime fields for the tapered encoding; high words should
-            // be zero in current packing design. If non-zero multis are used,
-            // additional unpack logic must be added here.
-            uint64_t low = bits_storage[0];
-            return decode_u64_to_double(low);
+            // Multi-word decode: read fields across words using bit-access helpers.
+            auto read_bit = [&](size_t bit_index) -> bool {
+                size_t wi = bit_index / 64;
+                size_t bi = bit_index % 64;
+                return ((bits_storage[wi] >> bi) & 1ULL) != 0ULL;
+            };
+
+            auto read_u64_at = [&](size_t bit_index, size_t len) -> uint64_t {
+                // Read up to 64 bits starting at bit_index (LSB-first)
+                uint64_t acc = 0ULL;
+                size_t remaining = len;
+                size_t pos = 0;
+                while (remaining > 0) {
+                    size_t wi = bit_index / 64;
+                    size_t bi = bit_index % 64;
+                    size_t space = 64 - bi;
+                    size_t take = std::min<size_t>(remaining, space);
+                    uint64_t mask = (take == 64) ? ~0ULL : ((1ULL << take) - 1ULL);
+                    uint64_t chunk = (bits_storage[wi] >> bi) & mask;
+                    acc |= (chunk << pos);
+                    bit_index += take;
+                    pos += take;
+                    remaining -= take;
+                }
+                return acc;
+            };
+
+            // Read sign and NaR check
+            bool S = read_bit(N - 1);
+            // Read lower (N-1) bits to check NaR
+            bool lower_all_zero = true;
+            for (size_t i = 0; i < N - 1; ++i) if (read_bit(i)) { lower_all_zero = false; break; }
+            if (S && lower_all_zero) return std::numeric_limits<double>::quiet_NaN();
+
+            bool D = read_bit(N - 2);
+            uint32_t R = static_cast<uint32_t>(read_u64_at(N - 5, 3));
+            uint32_t r = D ? R : (7U - R);
+            size_t p = N - 5 - r;
+            uint64_t c_bits = (r == 0) ? 0ULL : read_u64_at(p, static_cast<size_t>(r));
+
+            int64_t c = 0;
+            if (r == 0) c = 0;
+            else {
+                if (D) c = static_cast<int64_t>(((1ULL << r) - 1ULL) + c_bits);
+                else c = static_cast<int64_t>(-((1LL << (r + 1)) ) + 1LL + static_cast<int64_t>(c_bits));
+            }
+
+            // Read mantissa bits individually to build fractional value m
+            long double m = 0.0L;
+            long double twopow = 0.5L;
+            for (size_t i = 0; i < p; ++i) {
+                if (read_bit(i)) m += twopow;
+                twopow *= 0.5L;
+            }
+
+            long double ell = static_cast<long double>(c) + m;
+            double value_sign = S ? -1.0 : 1.0;
+            return value_sign * static_cast<double>(std::expl(ell * 0.5L));
         }
     }
 

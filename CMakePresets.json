@@ -3,12 +3,10 @@
   "configurePresets": [
     {
       "name": "gcc-release",
-      "displayName": "GCC 15 + Ninja",
+      "displayName": "GCC + Ninja (use compilers from PATH)",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/gcc-release",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
-        "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe",
         "CMAKE_BUILD_TYPE": "Release"
       }
     }

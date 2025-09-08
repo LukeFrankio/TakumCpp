@@ -3,6 +3,28 @@ param(
     [string]$BuildType = "Debug"
 )
 
+# If possible, re-invoke this script under ExecutionPolicy Bypass so users
+# can run the build without changing their system policy permanently.
+# Note: this only works when the script is allowed to start; a policy that
+# prevents script execution entirely will still block the first invocation.
+try {
+    $procPolicy = Get-ExecutionPolicy -Scope Process -ErrorAction SilentlyContinue
+} catch {
+    $procPolicy = $null
+}
+if ($procPolicy -ne 'Bypass') {
+    $pwsh = (Get-Command powershell.exe -ErrorAction SilentlyContinue | Select-Object -First 1).Source
+    if ($pwsh) {
+        # Construct argument list: forward original args
+        $forward = @()
+        if ($BuildDir) { $forward += "-BuildDir"; $forward += $BuildDir }
+        if ($BuildType) { $forward += "-BuildType"; $forward += $BuildType }
+        Write-Host "[INFO] Re-invoking script with ExecutionPolicy Bypass"
+        $startInfo = Start-Process -FilePath $pwsh -ArgumentList @("-NoProfile","-ExecutionPolicy","Bypass","-File",(Resolve-Path $MyInvocation.MyCommand.Path)) + $forward -NoNewWindow -Wait -PassThru
+        exit $startInfo.ExitCode
+    }
+}
+
 Write-Host "[INFO] Build directory: $BuildDir"
 Write-Host "[INFO] Build type: $BuildType"
 
