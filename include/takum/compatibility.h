@@ -1,5 +1,14 @@
 #pragma once
 
+/**
+ * @file compatibility.h
+ * @brief Backwards-compatibility helpers and small shims used by tests/examples.
+ *
+ * This header contains short-lived aliases (such as `float8_t`) and guards that
+ * help older consumers compile the code. Prefer using the core `takum<N>` types
+ * directly in new code.
+ */
+
 #include "core.h"
 #include "types.h"
 

@@ -18,16 +18,51 @@
 #include <limits>
 #include <algorithm>
 
+/**
+ * @file core.h
+ * @brief Core definitions for the Takum numeric type family.
+ *
+ * This header provides the parametric fixed-bit-width "takum" type template
+ * that represents a logarithmic-like numeric encoding (Phase2 reference
+ * implementation). It also provides small helpers and an error type used by
+ * the optional/expected-style accessors.
+ *
+ * The implementation intentionally documents places that are placeholders
+ * for future multi-word support.
+ */
+
 namespace takum {
 
-// Error type for expected
+/**
+ * @struct takum_error
+ * @brief Lightweight error value returned by expected/optional helpers.
+ *
+ * Used to indicate domain/representation errors when converting or operating
+ * on `takum` values. The `message` pointer is optional and may be nullptr.
+ */
 struct takum_error {
+    /// Broad classification of the error.
     enum class Kind { DomainError, Overflow, Underflow, InvalidOperation, Inexact, Internal } kind;
+    /// Optional NUL-terminated explanatory string.
     const char* message = nullptr;
 };
 
 // Concept mirroring std::floating_point for takum<N> (arithmetic disabled until ready)
 template <typename T>
+/**
+ * @concept takum_floating_point
+ * @brief Minimal concept describing the takum-like public API used by the
+ * library and tests.
+ *
+ * Types satisfying this concept must provide comparable semantics, a
+ * conversion to host `double`, and a way to test for the special `NaR`
+ * (Not-a-Real) value.
+ *
+ * This is intentionally lightweight — it mirrors the methods used in tests
+ * and utilities.
+ *
+ * @requirements The type must be a complete type (sizeof(T) > 0).
+ */
 concept takum_floating_point = requires(T t) {
     { t < t } -> std::convertible_to<bool>;
     { t == t } -> std::convertible_to<bool>;
@@ -36,18 +71,39 @@ concept takum_floating_point = requires(T t) {
 } && sizeof(T) > 0; // Ensure complete type
 
 template <size_t N>
+/**
+ * @brief Configurable-width Takum numeric type.
+ *
+ * The `takum<N>` template provides an N-bit logarithmic-like numeric value
+ * with a special NaR (Not-a-Real) encoding. The implementation uses an
+ * underlying integer or array-of-uint64_t storage depending on `N`.
+ *
+ * @tparam N Bit width in bits; supported range is 2..256 (static_assert enforces this).
+ */
 struct takum {
     static_assert(N >= 2 && N <= 256, "takum: supported bit widths 2..256 for now");
 
+    /// Underlying storage type chosen based on the width `N`.
     using storage_t = std::conditional_t<(N <= 32), uint32_t,
                       std::conditional_t<(N <= 64), uint64_t, std::array<uint64_t, (N+63)/64>>>;
 
+    /// Raw storage containing the N-bit pattern (valid bits are in the low N bits).
     storage_t storage{};
 
-    // Default constructs zero
+    /**
+     * @brief Default constructs a zero-valued `takum`.
+     *
+     * The default is noexcept and initializes the storage to the zero pattern.
+     */
     constexpr takum() noexcept = default;
 
-    // Factory for NaR (canonical pattern for reference impl uses all-ones in N bits stored in lower word)
+    /**
+     * @brief Construct the canonical NaR (Not-a-Real) pattern.
+     *
+     * @return A `takum` value representing NaR.
+     * @note The canonical NaR is represented by the sign bit set and all
+     *       other bits zero in this reference implementation.
+     */
     static takum nar() noexcept {
         takum t{};
         if constexpr (N <= 64) {
@@ -63,6 +119,11 @@ struct takum {
         return t;
     }
 
+    /**
+     * @brief Test whether the value is NaR.
+     *
+     * @return true if this value is the canonical NaR pattern.
+     */
     bool is_nar() const noexcept {
         if constexpr (N <= 64) {
             uint64_t w = uint64_t(storage);
@@ -81,13 +142,25 @@ struct takum {
         }
     }
 
-    // Comparison operators following total order: NaR smallest, then negatives to positives monotonic
+    /**
+     * @name Comparison operators
+     * These operators implement a total order where NaR is considered the
+     * smallest element and all real values are ordered monotonically.
+     */
+    //@{
     bool operator==(const takum& other) const noexcept {
         if (is_nar() && other.is_nar()) return true;
         if (is_nar() || other.is_nar()) return false;
         return storage == other.storage;  // Bitwise equal for reals
     }
 
+    /**
+     * @brief Total-order less-than comparison.
+     *
+     * NaR is ordered below any real value. For real values the comparison is
+     * implemented as a signed integer comparison of the N-bit pattern (with
+     * sign extension) for monotonicity.
+     */
     bool operator<(const takum& other) const noexcept {
         if (is_nar() || other.is_nar()) {
             return is_nar() && !other.is_nar();
@@ -109,7 +182,11 @@ struct takum {
     bool operator>(const takum& other) const noexcept { return other < *this; }
     bool operator>=(const takum& other) const noexcept { return !(*this < other); }
     bool operator!=(const takum& other) const noexcept { return !(*this == other); }
+    //@}
 
+    /**
+     * @brief Bitwise complement of the N-bit pattern (masked to N bits).
+     */
     takum operator~() const noexcept {
         takum res;
         if constexpr (std::is_integral_v<storage_t>) {
@@ -125,7 +202,9 @@ struct takum {
 
 
 
-    // Smallest representable nonzero takum (positive).
+    /**
+     * @brief Smallest positive representable non-zero value (pattern with LSB=1).
+     */
     static takum minpos() noexcept {
         takum r;
         if constexpr (std::is_integral_v<storage_t>) {
@@ -137,7 +216,10 @@ struct takum {
         return r;
     }
 
-    // Return true if this number is negative.
+    /**
+     * @brief Test whether the numeric sign bit is set (value negative).
+     * @return true if the sign bit (MSB) is 1.
+     */
     bool signbit() const noexcept {
         if constexpr (std::is_integral_v<storage_t>) {
             return (storage >> (N - 1)) & 1;
@@ -148,7 +230,9 @@ struct takum {
         }
     }
 
-    // Unary negation by flipping the sign bit (MSB).
+    /**
+     * @brief Unary negation: flips the sign bit. NaR is its own negation.
+     */
     takum operator-() const noexcept {
         if (is_nar()) return *this; // NaR is its own negation.
         
@@ -165,6 +249,12 @@ struct takum {
         return res;
     }
 
+    /**
+     * @brief Compute the reciprocal in the reference codec.
+     *
+     * Returns NaR for NaR or zero input. This implements the simple bitwise
+     * inverse-plus-one rule used by the Phase2 reference codec.
+     */
     takum reciprocal() const noexcept {
         if (is_nar()) return nar();
 
@@ -215,9 +305,16 @@ struct takum {
         return res;
     }
 
-    // Support for bit_cast and deprecated bit patterns
+    /**
+     * @brief Return raw storage bits.
+     * @return The underlying storage value(s) containing the N-bit pattern.
+     */
     storage_t raw_bits() const noexcept { return storage; }
 
+    /**
+     * @brief Create a `takum` from raw storage bits without validation.
+     * @param bits Raw storage bits (low N bits are used).
+     */
     static takum from_raw_bits(storage_t bits) noexcept {
         takum t{};
         t.storage = bits;
@@ -225,17 +322,27 @@ struct takum {
     }
 
 #if __cplusplus >= 202302L
+    /**
+     * @brief Convert to std::expected, returning unexpected on NaR.
+     */
     std::expected<takum, takum_error> to_expected() const noexcept {
         if (is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR"});
         return *this;
     }
 #else
+    /**
+     * @brief Convert to optional (nullopt if NaR) for pre-C++23 builds.
+     */
     std::optional<takum> to_expected() const noexcept {
         if (is_nar()) return std::nullopt;
         return *this;
     }
 #endif
 
+    /**
+     * @brief Return a bitset view useful for debugging and tests.
+     * @return std::bitset<N> where bit 0 is the least-significant stored bit.
+     */
     std::bitset<N> debug_view() const noexcept {
         std::bitset<N> b;
         if constexpr (N <= 64) {
@@ -251,7 +358,10 @@ struct takum {
         return b;
     }
 
-    // Conversions from host double using the simple reference codec (Phase2 ref)
+    /**
+     * @brief Convert a host `double` into the reference takum bit pattern.
+     * @param x Input double.
+     */
     explicit takum(double x) noexcept {
         uint64_t bits = takum::encode_from_double(x);
         if constexpr (N <= 64) {
@@ -262,6 +372,10 @@ struct takum {
         }
     }
 
+    /**
+     * @brief Convert this takum value to host `double` using the reference codec.
+     * @return Approximate `double` value; NaR converts to quiet NaN.
+     */
     double to_double() const noexcept {
         uint64_t bits;
         if constexpr (N <= 64) {
@@ -272,7 +386,12 @@ struct takum {
         return takum::decode_to_double(bits);
     }
 
-    // Extract the exact internal logarithmic value: ℓ = (-1)^S * (c + m)
+    /**
+     * @brief Extract the exact internal logarithmic value ℓ = (-1)^S * (c + m).
+     *
+     * Useful for diagnostics: returns the characteristic+mantissa with sign
+     * applied. For NaR this returns NaN.
+     */
     double get_exact_ell() const noexcept {
         if (N > 128) return 0.0;  // Placeholder for larger widths
 
@@ -313,8 +432,11 @@ struct takum {
         return (S ? -1.0 : 1.0) * ell_unsigned;
     }
 
-    // Authoritative maximum representable ell (positive) by decoding the max finite storage
-    // Helper to pack the maximum finite positive bit pattern: S=0, D=1, R=max_r, c_bits=max, m=all-ones
+    /**
+     * @brief Pack the maximum finite positive storage pattern and decode helpers.
+     *
+     * These helpers are internal but documented for clarity and testing.
+     */
     static uint64_t max_finite_storage() noexcept {
         if constexpr (N > 64) {
             // Placeholder for large N; full multi-word packing later
@@ -344,6 +466,13 @@ struct takum {
         return static_cast<long double>(temp.get_exact_ell());
     }
 
+    /**
+     * @brief Encode a host `double` into the takum bit pattern using the
+     * reference encoding.
+     *
+     * This function packs S,D,R,C,M fields per the Phase2 reference
+     * specification. Special cases: zero maps to zero; non-finite maps to NaR.
+     */
     static uint64_t encode_from_double(double x) noexcept {
         if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
         if (!std::isfinite(x)) return nar().storage;  // NaN/Inf → NaR per NaR convention in Def. 2
@@ -448,6 +577,7 @@ private:
         // Extract M per eq. (21), compute m per eq. (22)
         uint64_t m_bits = bits & ((1ULL << p) - 1ULL);
         double m = (p > 0) ? (static_cast<double>(m_bits) * std::pow(2.0, -static_cast<int>(p))) : 0.0;
+
         // ℓ = c + m per eq. (23)
         double ell = static_cast<double>(c) + m;
         // value = (-1)^S * exp(ℓ / 2) = (-1)^S * √e ^ ℓ per eq. (24)

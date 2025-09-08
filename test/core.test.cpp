@@ -1,3 +1,11 @@
+/**
+ * @file core.test.cpp
+ * @brief Unit tests covering core takum encoding/decoding, monotonicity, and properties.
+ *
+ * These tests exercise round-trip encode/decode, uniqueness and monotonicity
+ * properties, and numerous edge cases (NaR, minpos, saturation, etc.).
+ */
+
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>

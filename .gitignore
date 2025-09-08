@@ -38,6 +38,7 @@ cmake-build-*
 # DOCS
 Docs/Spec.md
 AcSo/
+Docs/doxygen
 
 # OS generated files
 .DS_Store
@@ -47,3 +48,7 @@ AcSo/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Plan
+Docs/Plan.md
+Docs/Spec.md

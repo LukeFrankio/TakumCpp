@@ -1,3 +1,11 @@
+/**
+ * @file test_helpers.h
+ * @brief Small utilities used across the unit tests (bit unpacking, dumping helpers).
+ *
+ * Contains readable decode helpers for test verification of exact tuples (S, c, r, m_int)
+ * and a small dump function used during debugging of collisions.
+ */
+
 #pragma once
 
 #include <tuple>

@@ -73,3 +73,22 @@ foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
         add_test(NAME ${EXAMPLE_NAME} COMMAND ${EXAMPLE_NAME})
     endif()
 endforeach()
+
+# Doxygen documentation: try to find a doxygen executable either in PATH
+# or at a common installation location on Windows. If not found we still
+# expose a `docs` target that will show an informative error when built.
+find_program(DOXYGEN_EXECUTABLE NAMES doxygen HINTS "C:/Program Files/doxygen/bin" "C:/Program Files (x86)/doxygen/bin")
+if(DOXYGEN_EXECUTABLE)
+  add_custom_target(docs
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/Doxyfile"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+  )
+else()
+  add_custom_target(docs
+    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen executable not found. Install Doxygen or add it to PATH to build docs."
+    COMMENT "Doxygen not found: docs target is a no-op"
+  )
+  message(WARNING "Doxygen not found; 'docs' target will be a no-op. Install doxygen to enable documentation generation.")
+endif()

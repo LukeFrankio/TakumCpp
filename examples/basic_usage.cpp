@@ -3,6 +3,15 @@
 #include "takum/types.h"
 #include "takum/core.h"
 
+/**
+ * @file basic_usage.cpp
+ * @brief Small example demonstrating construction, conversion, and basic ops.
+ *
+ * This example is intentionally tiny and shows common interactions with the
+ * `takum<N>` API (construction from double, negation, comparison, bit ops,
+ * and debug bit inspection).
+ */
+
 int main() {
     using namespace takum::types;
 

@@ -1,15 +1,14 @@
-// Reference tapered-log encoder/decoder for Phase 2
-//
-// This implementation provides a readable, testable tapered-log style codec that
-// splits the payload (N-1 bits) into a signed regime field and a fractional
-// mantissa field. It uses base = sqrt(e) (so log-domain value ℓ = 2*ln(|x|)).
-//
-// Notes:
-// - It intentionally targets N <= 64 for simplicity and testability.
-// - NaR encoding is the canonical all-ones pattern in the low N bits.
-// - This is a reference implementation for unit tests and is not optimized.
-
 #pragma once
+
+/**
+ * @file tau_ref.h
+ * @brief Reference (readable, unoptimized) tapered-log encoder/decoder used by tests.
+ *
+ * This header provides simple, auditable encode/decode helpers that mirror the
+ * library's packing format. The implementations are intentionally clear, not
+ * optimized, and are intended to be used by unit tests and spec-reference
+ * validations.
+ */
 
 #include <cstdint>
 #include <cmath>

@@ -1,5 +1,15 @@
 #pragma once
 
+/**
+ * @file expected_shim.h
+ * @brief Small compatibility shim for std::expected used by tests and examples.
+ *
+ * When compiling with a modern standard that provides `std::expected` this
+ * header aliases `takum::detail::expected` to `std::expected<T, takum_error>`.
+ * For older standards a tiny `expected`-like type is provided that supports the
+ * subset the project uses (has_value, value, error, value_or).
+ */
+
 #if __cplusplus >= 202302L
 #include <expected>
 namespace takum::detail {

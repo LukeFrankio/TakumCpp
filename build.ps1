@@ -94,6 +94,30 @@ if ($test.ExitCode -ne 0) {
     Write-Error "[FAIL] Some tests failed."
     exit 2
 }
-
 Write-Host "[SUCCESS] Build + tests completed successfully in '$BuildDir' ($BuildType)."
+
+# --- optional: run Doxygen if available ---
+function Find-ExePath($name, $hints) {
+    $p = (Get-Command $name -ErrorAction SilentlyContinue | Select-Object -First 1).Source
+    if ($p) { return $p }
+    foreach ($h in $hints) {
+        $candidate = Join-Path $h "$name"
+        if (Test-Path $candidate) { return $candidate }
+    }
+    return $null
+}
+
+$doxygenPath = Find-ExePath "doxygen.exe" @("C:\Program Files\doxygen\bin","C:\Program Files (x86)\doxygen\bin","C:\ProgramData\chocolatey\bin")
+if ($doxygenPath) {
+    Write-Host "[INFO] Running Doxygen: $doxygenPath"
+    $dox = Start-Process -FilePath $doxygenPath -ArgumentList "Doxyfile" -NoNewWindow -Wait -PassThru
+    if ($dox.ExitCode -ne 0) {
+        Write-Warning "[WARN] Doxygen exited with code $($dox.ExitCode). See output above."
+    } else {
+        Write-Host "[INFO] Documentation generated in 'docs/doxygen'."
+    }
+} else {
+    Write-Host "[INFO] Doxygen not found; skipping documentation generation."
+}
+
 exit 0
