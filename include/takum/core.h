@@ -407,6 +407,19 @@ struct takum {
     }
 
     /**
+     * @brief Test whether the value represents zero.
+     * @return true if all bits in the storage are zero
+     * @note Zero is represented by all bits being zero in the takum format
+     */
+    bool is_zero() const noexcept {
+        if constexpr (N <= 64) return uint64_t(storage) == 0ULL;
+        else {
+            for (size_t i = 0; i < storage.size(); ++i) if (storage[i] != 0ULL) return false;
+            return true;
+        }
+    }
+
+    /**
      * @brief Convert a host `double` into the reference takum bit pattern.
      * @param x Input double.
      */
@@ -452,9 +465,14 @@ struct takum {
     }
 
     /**
-     * @brief Pack the maximum finite positive storage pattern and decode helpers.
+     * @brief Generate the maximum finite positive storage pattern for this format.
      *
-     * These helpers are internal but documented for clarity and testing.
+     * Constructs the bit pattern representing the largest representable positive
+     * finite value in the takum<N> format. Used for determining dynamic range
+     * and testing boundary conditions.
+     *
+     * @return uint64_t containing the maximum finite positive bit pattern
+     * @note For N>64, returns placeholder value 0; full multi-word support pending
      */
     static uint64_t max_finite_storage() noexcept {
         if constexpr (N > 64) {
@@ -475,6 +493,17 @@ struct takum {
         packed |= m_max;
         return packed;
     }
+    
+    /**
+     * @brief Get the maximum representable ℓ value for this takum format.
+     *
+     * Returns the logarithmic value ℓ corresponding to the maximum finite
+     * representable number in this format. Used for determining dynamic range.
+     *
+     * @return long double The maximum ℓ value (approximately ±255 for large N)
+     * @note For N>64, uses specification bound of ±255
+     * @note For smaller N, computed from the actual maximum finite pattern
+     */
     static long double max_ell() noexcept {
         if constexpr (N > 64) {
             // For large N use the spec dynamic range bound: |ell| <= 255
@@ -600,7 +629,17 @@ struct takum {
         }
     }
 
-    // Helper: existing encode that returns packed bits in uint64_t for N<=64
+    /**
+     * @brief Helper to encode double to uint64_t for single-word takum formats.
+     *
+     * Optimized encoding path for N<=64 bit formats. Implements the full
+     * S,D,R,C,M field packing per the reference specification equations.
+     *
+     * @param x Input double value to encode
+     * @return uint64_t containing the packed N-bit takum representation
+     * @note Only used for N<=64; larger formats use the multi-word encode path
+     * @note Implements equations (14)-(24) from the reference specification
+     */
     static uint64_t encode_from_double_u64(double x) noexcept {
         if constexpr (N <= 64) {
             if (x == 0.0) return 0ULL; // Zero representation per eq. (24)
@@ -667,11 +706,19 @@ struct takum {
     }
 
 private:
+    /**
+     * @brief Generate bit mask for N-bit values.
+     * @return Mask with low N bits set to 1
+     */
     static constexpr uint64_t nbit_mask() noexcept {
         if constexpr (N >= 64) return ~0ULL;
         else return (N == 64 ? ~0ULL : ((1ULL << N) - 1ULL));
     }
 
+    /**
+     * @brief Mask storage to exactly N bits, zeroing any excess bits.
+     * @param s Storage reference to mask in-place
+     */
     static void mask_to_N(storage_t& s) noexcept {
         if constexpr (N <= 64) {
             s = static_cast<storage_t>(uint64_t(s) & nbit_mask());
@@ -682,19 +729,6 @@ private:
             uint64_t top_mask = (used_bits_top == 64) ? ~0ULL : ((1ULL << used_bits_top) - 1ULL);
             for (size_t i = msb_word + 1; i < s.size(); ++i) s[i] = 0; // safety
             s[msb_word] &= top_mask;
-        }
-    }
-
-    /**
-     * @brief Test whether the value represents zero.
-     * @return true if all bits in the storage are zero
-     * @note Zero is represented by all bits being zero in the takum format
-     */
-    bool is_zero() const noexcept {
-        if constexpr (N <= 64) return uint64_t(storage) == 0ULL;
-        else {
-            for (size_t i = 0; i < storage.size(); ++i) if (storage[i] != 0ULL) return false;
-            return true;
         }
     }
 

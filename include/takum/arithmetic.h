@@ -148,7 +148,15 @@ inline std::optional<takum<N>> safe_add(const takum<N>& a, const takum<N>& b) no
 }
 
 /**
- * Safe multiplication returning std::optional<takum> on older standards.
+ * @brief Safe multiplication for older C++ standards (returns optional).
+ * 
+ * Performs multiplication of two takum values with error checking, returning
+ * std::nullopt on error conditions instead of propagating NaR.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a First operand
+ * @param b Second operand
+ * @return std::optional containing result or nullopt on error
  */
 template <size_t N>
 inline std::optional<takum<N>> safe_mul(const takum<N>& a, const takum<N>& b) noexcept {
@@ -161,6 +169,17 @@ inline std::optional<takum<N>> safe_mul(const takum<N>& a, const takum<N>& b) no
 
 // Safe subtraction and division variants
 #if __cplusplus >= 202302L
+/**
+ * @brief Safe subtraction with explicit error handling.
+ * 
+ * Performs subtraction of two takum values with explicit error reporting
+ * instead of NaR propagation. Returns std::unexpected on error conditions.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a Minuend
+ * @param b Subtrahend
+ * @return std::expected containing result or error information
+ */
 template <size_t N>
 inline std::expected<takum<N>, takum_error> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
@@ -169,6 +188,18 @@ inline std::expected<takum<N>, takum_error> safe_sub(const takum<N>& a, const ta
     return r;
 }
 
+/**
+ * @brief Safe division with explicit error handling.
+ * 
+ * Performs division of two takum values with explicit error reporting
+ * instead of NaR propagation. Returns std::unexpected on error conditions
+ * including division by zero.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a Dividend
+ * @param b Divisor
+ * @return std::expected containing result or error information
+ */
 template <size_t N>
 inline std::expected<takum<N>, takum_error> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
@@ -177,6 +208,17 @@ inline std::expected<takum<N>, takum_error> safe_div(const takum<N>& a, const ta
     return r;
 }
 #else
+/**
+ * @brief Safe subtraction for older C++ standards (returns optional).
+ * 
+ * Performs subtraction of two takum values with error checking, returning
+ * std::nullopt on error conditions instead of propagating NaR.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a Minuend
+ * @param b Subtrahend
+ * @return std::optional containing result or nullopt on error
+ */
 template <size_t N>
 inline std::optional<takum<N>> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::nullopt;
@@ -185,6 +227,17 @@ inline std::optional<takum<N>> safe_sub(const takum<N>& a, const takum<N>& b) no
     return r;
 }
 
+/**
+ * @brief Safe division for older C++ standards (returns optional).
+ * 
+ * Performs division of two takum values with error checking, returning
+ * std::nullopt on error conditions including division by zero.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a Dividend
+ * @param b Divisor
+ * @return std::optional containing result or nullopt on error
+ */
 template <size_t N>
 inline std::optional<takum<N>> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::nullopt;
