@@ -1,0 +1,46 @@
+\doxysection{takum/core.h File Reference}
+\hypertarget{core_8h}{}\label{core_8h}\index{takum/core.h@{takum/core.h}}
+
+
+Core definitions for the Takum numeric type family.  
+
+
+{\ttfamily \#include $<$cstddef$>$}\newline
+{\ttfamily \#include $<$cstdint$>$}\newline
+{\ttfamily \#include $<$array$>$}\newline
+{\ttfamily \#include $<$bitset$>$}\newline
+{\ttfamily \#include $<$type\+\_\+traits$>$}\newline
+{\ttfamily \#include $<$bit$>$}\newline
+{\ttfamily \#include $<$optional$>$}\newline
+{\ttfamily \#include $<$variant$>$}\newline
+{\ttfamily \#include "{}takum/internal/ref/tau\+\_\+ref.\+h"{}}\newline
+{\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$limits$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtakum_1_1takum__error}{takum\+::takum\+\_\+error}}
+\begin{DoxyCompactList}\small\item\em Lightweight error value returned by expected/optional helpers. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum$<$ N $>$}}
+\begin{DoxyCompactList}\small\item\em Configurable-\/width Takum numeric type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacetakum}{takum}}
+\begin{DoxyCompactList}\small\item\em Compatibility shim for std\+::expected when C++23 is not available. \end{DoxyCompactList}\item 
+namespace \mbox{\hyperlink{namespacestd}{std}}
+\begin{DoxyCompactList}\small\item\em Standard library namespace extended with takum specializations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Concepts}
+\begin{DoxyCompactItemize}
+\item 
+concept \mbox{\hyperlink{concepttakum_1_1takum__floating__point}{takum\+::takum\+\_\+floating\+\_\+point}}
+\begin{DoxyCompactList}\small\item\em Minimal concept describing the takum-\/like public API used by the library and tests. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Core definitions for the Takum numeric type family. 
+
+This header provides the parametric fixed-\/bit-\/width "{}takum"{} type template that represents a logarithmic-\/like numeric encoding (Phase2 reference implementation). It also provides small helpers and an error type used by the optional/expected-\/style accessors.
+
+The implementation intentionally documents places that are placeholders for future multi-\/word support. 

@@ -78,7 +78,7 @@ template <typename T>
  * This is intentionally lightweight — it mirrors the methods used in tests
  * and utilities.
  *
- * @requirements The type must be a complete type (sizeof(T) > 0).
+ * The type must be a complete type (sizeof(T) > 0).
  */
 concept takum_floating_point = requires(T t) {
     { t < t } -> std::convertible_to<bool>;

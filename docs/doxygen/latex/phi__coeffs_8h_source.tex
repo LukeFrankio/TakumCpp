@@ -1,0 +1,537 @@
+\doxysection{phi\+\_\+coeffs.\+h}
+\hypertarget{phi__coeffs_8h_source}{}\label{phi__coeffs_8h_source}\index{takum/internal/generated/phi\_coeffs.h@{takum/internal/generated/phi\_coeffs.h}}
+\mbox{\hyperlink{phi__coeffs_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ Generated\ by\ scripts/gen\_poly\_coeffs.py}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ Do\ not\ edit\ manually!}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetakum_1_1internal_1_1phi}{takum::internal::phi}}\ \{}
+\DoxyCodeLine{00017\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_ad8447acc7f2385266be34e69fa4f943f}{NUM\_INTERVALS}}\ =\ 256;}
+\DoxyCodeLine{00018\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_a696a2190360163103ace9d277f3c5fd5}{POLY\_DEGREE}}\ =\ 5;}
+\DoxyCodeLine{00019\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_acff6a02b0acf5a0a2f12fe7f20076c0e}{Q\_FRAC\_BITS}}\ =\ 16;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ Coefficients:\ array\ of\ arrays,\ coeffs[interval][degree]}}
+\DoxyCodeLine{00022\ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{structtakum_1_1takum}{int16\_t}}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_adeb06ea27c284ce589f0a72719e53b8f}{poly\_coeffs}}[\mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_ad8447acc7f2385266be34e69fa4f943f}{NUM\_INTERVALS}}][\mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_a696a2190360163103ace9d277f3c5fd5}{POLY\_DEGREE}}\ +\ 1]\ =\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \{\ 20266,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 0\ :\ [\ -\/0.50000000\ ,\ \ -\/0.49609375\ )\ max\_err=\ 0.001669\ \ mean\_err=\ 0.000977}}
+\DoxyCodeLine{00024\ \ \ \ \ \{\ 20356,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 1\ :\ [\ -\/0.49609375\ ,\ \ -\/0.49218750\ )\ max\_err=\ 0.001663\ \ mean\_err=\ 0.000970}}
+\DoxyCodeLine{00025\ \ \ \ \ \{\ 20446,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 2\ :\ [\ -\/0.49218750\ ,\ \ -\/0.48828125\ )\ max\_err=\ 0.001657\ \ mean\_err=\ 0.000962}}
+\DoxyCodeLine{00026\ \ \ \ \ \{\ 20537,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 3\ :\ [\ -\/0.48828125\ ,\ \ -\/0.48437500\ )\ max\_err=\ 0.001650\ \ mean\_err=\ 0.000954}}
+\DoxyCodeLine{00027\ \ \ \ \ \{\ 20628,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 4\ :\ [\ -\/0.48437500\ ,\ \ -\/0.48046875\ )\ max\_err=\ 0.001644\ \ mean\_err=\ 0.000947}}
+\DoxyCodeLine{00028\ \ \ \ \ \{\ 20719,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 5\ :\ [\ -\/0.48046875\ ,\ \ -\/0.47656250\ )\ max\_err=\ 0.001638\ \ mean\_err=\ 0.000939}}
+\DoxyCodeLine{00029\ \ \ \ \ \{\ 20810,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 6\ :\ [\ -\/0.47656250\ ,\ \ -\/0.47265625\ )\ max\_err=\ 0.001631\ \ mean\_err=\ 0.000932}}
+\DoxyCodeLine{00030\ \ \ \ \ \{\ 20901,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 7\ :\ [\ -\/0.47265625\ ,\ \ -\/0.46875000\ )\ max\_err=\ 0.001625\ \ mean\_err=\ 0.000924}}
+\DoxyCodeLine{00031\ \ \ \ \ \{\ 20993,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 8\ :\ [\ -\/0.46875000\ ,\ \ -\/0.46484375\ )\ max\_err=\ 0.001619\ \ mean\_err=\ 0.000916}}
+\DoxyCodeLine{00032\ \ \ \ \ \{\ 21085,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ \ 9\ :\ [\ -\/0.46484375\ ,\ \ -\/0.46093750\ )\ max\_err=\ 0.001612\ \ mean\_err=\ 0.000909}}
+\DoxyCodeLine{00033\ \ \ \ \ \{\ 21176,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 10\ :\ [\ -\/0.46093750\ ,\ \ -\/0.45703125\ )\ max\_err=\ 0.001606\ \ mean\_err=\ 0.000901}}
+\DoxyCodeLine{00034\ \ \ \ \ \{\ 21268,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 11\ :\ [\ -\/0.45703125\ ,\ \ -\/0.45312500\ )\ max\_err=\ 0.001599\ \ mean\_err=\ 0.000893}}
+\DoxyCodeLine{00035\ \ \ \ \ \{\ 21361,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 12\ :\ [\ -\/0.45312500\ ,\ \ -\/0.44921875\ )\ max\_err=\ 0.001593\ \ mean\_err=\ 0.000886}}
+\DoxyCodeLine{00036\ \ \ \ \ \{\ 21453,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 13\ :\ [\ -\/0.44921875\ ,\ \ -\/0.44531250\ )\ max\_err=\ 0.001587\ \ mean\_err=\ 0.000878}}
+\DoxyCodeLine{00037\ \ \ \ \ \{\ 21545,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 14\ :\ [\ -\/0.44531250\ ,\ \ -\/0.44140625\ )\ max\_err=\ 0.001580\ \ mean\_err=\ 0.000870}}
+\DoxyCodeLine{00038\ \ \ \ \ \{\ 21638,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 15\ :\ [\ -\/0.44140625\ ,\ \ -\/0.43750000\ )\ max\_err=\ 0.001574\ \ mean\_err=\ 0.000863}}
+\DoxyCodeLine{00039\ \ \ \ \ \{\ 21731,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 16\ :\ [\ -\/0.43750000\ ,\ \ -\/0.43359375\ )\ max\_err=\ 0.001567\ \ mean\_err=\ 0.000855}}
+\DoxyCodeLine{00040\ \ \ \ \ \{\ 21824,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 17\ :\ [\ -\/0.43359375\ ,\ \ -\/0.42968750\ )\ max\_err=\ 0.001561\ \ mean\_err=\ 0.000847}}
+\DoxyCodeLine{00041\ \ \ \ \ \{\ 21917,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 18\ :\ [\ -\/0.42968750\ ,\ \ -\/0.42578125\ )\ max\_err=\ 0.001555\ \ mean\_err=\ 0.000840}}
+\DoxyCodeLine{00042\ \ \ \ \ \{\ 22010,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 19\ :\ [\ -\/0.42578125\ ,\ \ -\/0.42187500\ )\ max\_err=\ 0.001548\ \ mean\_err=\ 0.000832}}
+\DoxyCodeLine{00043\ \ \ \ \ \{\ 22104,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 20\ :\ [\ -\/0.42187500\ ,\ \ -\/0.41796875\ )\ max\_err=\ 0.001542\ \ mean\_err=\ 0.000825}}
+\DoxyCodeLine{00044\ \ \ \ \ \{\ 22197,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 21\ :\ [\ -\/0.41796875\ ,\ \ -\/0.41406250\ )\ max\_err=\ 0.001535\ \ mean\_err=\ 0.000817}}
+\DoxyCodeLine{00045\ \ \ \ \ \{\ 22291,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 22\ :\ [\ -\/0.41406250\ ,\ \ -\/0.41015625\ )\ max\_err=\ 0.001529\ \ mean\_err=\ 0.000809}}
+\DoxyCodeLine{00046\ \ \ \ \ \{\ 22385,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 23\ :\ [\ -\/0.41015625\ ,\ \ -\/0.40625000\ )\ max\_err=\ 0.001522\ \ mean\_err=\ 0.000802}}
+\DoxyCodeLine{00047\ \ \ \ \ \{\ 22479,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 24\ :\ [\ -\/0.40625000\ ,\ \ -\/0.40234375\ )\ max\_err=\ 0.001516\ \ mean\_err=\ 0.000794}}
+\DoxyCodeLine{00048\ \ \ \ \ \{\ 22573,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 25\ :\ [\ -\/0.40234375\ ,\ \ -\/0.39843750\ )\ max\_err=\ 0.001509\ \ mean\_err=\ 0.000786}}
+\DoxyCodeLine{00049\ \ \ \ \ \{\ 22667,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 26\ :\ [\ -\/0.39843750\ ,\ \ -\/0.39453125\ )\ max\_err=\ 0.001503\ \ mean\_err=\ 0.000779}}
+\DoxyCodeLine{00050\ \ \ \ \ \{\ 22762,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 27\ :\ [\ -\/0.39453125\ ,\ \ -\/0.39062500\ )\ max\_err=\ 0.001496\ \ mean\_err=\ 0.000771}}
+\DoxyCodeLine{00051\ \ \ \ \ \{\ 22857,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 28\ :\ [\ -\/0.39062500\ ,\ \ -\/0.38671875\ )\ max\_err=\ 0.001490\ \ mean\_err=\ 0.000763}}
+\DoxyCodeLine{00052\ \ \ \ \ \{\ 22951,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 29\ :\ [\ -\/0.38671875\ ,\ \ -\/0.38281250\ )\ max\_err=\ 0.001483\ \ mean\_err=\ 0.000756}}
+\DoxyCodeLine{00053\ \ \ \ \ \{\ 23046,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 30\ :\ [\ -\/0.38281250\ ,\ \ -\/0.37890625\ )\ max\_err=\ 0.001476\ \ mean\_err=\ 0.000748}}
+\DoxyCodeLine{00054\ \ \ \ \ \{\ 23141,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 31\ :\ [\ -\/0.37890625\ ,\ \ -\/0.37500000\ )\ max\_err=\ 0.001470\ \ mean\_err=\ 0.000741}}
+\DoxyCodeLine{00055\ \ \ \ \ \{\ 23236,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 32\ :\ [\ -\/0.37500000\ ,\ \ -\/0.37109375\ )\ max\_err=\ 0.001463\ \ mean\_err=\ 0.000733}}
+\DoxyCodeLine{00056\ \ \ \ \ \{\ 23332,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 33\ :\ [\ -\/0.37109375\ ,\ \ -\/0.36718750\ )\ max\_err=\ 0.001457\ \ mean\_err=\ 0.000725}}
+\DoxyCodeLine{00057\ \ \ \ \ \{\ 23427,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 34\ :\ [\ -\/0.36718750\ ,\ \ -\/0.36328125\ )\ max\_err=\ 0.001450\ \ mean\_err=\ 0.000718}}
+\DoxyCodeLine{00058\ \ \ \ \ \{\ 23523,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 35\ :\ [\ -\/0.36328125\ ,\ \ -\/0.35937500\ )\ max\_err=\ 0.001444\ \ mean\_err=\ 0.000710}}
+\DoxyCodeLine{00059\ \ \ \ \ \{\ 23619,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 36\ :\ [\ -\/0.35937500\ ,\ \ -\/0.35546875\ )\ max\_err=\ 0.001437\ \ mean\_err=\ 0.000703}}
+\DoxyCodeLine{00060\ \ \ \ \ \{\ 23715,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 37\ :\ [\ -\/0.35546875\ ,\ \ -\/0.35156250\ )\ max\_err=\ 0.001430\ \ mean\_err=\ 0.000696}}
+\DoxyCodeLine{00061\ \ \ \ \ \{\ 23811,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 38\ :\ [\ -\/0.35156250\ ,\ \ -\/0.34765625\ )\ max\_err=\ 0.001424\ \ mean\_err=\ 0.000689}}
+\DoxyCodeLine{00062\ \ \ \ \ \{\ 23907,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 39\ :\ [\ -\/0.34765625\ ,\ \ -\/0.34375000\ )\ max\_err=\ 0.001417\ \ mean\_err=\ 0.000682}}
+\DoxyCodeLine{00063\ \ \ \ \ \{\ 24003,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 40\ :\ [\ -\/0.34375000\ ,\ \ -\/0.33984375\ )\ max\_err=\ 0.001410\ \ mean\_err=\ 0.000675}}
+\DoxyCodeLine{00064\ \ \ \ \ \{\ 24099,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 41\ :\ [\ -\/0.33984375\ ,\ \ -\/0.33593750\ )\ max\_err=\ 0.001404\ \ mean\_err=\ 0.000668}}
+\DoxyCodeLine{00065\ \ \ \ \ \{\ 24196,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 42\ :\ [\ -\/0.33593750\ ,\ \ -\/0.33203125\ )\ max\_err=\ 0.001397\ \ mean\_err=\ 0.000661}}
+\DoxyCodeLine{00066\ \ \ \ \ \{\ 24293,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 43\ :\ [\ -\/0.33203125\ ,\ \ -\/0.32812500\ )\ max\_err=\ 0.001390\ \ mean\_err=\ 0.000655}}
+\DoxyCodeLine{00067\ \ \ \ \ \{\ 24389,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 44\ :\ [\ -\/0.32812500\ ,\ \ -\/0.32421875\ )\ max\_err=\ 0.001384\ \ mean\_err=\ 0.000648}}
+\DoxyCodeLine{00068\ \ \ \ \ \{\ 24486,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 45\ :\ [\ -\/0.32421875\ ,\ \ -\/0.32031250\ )\ max\_err=\ 0.001377\ \ mean\_err=\ 0.000642}}
+\DoxyCodeLine{00069\ \ \ \ \ \{\ 24583,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 46\ :\ [\ -\/0.32031250\ ,\ \ -\/0.31640625\ )\ max\_err=\ 0.001370\ \ mean\_err=\ 0.000635}}
+\DoxyCodeLine{00070\ \ \ \ \ \{\ 24680,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 47\ :\ [\ -\/0.31640625\ ,\ \ -\/0.31250000\ )\ max\_err=\ 0.001364\ \ mean\_err=\ 0.000629}}
+\DoxyCodeLine{00071\ \ \ \ \ \{\ 24778,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 48\ :\ [\ -\/0.31250000\ ,\ \ -\/0.30859375\ )\ max\_err=\ 0.001357\ \ mean\_err=\ 0.000623}}
+\DoxyCodeLine{00072\ \ \ \ \ \{\ 24875,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 49\ :\ [\ -\/0.30859375\ ,\ \ -\/0.30468750\ )\ max\_err=\ 0.001350\ \ mean\_err=\ 0.000617}}
+\DoxyCodeLine{00073\ \ \ \ \ \{\ 24972,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 50\ :\ [\ -\/0.30468750\ ,\ \ -\/0.30078125\ )\ max\_err=\ 0.001343\ \ mean\_err=\ 0.000611}}
+\DoxyCodeLine{00074\ \ \ \ \ \{\ 25070,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 51\ :\ [\ -\/0.30078125\ ,\ \ -\/0.29687500\ )\ max\_err=\ 0.001337\ \ mean\_err=\ 0.000605}}
+\DoxyCodeLine{00075\ \ \ \ \ \{\ 25168,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 52\ :\ [\ -\/0.29687500\ ,\ \ -\/0.29296875\ )\ max\_err=\ 0.001330\ \ mean\_err=\ 0.000599}}
+\DoxyCodeLine{00076\ \ \ \ \ \{\ 25266,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 53\ :\ [\ -\/0.29296875\ ,\ \ -\/0.28906250\ )\ max\_err=\ 0.001323\ \ mean\_err=\ 0.000594}}
+\DoxyCodeLine{00077\ \ \ \ \ \{\ 25364,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 54\ :\ [\ -\/0.28906250\ ,\ \ -\/0.28515625\ )\ max\_err=\ 0.001316\ \ mean\_err=\ 0.000588}}
+\DoxyCodeLine{00078\ \ \ \ \ \{\ 25462,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 55\ :\ [\ -\/0.28515625\ ,\ \ -\/0.28125000\ )\ max\_err=\ 0.001309\ \ mean\_err=\ 0.000583}}
+\DoxyCodeLine{00079\ \ \ \ \ \{\ 25560,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 56\ :\ [\ -\/0.28125000\ ,\ \ -\/0.27734375\ )\ max\_err=\ 0.001303\ \ mean\_err=\ 0.000577}}
+\DoxyCodeLine{00080\ \ \ \ \ \{\ 25658,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 57\ :\ [\ -\/0.27734375\ ,\ \ -\/0.27343750\ )\ max\_err=\ 0.001296\ \ mean\_err=\ 0.000572}}
+\DoxyCodeLine{00081\ \ \ \ \ \{\ 25757,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 58\ :\ [\ -\/0.27343750\ ,\ \ -\/0.26953125\ )\ max\_err=\ 0.001289\ \ mean\_err=\ 0.000567}}
+\DoxyCodeLine{00082\ \ \ \ \ \{\ 25855,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 59\ :\ [\ -\/0.26953125\ ,\ \ -\/0.26562500\ )\ max\_err=\ 0.001282\ \ mean\_err=\ 0.000561}}
+\DoxyCodeLine{00083\ \ \ \ \ \{\ 25954,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 60\ :\ [\ -\/0.26562500\ ,\ \ -\/0.26171875\ )\ max\_err=\ 0.001275\ \ mean\_err=\ 0.000556}}
+\DoxyCodeLine{00084\ \ \ \ \ \{\ 26052,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 61\ :\ [\ -\/0.26171875\ ,\ \ -\/0.25781250\ )\ max\_err=\ 0.001268\ \ mean\_err=\ 0.000551}}
+\DoxyCodeLine{00085\ \ \ \ \ \{\ 26151,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 62\ :\ [\ -\/0.25781250\ ,\ \ -\/0.25390625\ )\ max\_err=\ 0.001262\ \ mean\_err=\ 0.000546}}
+\DoxyCodeLine{00086\ \ \ \ \ \{\ 26250,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 63\ :\ [\ -\/0.25390625\ ,\ \ -\/0.25000000\ )\ max\_err=\ 0.001255\ \ mean\_err=\ 0.000542}}
+\DoxyCodeLine{00087\ \ \ \ \ \{\ 26349,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 64\ :\ [\ -\/0.25000000\ ,\ \ -\/0.24609375\ )\ max\_err=\ 0.001248\ \ mean\_err=\ 0.000537}}
+\DoxyCodeLine{00088\ \ \ \ \ \{\ 26448,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 65\ :\ [\ -\/0.24609375\ ,\ \ -\/0.24218750\ )\ max\_err=\ 0.001241\ \ mean\_err=\ 0.000532}}
+\DoxyCodeLine{00089\ \ \ \ \ \{\ 26547,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 66\ :\ [\ -\/0.24218750\ ,\ \ -\/0.23828125\ )\ max\_err=\ 0.001234\ \ mean\_err=\ 0.000528}}
+\DoxyCodeLine{00090\ \ \ \ \ \{\ 26646,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 67\ :\ [\ -\/0.23828125\ ,\ \ -\/0.23437500\ )\ max\_err=\ 0.001227\ \ mean\_err=\ 0.000523}}
+\DoxyCodeLine{00091\ \ \ \ \ \{\ 26746,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 68\ :\ [\ -\/0.23437500\ ,\ \ -\/0.23046875\ )\ max\_err=\ 0.001220\ \ mean\_err=\ 0.000519}}
+\DoxyCodeLine{00092\ \ \ \ \ \{\ 26845,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 69\ :\ [\ -\/0.23046875\ ,\ \ -\/0.22656250\ )\ max\_err=\ 0.001213\ \ mean\_err=\ 0.000514}}
+\DoxyCodeLine{00093\ \ \ \ \ \{\ 26945,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 70\ :\ [\ -\/0.22656250\ ,\ \ -\/0.22265625\ )\ max\_err=\ 0.001206\ \ mean\_err=\ 0.000510}}
+\DoxyCodeLine{00094\ \ \ \ \ \{\ 27044,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 71\ :\ [\ -\/0.22265625\ ,\ \ -\/0.21875000\ )\ max\_err=\ 0.001199\ \ mean\_err=\ 0.000506}}
+\DoxyCodeLine{00095\ \ \ \ \ \{\ 27144,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 72\ :\ [\ -\/0.21875000\ ,\ \ -\/0.21484375\ )\ max\_err=\ 0.001192\ \ mean\_err=\ 0.000502}}
+\DoxyCodeLine{00096\ \ \ \ \ \{\ 27244,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 73\ :\ [\ -\/0.21484375\ ,\ \ -\/0.21093750\ )\ max\_err=\ 0.001185\ \ mean\_err=\ 0.000498}}
+\DoxyCodeLine{00097\ \ \ \ \ \{\ 27344,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 74\ :\ [\ -\/0.21093750\ ,\ \ -\/0.20703125\ )\ max\_err=\ 0.001178\ \ mean\_err=\ 0.000494}}
+\DoxyCodeLine{00098\ \ \ \ \ \{\ 27444,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 75\ :\ [\ -\/0.20703125\ ,\ \ -\/0.20312500\ )\ max\_err=\ 0.001171\ \ mean\_err=\ 0.000490}}
+\DoxyCodeLine{00099\ \ \ \ \ \{\ 27544,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 76\ :\ [\ -\/0.20312500\ ,\ \ -\/0.19921875\ )\ max\_err=\ 0.001164\ \ mean\_err=\ 0.000486}}
+\DoxyCodeLine{00100\ \ \ \ \ \{\ 27644,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 77\ :\ [\ -\/0.19921875\ ,\ \ -\/0.19531250\ )\ max\_err=\ 0.001157\ \ mean\_err=\ 0.000483}}
+\DoxyCodeLine{00101\ \ \ \ \ \{\ 27744,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 78\ :\ [\ -\/0.19531250\ ,\ \ -\/0.19140625\ )\ max\_err=\ 0.001150\ \ mean\_err=\ 0.000479}}
+\DoxyCodeLine{00102\ \ \ \ \ \{\ 27844,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 79\ :\ [\ -\/0.19140625\ ,\ \ -\/0.18750000\ )\ max\_err=\ 0.001143\ \ mean\_err=\ 0.000476}}
+\DoxyCodeLine{00103\ \ \ \ \ \{\ 27945,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 80\ :\ [\ -\/0.18750000\ ,\ \ -\/0.18359375\ )\ max\_err=\ 0.001136\ \ mean\_err=\ 0.000472}}
+\DoxyCodeLine{00104\ \ \ \ \ \{\ 28045,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 81\ :\ [\ -\/0.18359375\ ,\ \ -\/0.17968750\ )\ max\_err=\ 0.001129\ \ mean\_err=\ 0.000469}}
+\DoxyCodeLine{00105\ \ \ \ \ \{\ 28146,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 82\ :\ [\ -\/0.17968750\ ,\ \ -\/0.17578125\ )\ max\_err=\ 0.001122\ \ mean\_err=\ 0.000465}}
+\DoxyCodeLine{00106\ \ \ \ \ \{\ 28246,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 83\ :\ [\ -\/0.17578125\ ,\ \ -\/0.17187500\ )\ max\_err=\ 0.001115\ \ mean\_err=\ 0.000462}}
+\DoxyCodeLine{00107\ \ \ \ \ \{\ 28347,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 84\ :\ [\ -\/0.17187500\ ,\ \ -\/0.16796875\ )\ max\_err=\ 0.001108\ \ mean\_err=\ 0.000459}}
+\DoxyCodeLine{00108\ \ \ \ \ \{\ 28448,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 85\ :\ [\ -\/0.16796875\ ,\ \ -\/0.16406250\ )\ max\_err=\ 0.001100\ \ mean\_err=\ 0.000456}}
+\DoxyCodeLine{00109\ \ \ \ \ \{\ 28548,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 86\ :\ [\ -\/0.16406250\ ,\ \ -\/0.16015625\ )\ max\_err=\ 0.001093\ \ mean\_err=\ 0.000453}}
+\DoxyCodeLine{00110\ \ \ \ \ \{\ 28649,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 87\ :\ [\ -\/0.16015625\ ,\ \ -\/0.15625000\ )\ max\_err=\ 0.001086\ \ mean\_err=\ 0.000450}}
+\DoxyCodeLine{00111\ \ \ \ \ \{\ 28750,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 88\ :\ [\ -\/0.15625000\ ,\ \ -\/0.15234375\ )\ max\_err=\ 0.001079\ \ mean\_err=\ 0.000447}}
+\DoxyCodeLine{00112\ \ \ \ \ \{\ 28851,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 89\ :\ [\ -\/0.15234375\ ,\ \ -\/0.14843750\ )\ max\_err=\ 0.001072\ \ mean\_err=\ 0.000444}}
+\DoxyCodeLine{00113\ \ \ \ \ \{\ 28952,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 90\ :\ [\ -\/0.14843750\ ,\ \ -\/0.14453125\ )\ max\_err=\ 0.001065\ \ mean\_err=\ 0.000442}}
+\DoxyCodeLine{00114\ \ \ \ \ \{\ 29053,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 91\ :\ [\ -\/0.14453125\ ,\ \ -\/0.14062500\ )\ max\_err=\ 0.001057\ \ mean\_err=\ 0.000439}}
+\DoxyCodeLine{00115\ \ \ \ \ \{\ 29154,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 92\ :\ [\ -\/0.14062500\ ,\ \ -\/0.13671875\ )\ max\_err=\ 0.001050\ \ mean\_err=\ 0.000436}}
+\DoxyCodeLine{00116\ \ \ \ \ \{\ 29255,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 93\ :\ [\ -\/0.13671875\ ,\ \ -\/0.13281250\ )\ max\_err=\ 0.001043\ \ mean\_err=\ 0.000434}}
+\DoxyCodeLine{00117\ \ \ \ \ \{\ 29357,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 94\ :\ [\ -\/0.13281250\ ,\ \ -\/0.12890625\ )\ max\_err=\ 0.001036\ \ mean\_err=\ 0.000432}}
+\DoxyCodeLine{00118\ \ \ \ \ \{\ 29458,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 95\ :\ [\ -\/0.12890625\ ,\ \ -\/0.12500000\ )\ max\_err=\ 0.001028\ \ mean\_err=\ 0.000429}}
+\DoxyCodeLine{00119\ \ \ \ \ \{\ 29559,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 96\ :\ [\ -\/0.12500000\ ,\ \ -\/0.12109375\ )\ max\_err=\ 0.001021\ \ mean\_err=\ 0.000427}}
+\DoxyCodeLine{00120\ \ \ \ \ \{\ 29661,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 97\ :\ [\ -\/0.12109375\ ,\ \ -\/0.11718750\ )\ max\_err=\ 0.001014\ \ mean\_err=\ 0.000425}}
+\DoxyCodeLine{00121\ \ \ \ \ \{\ 29762,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 98\ :\ [\ -\/0.11718750\ ,\ \ -\/0.11328125\ )\ max\_err=\ 0.001007\ \ mean\_err=\ 0.000423}}
+\DoxyCodeLine{00122\ \ \ \ \ \{\ 29864,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ \ 99\ :\ [\ -\/0.11328125\ ,\ \ -\/0.10937500\ )\ max\_err=\ 0.000999\ \ mean\_err=\ 0.000421}}
+\DoxyCodeLine{00123\ \ \ \ \ \{\ 29965,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 100\ :\ [\ -\/0.10937500\ ,\ \ -\/0.10546875\ )\ max\_err=\ 0.000992\ \ mean\_err=\ 0.000419}}
+\DoxyCodeLine{00124\ \ \ \ \ \{\ 30067,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 101\ :\ [\ -\/0.10546875\ ,\ \ -\/0.10156250\ )\ max\_err=\ 0.000985\ \ mean\_err=\ 0.000417}}
+\DoxyCodeLine{00125\ \ \ \ \ \{\ 30168,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 102\ :\ [\ -\/0.10156250\ ,\ \ -\/0.09765625\ )\ max\_err=\ 0.000977\ \ mean\_err=\ 0.000415}}
+\DoxyCodeLine{00126\ \ \ \ \ \{\ 30270,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 103\ :\ [\ -\/0.09765625\ ,\ \ -\/0.09375000\ )\ max\_err=\ 0.000970\ \ mean\_err=\ 0.000413}}
+\DoxyCodeLine{00127\ \ \ \ \ \{\ 30372,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 104\ :\ [\ -\/0.09375000\ ,\ \ -\/0.08984375\ )\ max\_err=\ 0.000963\ \ mean\_err=\ 0.000411}}
+\DoxyCodeLine{00128\ \ \ \ \ \{\ 30473,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 105\ :\ [\ -\/0.08984375\ ,\ \ -\/0.08593750\ )\ max\_err=\ 0.000955\ \ mean\_err=\ 0.000410}}
+\DoxyCodeLine{00129\ \ \ \ \ \{\ 30575,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 106\ :\ [\ -\/0.08593750\ ,\ \ -\/0.08203125\ )\ max\_err=\ 0.000948\ \ mean\_err=\ 0.000408}}
+\DoxyCodeLine{00130\ \ \ \ \ \{\ 30677,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 107\ :\ [\ -\/0.08203125\ ,\ \ -\/0.07812500\ )\ max\_err=\ 0.000941\ \ mean\_err=\ 0.000407}}
+\DoxyCodeLine{00131\ \ \ \ \ \{\ 30779,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 108\ :\ [\ -\/0.07812500\ ,\ \ -\/0.07421875\ )\ max\_err=\ 0.000933\ \ mean\_err=\ 0.000405}}
+\DoxyCodeLine{00132\ \ \ \ \ \{\ 30881,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 109\ :\ [\ -\/0.07421875\ ,\ \ -\/0.07031250\ )\ max\_err=\ 0.000926\ \ mean\_err=\ 0.000404}}
+\DoxyCodeLine{00133\ \ \ \ \ \{\ 30982,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 110\ :\ [\ -\/0.07031250\ ,\ \ -\/0.06640625\ )\ max\_err=\ 0.000918\ \ mean\_err=\ 0.000403}}
+\DoxyCodeLine{00134\ \ \ \ \ \{\ 31084,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 111\ :\ [\ -\/0.06640625\ ,\ \ -\/0.06250000\ )\ max\_err=\ 0.000911\ \ mean\_err=\ 0.000401}}
+\DoxyCodeLine{00135\ \ \ \ \ \{\ 31186,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 112\ :\ [\ -\/0.06250000\ ,\ \ -\/0.05859375\ )\ max\_err=\ 0.000904\ \ mean\_err=\ 0.000400}}
+\DoxyCodeLine{00136\ \ \ \ \ \{\ 31288,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 113\ :\ [\ -\/0.05859375\ ,\ \ -\/0.05468750\ )\ max\_err=\ 0.000896\ \ mean\_err=\ 0.000399}}
+\DoxyCodeLine{00137\ \ \ \ \ \{\ 31390,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 114\ :\ [\ -\/0.05468750\ ,\ \ -\/0.05078125\ )\ max\_err=\ 0.000889\ \ mean\_err=\ 0.000398}}
+\DoxyCodeLine{00138\ \ \ \ \ \{\ 31492,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 115\ :\ [\ -\/0.05078125\ ,\ \ -\/0.04687500\ )\ max\_err=\ 0.000881\ \ mean\_err=\ 0.000397}}
+\DoxyCodeLine{00139\ \ \ \ \ \{\ 31594,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 116\ :\ [\ -\/0.04687500\ ,\ \ -\/0.04296875\ )\ max\_err=\ 0.000874\ \ mean\_err=\ 0.000397}}
+\DoxyCodeLine{00140\ \ \ \ \ \{\ 31696,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 117\ :\ [\ -\/0.04296875\ ,\ \ -\/0.03906250\ )\ max\_err=\ 0.000866\ \ mean\_err=\ 0.000396}}
+\DoxyCodeLine{00141\ \ \ \ \ \{\ 31798,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 118\ :\ [\ -\/0.03906250\ ,\ \ -\/0.03515625\ )\ max\_err=\ 0.000859\ \ mean\_err=\ 0.000395}}
+\DoxyCodeLine{00142\ \ \ \ \ \{\ 31900,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 119\ :\ [\ -\/0.03515625\ ,\ \ -\/0.03125000\ )\ max\_err=\ 0.000851\ \ mean\_err=\ 0.000394}}
+\DoxyCodeLine{00143\ \ \ \ \ \{\ 32002,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 120\ :\ [\ -\/0.03125000\ ,\ \ -\/0.02734375\ )\ max\_err=\ 0.000844\ \ mean\_err=\ 0.000394}}
+\DoxyCodeLine{00144\ \ \ \ \ \{\ 32104,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 121\ :\ [\ -\/0.02734375\ ,\ \ -\/0.02343750\ )\ max\_err=\ 0.000836\ \ mean\_err=\ 0.000393}}
+\DoxyCodeLine{00145\ \ \ \ \ \{\ 32207,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 122\ :\ [\ -\/0.02343750\ ,\ \ -\/0.01953125\ )\ max\_err=\ 0.000829\ \ mean\_err=\ 0.000393}}
+\DoxyCodeLine{00146\ \ \ \ \ \{\ 32309,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 123\ :\ [\ -\/0.01953125\ ,\ \ -\/0.01562500\ )\ max\_err=\ 0.000821\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00147\ \ \ \ \ \{\ 32411,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 124\ :\ [\ -\/0.01562500\ ,\ \ -\/0.01171875\ )\ max\_err=\ 0.000813\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00148\ \ \ \ \ \{\ 32513,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 125\ :\ [\ -\/0.01171875\ ,\ \ -\/0.00781250\ )\ max\_err=\ 0.000806\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00149\ \ \ \ \ \{\ 32615,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 126\ :\ [\ -\/0.00781250\ ,\ \ -\/0.00390625\ )\ max\_err=\ 0.000798\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00150\ \ \ \ \ \{\ 32717,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 127\ :\ [\ -\/0.00390625\ ,\ \ \ 0.00000000\ )\ max\_err=\ 0.000791\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00151\ \ \ \ \ \{\ 32819,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 128\ :\ [\ \ 0.00000000\ ,\ \ \ 0.00390625\ )\ max\_err=\ 0.000783\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00152\ \ \ \ \ \{\ 32921,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 129\ :\ [\ \ 0.00390625\ ,\ \ \ 0.00781250\ )\ max\_err=\ 0.000791\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00153\ \ \ \ \ \{\ 33024,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 130\ :\ [\ \ 0.00781250\ ,\ \ \ 0.01171875\ )\ max\_err=\ 0.000798\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00154\ \ \ \ \ \{\ 33126,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 131\ :\ [\ \ 0.01171875\ ,\ \ \ 0.01562500\ )\ max\_err=\ 0.000806\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00155\ \ \ \ \ \{\ 33228,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 132\ :\ [\ \ 0.01562500\ ,\ \ \ 0.01953125\ )\ max\_err=\ 0.000813\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00156\ \ \ \ \ \{\ 33330,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 133\ :\ [\ \ 0.01953125\ ,\ \ \ 0.02343750\ )\ max\_err=\ 0.000821\ \ mean\_err=\ 0.000392}}
+\DoxyCodeLine{00157\ \ \ \ \ \{\ 33432,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 134\ :\ [\ \ 0.02343750\ ,\ \ \ 0.02734375\ )\ max\_err=\ 0.000829\ \ mean\_err=\ 0.000393}}
+\DoxyCodeLine{00158\ \ \ \ \ \{\ 33534,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 135\ :\ [\ \ 0.02734375\ ,\ \ \ 0.03125000\ )\ max\_err=\ 0.000836\ \ mean\_err=\ 0.000393}}
+\DoxyCodeLine{00159\ \ \ \ \ \{\ 33636,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 136\ :\ [\ \ 0.03125000\ ,\ \ \ 0.03515625\ )\ max\_err=\ 0.000844\ \ mean\_err=\ 0.000394}}
+\DoxyCodeLine{00160\ \ \ \ \ \{\ 33738,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 137\ :\ [\ \ 0.03515625\ ,\ \ \ 0.03906250\ )\ max\_err=\ 0.000851\ \ mean\_err=\ 0.000394}}
+\DoxyCodeLine{00161\ \ \ \ \ \{\ 33840,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 138\ :\ [\ \ 0.03906250\ ,\ \ \ 0.04296875\ )\ max\_err=\ 0.000859\ \ mean\_err=\ 0.000395}}
+\DoxyCodeLine{00162\ \ \ \ \ \{\ 33942,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 139\ :\ [\ \ 0.04296875\ ,\ \ \ 0.04687500\ )\ max\_err=\ 0.000866\ \ mean\_err=\ 0.000396}}
+\DoxyCodeLine{00163\ \ \ \ \ \{\ 34044,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 140\ :\ [\ \ 0.04687500\ ,\ \ \ 0.05078125\ )\ max\_err=\ 0.000874\ \ mean\_err=\ 0.000396}}
+\DoxyCodeLine{00164\ \ \ \ \ \{\ 34146,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 141\ :\ [\ \ 0.05078125\ ,\ \ \ 0.05468750\ )\ max\_err=\ 0.000881\ \ mean\_err=\ 0.000397}}
+\DoxyCodeLine{00165\ \ \ \ \ \{\ 34248,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 142\ :\ [\ \ 0.05468750\ ,\ \ \ 0.05859375\ )\ max\_err=\ 0.000889\ \ mean\_err=\ 0.000398}}
+\DoxyCodeLine{00166\ \ \ \ \ \{\ 34350,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 143\ :\ [\ \ 0.05859375\ ,\ \ \ 0.06250000\ )\ max\_err=\ 0.000896\ \ mean\_err=\ 0.000399}}
+\DoxyCodeLine{00167\ \ \ \ \ \{\ 34452,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 144\ :\ [\ \ 0.06250000\ ,\ \ \ 0.06640625\ )\ max\_err=\ 0.000903\ \ mean\_err=\ 0.000400}}
+\DoxyCodeLine{00168\ \ \ \ \ \{\ 34554,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 145\ :\ [\ \ 0.06640625\ ,\ \ \ 0.07031250\ )\ max\_err=\ 0.000911\ \ mean\_err=\ 0.000401}}
+\DoxyCodeLine{00169\ \ \ \ \ \{\ 34656,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 146\ :\ [\ \ 0.07031250\ ,\ \ \ 0.07421875\ )\ max\_err=\ 0.000918\ \ mean\_err=\ 0.000403}}
+\DoxyCodeLine{00170\ \ \ \ \ \{\ 34758,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 147\ :\ [\ \ 0.07421875\ ,\ \ \ 0.07812500\ )\ max\_err=\ 0.000926\ \ mean\_err=\ 0.000404}}
+\DoxyCodeLine{00171\ \ \ \ \ \{\ 34860,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 148\ :\ [\ \ 0.07812500\ ,\ \ \ 0.08203125\ )\ max\_err=\ 0.000933\ \ mean\_err=\ 0.000405}}
+\DoxyCodeLine{00172\ \ \ \ \ \{\ 34961,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 149\ :\ [\ \ 0.08203125\ ,\ \ \ 0.08593750\ )\ max\_err=\ 0.000940\ \ mean\_err=\ 0.000407}}
+\DoxyCodeLine{00173\ \ \ \ \ \{\ 35063,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 150\ :\ [\ \ 0.08593750\ ,\ \ \ 0.08984375\ )\ max\_err=\ 0.000948\ \ mean\_err=\ 0.000408}}
+\DoxyCodeLine{00174\ \ \ \ \ \{\ 35165,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 151\ :\ [\ \ 0.08984375\ ,\ \ \ 0.09375000\ )\ max\_err=\ 0.000955\ \ mean\_err=\ 0.000410}}
+\DoxyCodeLine{00175\ \ \ \ \ \{\ 35267,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 152\ :\ [\ \ 0.09375000\ ,\ \ \ 0.09765625\ )\ max\_err=\ 0.000962\ \ mean\_err=\ 0.000411}}
+\DoxyCodeLine{00176\ \ \ \ \ \{\ 35368,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 153\ :\ [\ \ 0.09765625\ ,\ \ \ 0.10156250\ )\ max\_err=\ 0.000970\ \ mean\_err=\ 0.000413}}
+\DoxyCodeLine{00177\ \ \ \ \ \{\ 35470,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 154\ :\ [\ \ 0.10156250\ ,\ \ \ 0.10546875\ )\ max\_err=\ 0.000977\ \ mean\_err=\ 0.000415}}
+\DoxyCodeLine{00178\ \ \ \ \ \{\ 35571,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 155\ :\ [\ \ 0.10546875\ ,\ \ \ 0.10937500\ )\ max\_err=\ 0.000984\ \ mean\_err=\ 0.000417}}
+\DoxyCodeLine{00179\ \ \ \ \ \{\ 35673,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 156\ :\ [\ \ 0.10937500\ ,\ \ \ 0.11328125\ )\ max\_err=\ 0.000992\ \ mean\_err=\ 0.000418}}
+\DoxyCodeLine{00180\ \ \ \ \ \{\ 35774,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 157\ :\ [\ \ 0.11328125\ ,\ \ \ 0.11718750\ )\ max\_err=\ 0.000999\ \ mean\_err=\ 0.000420}}
+\DoxyCodeLine{00181\ \ \ \ \ \{\ 35876,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 158\ :\ [\ \ 0.11718750\ ,\ \ \ 0.12109375\ )\ max\_err=\ 0.001006\ \ mean\_err=\ 0.000422}}
+\DoxyCodeLine{00182\ \ \ \ \ \{\ 35977,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 159\ :\ [\ \ 0.12109375\ ,\ \ \ 0.12500000\ )\ max\_err=\ 0.001013\ \ mean\_err=\ 0.000425}}
+\DoxyCodeLine{00183\ \ \ \ \ \{\ 36079,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 160\ :\ [\ \ 0.12500000\ ,\ \ \ 0.12890625\ )\ max\_err=\ 0.001021\ \ mean\_err=\ 0.000427}}
+\DoxyCodeLine{00184\ \ \ \ \ \{\ 36180,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 161\ :\ [\ \ 0.12890625\ ,\ \ \ 0.13281250\ )\ max\_err=\ 0.001028\ \ mean\_err=\ 0.000429}}
+\DoxyCodeLine{00185\ \ \ \ \ \{\ 36281,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 162\ :\ [\ \ 0.13281250\ ,\ \ \ 0.13671875\ )\ max\_err=\ 0.001035\ \ mean\_err=\ 0.000431}}
+\DoxyCodeLine{00186\ \ \ \ \ \{\ 36382,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 163\ :\ [\ \ 0.13671875\ ,\ \ \ 0.14062500\ )\ max\_err=\ 0.001042\ \ mean\_err=\ 0.000434}}
+\DoxyCodeLine{00187\ \ \ \ \ \{\ 36483,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 164\ :\ [\ \ 0.14062500\ ,\ \ \ 0.14453125\ )\ max\_err=\ 0.001050\ \ mean\_err=\ 0.000436}}
+\DoxyCodeLine{00188\ \ \ \ \ \{\ 36584,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 165\ :\ [\ \ 0.14453125\ ,\ \ \ 0.14843750\ )\ max\_err=\ 0.001057\ \ mean\_err=\ 0.000439}}
+\DoxyCodeLine{00189\ \ \ \ \ \{\ 36685,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 166\ :\ [\ \ 0.14843750\ ,\ \ \ 0.15234375\ )\ max\_err=\ 0.001064\ \ mean\_err=\ 0.000441}}
+\DoxyCodeLine{00190\ \ \ \ \ \{\ 36786,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 167\ :\ [\ \ 0.15234375\ ,\ \ \ 0.15625000\ )\ max\_err=\ 0.001071\ \ mean\_err=\ 0.000444}}
+\DoxyCodeLine{00191\ \ \ \ \ \{\ 36887,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 168\ :\ [\ \ 0.15625000\ ,\ \ \ 0.16015625\ )\ max\_err=\ 0.001078\ \ mean\_err=\ 0.000447}}
+\DoxyCodeLine{00192\ \ \ \ \ \{\ 36988,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 169\ :\ [\ \ 0.16015625\ ,\ \ \ 0.16406250\ )\ max\_err=\ 0.001085\ \ mean\_err=\ 0.000450}}
+\DoxyCodeLine{00193\ \ \ \ \ \{\ 37089,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 170\ :\ [\ \ 0.16406250\ ,\ \ \ 0.16796875\ )\ max\_err=\ 0.001093\ \ mean\_err=\ 0.000453}}
+\DoxyCodeLine{00194\ \ \ \ \ \{\ 37190,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 171\ :\ [\ \ 0.16796875\ ,\ \ \ 0.17187500\ )\ max\_err=\ 0.001100\ \ mean\_err=\ 0.000456}}
+\DoxyCodeLine{00195\ \ \ \ \ \{\ 37290,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 172\ :\ [\ \ 0.17187500\ ,\ \ \ 0.17578125\ )\ max\_err=\ 0.001107\ \ mean\_err=\ 0.000459}}
+\DoxyCodeLine{00196\ \ \ \ \ \{\ 37391,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 173\ :\ [\ \ 0.17578125\ ,\ \ \ 0.17968750\ )\ max\_err=\ 0.001114\ \ mean\_err=\ 0.000462}}
+\DoxyCodeLine{00197\ \ \ \ \ \{\ 37491,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 174\ :\ [\ \ 0.17968750\ ,\ \ \ 0.18359375\ )\ max\_err=\ 0.001121\ \ mean\_err=\ 0.000465}}
+\DoxyCodeLine{00198\ \ \ \ \ \{\ 37592,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 175\ :\ [\ \ 0.18359375\ ,\ \ \ 0.18750000\ )\ max\_err=\ 0.001128\ \ mean\_err=\ 0.000468}}
+\DoxyCodeLine{00199\ \ \ \ \ \{\ 37692,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 176\ :\ [\ \ 0.18750000\ ,\ \ \ 0.19140625\ )\ max\_err=\ 0.001135\ \ mean\_err=\ 0.000472}}
+\DoxyCodeLine{00200\ \ \ \ \ \{\ 37792,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 177\ :\ [\ \ 0.19140625\ ,\ \ \ 0.19531250\ )\ max\_err=\ 0.001142\ \ mean\_err=\ 0.000475}}
+\DoxyCodeLine{00201\ \ \ \ \ \{\ 37893,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 178\ :\ [\ \ 0.19531250\ ,\ \ \ 0.19921875\ )\ max\_err=\ 0.001149\ \ mean\_err=\ 0.000479}}
+\DoxyCodeLine{00202\ \ \ \ \ \{\ 37993,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 179\ :\ [\ \ 0.19921875\ ,\ \ \ 0.20312500\ )\ max\_err=\ 0.001156\ \ mean\_err=\ 0.000482}}
+\DoxyCodeLine{00203\ \ \ \ \ \{\ 38093,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 180\ :\ [\ \ 0.20312500\ ,\ \ \ 0.20703125\ )\ max\_err=\ 0.001163\ \ mean\_err=\ 0.000486}}
+\DoxyCodeLine{00204\ \ \ \ \ \{\ 38193,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 181\ :\ [\ \ 0.20703125\ ,\ \ \ 0.21093750\ )\ max\_err=\ 0.001170\ \ mean\_err=\ 0.000490}}
+\DoxyCodeLine{00205\ \ \ \ \ \{\ 38293,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 182\ :\ [\ \ 0.21093750\ ,\ \ \ 0.21484375\ )\ max\_err=\ 0.001177\ \ mean\_err=\ 0.000494}}
+\DoxyCodeLine{00206\ \ \ \ \ \{\ 38392,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 183\ :\ [\ \ 0.21484375\ ,\ \ \ 0.21875000\ )\ max\_err=\ 0.001184\ \ mean\_err=\ 0.000497}}
+\DoxyCodeLine{00207\ \ \ \ \ \{\ 38492,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 184\ :\ [\ \ 0.21875000\ ,\ \ \ 0.22265625\ )\ max\_err=\ 0.001191\ \ mean\_err=\ 0.000501}}
+\DoxyCodeLine{00208\ \ \ \ \ \{\ 38592,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 185\ :\ [\ \ 0.22265625\ ,\ \ \ 0.22656250\ )\ max\_err=\ 0.001198\ \ mean\_err=\ 0.000506}}
+\DoxyCodeLine{00209\ \ \ \ \ \{\ 38691,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 186\ :\ [\ \ 0.22656250\ ,\ \ \ 0.23046875\ )\ max\_err=\ 0.001205\ \ mean\_err=\ 0.000510}}
+\DoxyCodeLine{00210\ \ \ \ \ \{\ 38791,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 187\ :\ [\ \ 0.23046875\ ,\ \ \ 0.23437500\ )\ max\_err=\ 0.001212\ \ mean\_err=\ 0.000514}}
+\DoxyCodeLine{00211\ \ \ \ \ \{\ 38890,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 188\ :\ [\ \ 0.23437500\ ,\ \ \ 0.23828125\ )\ max\_err=\ 0.001219\ \ mean\_err=\ 0.000518}}
+\DoxyCodeLine{00212\ \ \ \ \ \{\ 38989,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 189\ :\ [\ \ 0.23828125\ ,\ \ \ 0.24218750\ )\ max\_err=\ 0.001226\ \ mean\_err=\ 0.000523}}
+\DoxyCodeLine{00213\ \ \ \ \ \{\ 39088,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 190\ :\ [\ \ 0.24218750\ ,\ \ \ 0.24609375\ )\ max\_err=\ 0.001233\ \ mean\_err=\ 0.000527}}
+\DoxyCodeLine{00214\ \ \ \ \ \{\ 39188,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 191\ :\ [\ \ 0.24609375\ ,\ \ \ 0.25000000\ )\ max\_err=\ 0.001240\ \ mean\_err=\ 0.000532}}
+\DoxyCodeLine{00215\ \ \ \ \ \{\ 39287,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 192\ :\ [\ \ 0.25000000\ ,\ \ \ 0.25390625\ )\ max\_err=\ 0.001247\ \ mean\_err=\ 0.000536}}
+\DoxyCodeLine{00216\ \ \ \ \ \{\ 39385,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 193\ :\ [\ \ 0.25390625\ ,\ \ \ 0.25781250\ )\ max\_err=\ 0.001253\ \ mean\_err=\ 0.000541}}
+\DoxyCodeLine{00217\ \ \ \ \ \{\ 39484,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 194\ :\ [\ \ 0.25781250\ ,\ \ \ 0.26171875\ )\ max\_err=\ 0.001260\ \ mean\_err=\ 0.000546}}
+\DoxyCodeLine{00218\ \ \ \ \ \{\ 39583,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 195\ :\ [\ \ 0.26171875\ ,\ \ \ 0.26562500\ )\ max\_err=\ 0.001267\ \ mean\_err=\ 0.000551}}
+\DoxyCodeLine{00219\ \ \ \ \ \{\ 39682,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 196\ :\ [\ \ 0.26562500\ ,\ \ \ 0.26953125\ )\ max\_err=\ 0.001274\ \ mean\_err=\ 0.000556}}
+\DoxyCodeLine{00220\ \ \ \ \ \{\ 39780,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 197\ :\ [\ \ 0.26953125\ ,\ \ \ 0.27343750\ )\ max\_err=\ 0.001281\ \ mean\_err=\ 0.000561}}
+\DoxyCodeLine{00221\ \ \ \ \ \{\ 39878,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 198\ :\ [\ \ 0.27343750\ ,\ \ \ 0.27734375\ )\ max\_err=\ 0.001288\ \ mean\_err=\ 0.000566}}
+\DoxyCodeLine{00222\ \ \ \ \ \{\ 39977,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 199\ :\ [\ \ 0.27734375\ ,\ \ \ 0.28125000\ )\ max\_err=\ 0.001294\ \ mean\_err=\ 0.000571}}
+\DoxyCodeLine{00223\ \ \ \ \ \{\ 40075,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 200\ :\ [\ \ 0.28125000\ ,\ \ \ 0.28515625\ )\ max\_err=\ 0.001301\ \ mean\_err=\ 0.000576}}
+\DoxyCodeLine{00224\ \ \ \ \ \{\ 40173,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 201\ :\ [\ \ 0.28515625\ ,\ \ \ 0.28906250\ )\ max\_err=\ 0.001308\ \ mean\_err=\ 0.000582}}
+\DoxyCodeLine{00225\ \ \ \ \ \{\ 40271,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 202\ :\ [\ \ 0.28906250\ ,\ \ \ 0.29296875\ )\ max\_err=\ 0.001315\ \ mean\_err=\ 0.000587}}
+\DoxyCodeLine{00226\ \ \ \ \ \{\ 40369,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 203\ :\ [\ \ 0.29296875\ ,\ \ \ 0.29687500\ )\ max\_err=\ 0.001321\ \ mean\_err=\ 0.000593}}
+\DoxyCodeLine{00227\ \ \ \ \ \{\ 40466,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 204\ :\ [\ \ 0.29687500\ ,\ \ \ 0.30078125\ )\ max\_err=\ 0.001328\ \ mean\_err=\ 0.000599}}
+\DoxyCodeLine{00228\ \ \ \ \ \{\ 40564,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 205\ :\ [\ \ 0.30078125\ ,\ \ \ 0.30468750\ )\ max\_err=\ 0.001335\ \ mean\_err=\ 0.000604}}
+\DoxyCodeLine{00229\ \ \ \ \ \{\ 40662,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 206\ :\ [\ \ 0.30468750\ ,\ \ \ 0.30859375\ )\ max\_err=\ 0.001342\ \ mean\_err=\ 0.000610}}
+\DoxyCodeLine{00230\ \ \ \ \ \{\ 40759,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 207\ :\ [\ \ 0.30859375\ ,\ \ \ 0.31250000\ )\ max\_err=\ 0.001348\ \ mean\_err=\ 0.000616}}
+\DoxyCodeLine{00231\ \ \ \ \ \{\ 40856,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 208\ :\ [\ \ 0.31250000\ ,\ \ \ 0.31640625\ )\ max\_err=\ 0.001355\ \ mean\_err=\ 0.000622}}
+\DoxyCodeLine{00232\ \ \ \ \ \{\ 40953,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 209\ :\ [\ \ 0.31640625\ ,\ \ \ 0.32031250\ )\ max\_err=\ 0.001362\ \ mean\_err=\ 0.000628}}
+\DoxyCodeLine{00233\ \ \ \ \ \{\ 41050,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 210\ :\ [\ \ 0.32031250\ ,\ \ \ 0.32421875\ )\ max\_err=\ 0.001369\ \ mean\_err=\ 0.000635}}
+\DoxyCodeLine{00234\ \ \ \ \ \{\ 41147,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 211\ :\ [\ \ 0.32421875\ ,\ \ \ 0.32812500\ )\ max\_err=\ 0.001375\ \ mean\_err=\ 0.000641}}
+\DoxyCodeLine{00235\ \ \ \ \ \{\ 41244,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 212\ :\ [\ \ 0.32812500\ ,\ \ \ 0.33203125\ )\ max\_err=\ 0.001382\ \ mean\_err=\ 0.000647}}
+\DoxyCodeLine{00236\ \ \ \ \ \{\ 41341,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 213\ :\ [\ \ 0.33203125\ ,\ \ \ 0.33593750\ )\ max\_err=\ 0.001389\ \ mean\_err=\ 0.000654}}
+\DoxyCodeLine{00237\ \ \ \ \ \{\ 41437,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 214\ :\ [\ \ 0.33593750\ ,\ \ \ 0.33984375\ )\ max\_err=\ 0.001395\ \ mean\_err=\ 0.000660}}
+\DoxyCodeLine{00238\ \ \ \ \ \{\ 41534,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 215\ :\ [\ \ 0.33984375\ ,\ \ \ 0.34375000\ )\ max\_err=\ 0.001402\ \ mean\_err=\ 0.000667}}
+\DoxyCodeLine{00239\ \ \ \ \ \{\ 41630,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 216\ :\ [\ \ 0.34375000\ ,\ \ \ 0.34765625\ )\ max\_err=\ 0.001408\ \ mean\_err=\ 0.000674}}
+\DoxyCodeLine{00240\ \ \ \ \ \{\ 41726,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 217\ :\ [\ \ 0.34765625\ ,\ \ \ 0.35156250\ )\ max\_err=\ 0.001415\ \ mean\_err=\ 0.000681}}
+\DoxyCodeLine{00241\ \ \ \ \ \{\ 41822,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 218\ :\ [\ \ 0.35156250\ ,\ \ \ 0.35546875\ )\ max\_err=\ 0.001422\ \ mean\_err=\ 0.000688}}
+\DoxyCodeLine{00242\ \ \ \ \ \{\ 41918,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 219\ :\ [\ \ 0.35546875\ ,\ \ \ 0.35937500\ )\ max\_err=\ 0.001428\ \ mean\_err=\ 0.000695}}
+\DoxyCodeLine{00243\ \ \ \ \ \{\ 42014,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 220\ :\ [\ \ 0.35937500\ ,\ \ \ 0.36328125\ )\ max\_err=\ 0.001435\ \ mean\_err=\ 0.000702}}
+\DoxyCodeLine{00244\ \ \ \ \ \{\ 42109,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 221\ :\ [\ \ 0.36328125\ ,\ \ \ 0.36718750\ )\ max\_err=\ 0.001441\ \ mean\_err=\ 0.000709}}
+\DoxyCodeLine{00245\ \ \ \ \ \{\ 42205,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 222\ :\ [\ \ 0.36718750\ ,\ \ \ 0.37109375\ )\ max\_err=\ 0.001448\ \ mean\_err=\ 0.000717}}
+\DoxyCodeLine{00246\ \ \ \ \ \{\ 42300,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 223\ :\ [\ \ 0.37109375\ ,\ \ \ 0.37500000\ )\ max\_err=\ 0.001455\ \ mean\_err=\ 0.000724}}
+\DoxyCodeLine{00247\ \ \ \ \ \{\ 42395,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 224\ :\ [\ \ 0.37500000\ ,\ \ \ 0.37890625\ )\ max\_err=\ 0.001461\ \ mean\_err=\ 0.000732}}
+\DoxyCodeLine{00248\ \ \ \ \ \{\ 42490,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 225\ :\ [\ \ 0.37890625\ ,\ \ \ 0.38281250\ )\ max\_err=\ 0.001468\ \ mean\_err=\ 0.000739}}
+\DoxyCodeLine{00249\ \ \ \ \ \{\ 42585,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 226\ :\ [\ \ 0.38281250\ ,\ \ \ 0.38671875\ )\ max\_err=\ 0.001474\ \ mean\_err=\ 0.000747}}
+\DoxyCodeLine{00250\ \ \ \ \ \{\ 42680,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 227\ :\ [\ \ 0.38671875\ ,\ \ \ 0.39062500\ )\ max\_err=\ 0.001481\ \ mean\_err=\ 0.000755}}
+\DoxyCodeLine{00251\ \ \ \ \ \{\ 42775,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 228\ :\ [\ \ 0.39062500\ ,\ \ \ 0.39453125\ )\ max\_err=\ 0.001487\ \ mean\_err=\ 0.000762}}
+\DoxyCodeLine{00252\ \ \ \ \ \{\ 42869,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 229\ :\ [\ \ 0.39453125\ ,\ \ \ 0.39843750\ )\ max\_err=\ 0.001494\ \ mean\_err=\ 0.000770}}
+\DoxyCodeLine{00253\ \ \ \ \ \{\ 42963,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 230\ :\ [\ \ 0.39843750\ ,\ \ \ 0.40234375\ )\ max\_err=\ 0.001500\ \ mean\_err=\ 0.000777}}
+\DoxyCodeLine{00254\ \ \ \ \ \{\ 43058,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 231\ :\ [\ \ 0.40234375\ ,\ \ \ 0.40625000\ )\ max\_err=\ 0.001507\ \ mean\_err=\ 0.000785}}
+\DoxyCodeLine{00255\ \ \ \ \ \{\ 43152,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 232\ :\ [\ \ 0.40625000\ ,\ \ \ 0.41015625\ )\ max\_err=\ 0.001513\ \ mean\_err=\ 0.000793}}
+\DoxyCodeLine{00256\ \ \ \ \ \{\ 43246,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 233\ :\ [\ \ 0.41015625\ ,\ \ \ 0.41406250\ )\ max\_err=\ 0.001520\ \ mean\_err=\ 0.000800}}
+\DoxyCodeLine{00257\ \ \ \ \ \{\ 43339,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 234\ :\ [\ \ 0.41406250\ ,\ \ \ 0.41796875\ )\ max\_err=\ 0.001526\ \ mean\_err=\ 0.000808}}
+\DoxyCodeLine{00258\ \ \ \ \ \{\ 43433,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 235\ :\ [\ \ 0.41796875\ ,\ \ \ 0.42187500\ )\ max\_err=\ 0.001533\ \ mean\_err=\ 0.000816}}
+\DoxyCodeLine{00259\ \ \ \ \ \{\ 43526,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 236\ :\ [\ \ 0.42187500\ ,\ \ \ 0.42578125\ )\ max\_err=\ 0.001539\ \ mean\_err=\ 0.000823}}
+\DoxyCodeLine{00260\ \ \ \ \ \{\ 43620,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 237\ :\ [\ \ 0.42578125\ ,\ \ \ 0.42968750\ )\ max\_err=\ 0.001545\ \ mean\_err=\ 0.000831}}
+\DoxyCodeLine{00261\ \ \ \ \ \{\ 43713,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 238\ :\ [\ \ 0.42968750\ ,\ \ \ 0.43359375\ )\ max\_err=\ 0.001552\ \ mean\_err=\ 0.000838}}
+\DoxyCodeLine{00262\ \ \ \ \ \{\ 43806,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 239\ :\ [\ \ 0.43359375\ ,\ \ \ 0.43750000\ )\ max\_err=\ 0.001558\ \ mean\_err=\ 0.000846}}
+\DoxyCodeLine{00263\ \ \ \ \ \{\ 43898,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 240\ :\ [\ \ 0.43750000\ ,\ \ \ 0.44140625\ )\ max\_err=\ 0.001565\ \ mean\_err=\ 0.000854}}
+\DoxyCodeLine{00264\ \ \ \ \ \{\ 43991,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 241\ :\ [\ \ 0.44140625\ ,\ \ \ 0.44531250\ )\ max\_err=\ 0.001571\ \ mean\_err=\ 0.000861}}
+\DoxyCodeLine{00265\ \ \ \ \ \{\ 44084,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 242\ :\ [\ \ 0.44531250\ ,\ \ \ 0.44921875\ )\ max\_err=\ 0.001578\ \ mean\_err=\ 0.000869}}
+\DoxyCodeLine{00266\ \ \ \ \ \{\ 44176,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 243\ :\ [\ \ 0.44921875\ ,\ \ \ 0.45312500\ )\ max\_err=\ 0.001584\ \ mean\_err=\ 0.000877}}
+\DoxyCodeLine{00267\ \ \ \ \ \{\ 44268,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 244\ :\ [\ \ 0.45312500\ ,\ \ \ 0.45703125\ )\ max\_err=\ 0.001590\ \ mean\_err=\ 0.000884}}
+\DoxyCodeLine{00268\ \ \ \ \ \{\ 44360,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 245\ :\ [\ \ 0.45703125\ ,\ \ \ 0.46093750\ )\ max\_err=\ 0.001597\ \ mean\_err=\ 0.000892}}
+\DoxyCodeLine{00269\ \ \ \ \ \{\ 44452,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 246\ :\ [\ \ 0.46093750\ ,\ \ \ 0.46484375\ )\ max\_err=\ 0.001603\ \ mean\_err=\ 0.000899}}
+\DoxyCodeLine{00270\ \ \ \ \ \{\ 44544,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 247\ :\ [\ \ 0.46484375\ ,\ \ \ 0.46875000\ )\ max\_err=\ 0.001609\ \ mean\_err=\ 0.000907}}
+\DoxyCodeLine{00271\ \ \ \ \ \{\ 44635,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 248\ :\ [\ \ 0.46875000\ ,\ \ \ 0.47265625\ )\ max\_err=\ 0.001616\ \ mean\_err=\ 0.000915}}
+\DoxyCodeLine{00272\ \ \ \ \ \{\ 44726,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 249\ :\ [\ \ 0.47265625\ ,\ \ \ 0.47656250\ )\ max\_err=\ 0.001622\ \ mean\_err=\ 0.000922}}
+\DoxyCodeLine{00273\ \ \ \ \ \{\ 44818,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 250\ :\ [\ \ 0.47656250\ ,\ \ \ 0.48046875\ )\ max\_err=\ 0.001628\ \ mean\_err=\ 0.000930}}
+\DoxyCodeLine{00274\ \ \ \ \ \{\ 44909,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 251\ :\ [\ \ 0.48046875\ ,\ \ \ 0.48437500\ )\ max\_err=\ 0.001635\ \ mean\_err=\ 0.000937}}
+\DoxyCodeLine{00275\ \ \ \ \ \{\ 44999,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 252\ :\ [\ \ 0.48437500\ ,\ \ \ 0.48828125\ )\ max\_err=\ 0.001641\ \ mean\_err=\ 0.000945}}
+\DoxyCodeLine{00276\ \ \ \ \ \{\ 45090,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 253\ :\ [\ \ 0.48828125\ ,\ \ \ 0.49218750\ )\ max\_err=\ 0.001647\ \ mean\_err=\ 0.000953}}
+\DoxyCodeLine{00277\ \ \ \ \ \{\ 45181,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 254\ :\ [\ \ 0.49218750\ ,\ \ \ 0.49609375\ )\ max\_err=\ 0.001653\ \ mean\_err=\ 0.000960}}
+\DoxyCodeLine{00278\ \ \ \ \ \{\ 45271,\ -\/128,\ 0,\ 0,\ 0,\ 0\ \},\ \ \textcolor{comment}{//\ Interval\ 255\ :\ [\ \ 0.49609375\ ,\ \ \ 0.50000000\ )\ max\_err=\ 0.001660\ \ mean\_err=\ 0.000968}}
+\DoxyCodeLine{00279\ \};}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \textcolor{comment}{//\ Per-\/interval\ error\ bounds\ (max\ abs\ error)}}
+\DoxyCodeLine{00282\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_ac5f4307844c92f00d0e98a514e5c6770}{max\_errors}}[\mbox{\hyperlink{namespacetakum_1_1internal_1_1phi_ad8447acc7f2385266be34e69fa4f943f}{NUM\_INTERVALS}}]\ =\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ 0.001669,\ \ \textcolor{comment}{//\ Interval\ \ \ 0}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ 0.001663,\ \ \textcolor{comment}{//\ Interval\ \ \ 1}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ 0.001657,\ \ \textcolor{comment}{//\ Interval\ \ \ 2}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ 0.001650,\ \ \textcolor{comment}{//\ Interval\ \ \ 3}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ 0.001644,\ \ \textcolor{comment}{//\ Interval\ \ \ 4}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ 0.001638,\ \ \textcolor{comment}{//\ Interval\ \ \ 5}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ 0.001631,\ \ \textcolor{comment}{//\ Interval\ \ \ 6}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ 0.001625,\ \ \textcolor{comment}{//\ Interval\ \ \ 7}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ 0.001619,\ \ \textcolor{comment}{//\ Interval\ \ \ 8}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ 0.001612,\ \ \textcolor{comment}{//\ Interval\ \ \ 9}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ 0.001606,\ \ \textcolor{comment}{//\ Interval\ \ 10}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ 0.001599,\ \ \textcolor{comment}{//\ Interval\ \ 11}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ 0.001593,\ \ \textcolor{comment}{//\ Interval\ \ 12}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ 0.001587,\ \ \textcolor{comment}{//\ Interval\ \ 13}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ 0.001580,\ \ \textcolor{comment}{//\ Interval\ \ 14}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ 0.001574,\ \ \textcolor{comment}{//\ Interval\ \ 15}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ 0.001567,\ \ \textcolor{comment}{//\ Interval\ \ 16}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ 0.001561,\ \ \textcolor{comment}{//\ Interval\ \ 17}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ 0.001555,\ \ \textcolor{comment}{//\ Interval\ \ 18}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ 0.001548,\ \ \textcolor{comment}{//\ Interval\ \ 19}}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ 0.001542,\ \ \textcolor{comment}{//\ Interval\ \ 20}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ 0.001535,\ \ \textcolor{comment}{//\ Interval\ \ 21}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ 0.001529,\ \ \textcolor{comment}{//\ Interval\ \ 22}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ 0.001522,\ \ \textcolor{comment}{//\ Interval\ \ 23}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ 0.001516,\ \ \textcolor{comment}{//\ Interval\ \ 24}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ 0.001509,\ \ \textcolor{comment}{//\ Interval\ \ 25}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ 0.001503,\ \ \textcolor{comment}{//\ Interval\ \ 26}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ 0.001496,\ \ \textcolor{comment}{//\ Interval\ \ 27}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ 0.001490,\ \ \textcolor{comment}{//\ Interval\ \ 28}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ 0.001483,\ \ \textcolor{comment}{//\ Interval\ \ 29}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ 0.001476,\ \ \textcolor{comment}{//\ Interval\ \ 30}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ 0.001470,\ \ \textcolor{comment}{//\ Interval\ \ 31}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ 0.001463,\ \ \textcolor{comment}{//\ Interval\ \ 32}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ 0.001457,\ \ \textcolor{comment}{//\ Interval\ \ 33}}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ 0.001450,\ \ \textcolor{comment}{//\ Interval\ \ 34}}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ 0.001444,\ \ \textcolor{comment}{//\ Interval\ \ 35}}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ 0.001437,\ \ \textcolor{comment}{//\ Interval\ \ 36}}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ 0.001430,\ \ \textcolor{comment}{//\ Interval\ \ 37}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ 0.001424,\ \ \textcolor{comment}{//\ Interval\ \ 38}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ 0.001417,\ \ \textcolor{comment}{//\ Interval\ \ 39}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ 0.001410,\ \ \textcolor{comment}{//\ Interval\ \ 40}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ 0.001404,\ \ \textcolor{comment}{//\ Interval\ \ 41}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ 0.001397,\ \ \textcolor{comment}{//\ Interval\ \ 42}}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ 0.001390,\ \ \textcolor{comment}{//\ Interval\ \ 43}}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ 0.001384,\ \ \textcolor{comment}{//\ Interval\ \ 44}}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ 0.001377,\ \ \textcolor{comment}{//\ Interval\ \ 45}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ 0.001370,\ \ \textcolor{comment}{//\ Interval\ \ 46}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ 0.001364,\ \ \textcolor{comment}{//\ Interval\ \ 47}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ 0.001357,\ \ \textcolor{comment}{//\ Interval\ \ 48}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ 0.001350,\ \ \textcolor{comment}{//\ Interval\ \ 49}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ 0.001343,\ \ \textcolor{comment}{//\ Interval\ \ 50}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ 0.001337,\ \ \textcolor{comment}{//\ Interval\ \ 51}}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ 0.001330,\ \ \textcolor{comment}{//\ Interval\ \ 52}}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ 0.001323,\ \ \textcolor{comment}{//\ Interval\ \ 53}}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ 0.001316,\ \ \textcolor{comment}{//\ Interval\ \ 54}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ 0.001309,\ \ \textcolor{comment}{//\ Interval\ \ 55}}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ 0.001303,\ \ \textcolor{comment}{//\ Interval\ \ 56}}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ 0.001296,\ \ \textcolor{comment}{//\ Interval\ \ 57}}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ 0.001289,\ \ \textcolor{comment}{//\ Interval\ \ 58}}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ 0.001282,\ \ \textcolor{comment}{//\ Interval\ \ 59}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ 0.001275,\ \ \textcolor{comment}{//\ Interval\ \ 60}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ 0.001268,\ \ \textcolor{comment}{//\ Interval\ \ 61}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ 0.001262,\ \ \textcolor{comment}{//\ Interval\ \ 62}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ 0.001255,\ \ \textcolor{comment}{//\ Interval\ \ 63}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ 0.001248,\ \ \textcolor{comment}{//\ Interval\ \ 64}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ 0.001241,\ \ \textcolor{comment}{//\ Interval\ \ 65}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ 0.001234,\ \ \textcolor{comment}{//\ Interval\ \ 66}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ 0.001227,\ \ \textcolor{comment}{//\ Interval\ \ 67}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ 0.001220,\ \ \textcolor{comment}{//\ Interval\ \ 68}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ 0.001213,\ \ \textcolor{comment}{//\ Interval\ \ 69}}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ 0.001206,\ \ \textcolor{comment}{//\ Interval\ \ 70}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ 0.001199,\ \ \textcolor{comment}{//\ Interval\ \ 71}}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ 0.001192,\ \ \textcolor{comment}{//\ Interval\ \ 72}}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ 0.001185,\ \ \textcolor{comment}{//\ Interval\ \ 73}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ 0.001178,\ \ \textcolor{comment}{//\ Interval\ \ 74}}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ 0.001171,\ \ \textcolor{comment}{//\ Interval\ \ 75}}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ 0.001164,\ \ \textcolor{comment}{//\ Interval\ \ 76}}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ 0.001157,\ \ \textcolor{comment}{//\ Interval\ \ 77}}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ 0.001150,\ \ \textcolor{comment}{//\ Interval\ \ 78}}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ 0.001143,\ \ \textcolor{comment}{//\ Interval\ \ 79}}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ 0.001136,\ \ \textcolor{comment}{//\ Interval\ \ 80}}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ 0.001129,\ \ \textcolor{comment}{//\ Interval\ \ 81}}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ 0.001122,\ \ \textcolor{comment}{//\ Interval\ \ 82}}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ 0.001115,\ \ \textcolor{comment}{//\ Interval\ \ 83}}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ 0.001108,\ \ \textcolor{comment}{//\ Interval\ \ 84}}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ 0.001100,\ \ \textcolor{comment}{//\ Interval\ \ 85}}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ 0.001093,\ \ \textcolor{comment}{//\ Interval\ \ 86}}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ 0.001086,\ \ \textcolor{comment}{//\ Interval\ \ 87}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ 0.001079,\ \ \textcolor{comment}{//\ Interval\ \ 88}}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ 0.001072,\ \ \textcolor{comment}{//\ Interval\ \ 89}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ 0.001065,\ \ \textcolor{comment}{//\ Interval\ \ 90}}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ 0.001057,\ \ \textcolor{comment}{//\ Interval\ \ 91}}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ 0.001050,\ \ \textcolor{comment}{//\ Interval\ \ 92}}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ 0.001043,\ \ \textcolor{comment}{//\ Interval\ \ 93}}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ 0.001036,\ \ \textcolor{comment}{//\ Interval\ \ 94}}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ 0.001028,\ \ \textcolor{comment}{//\ Interval\ \ 95}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ 0.001021,\ \ \textcolor{comment}{//\ Interval\ \ 96}}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ 0.001014,\ \ \textcolor{comment}{//\ Interval\ \ 97}}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ 0.001007,\ \ \textcolor{comment}{//\ Interval\ \ 98}}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ 0.000999,\ \ \textcolor{comment}{//\ Interval\ \ 99}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ 0.000992,\ \ \textcolor{comment}{//\ Interval\ 100}}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ 0.000985,\ \ \textcolor{comment}{//\ Interval\ 101}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ 0.000977,\ \ \textcolor{comment}{//\ Interval\ 102}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ 0.000970,\ \ \textcolor{comment}{//\ Interval\ 103}}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ 0.000963,\ \ \textcolor{comment}{//\ Interval\ 104}}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ 0.000955,\ \ \textcolor{comment}{//\ Interval\ 105}}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ 0.000948,\ \ \textcolor{comment}{//\ Interval\ 106}}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ 0.000941,\ \ \textcolor{comment}{//\ Interval\ 107}}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ 0.000933,\ \ \textcolor{comment}{//\ Interval\ 108}}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ 0.000926,\ \ \textcolor{comment}{//\ Interval\ 109}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ 0.000918,\ \ \textcolor{comment}{//\ Interval\ 110}}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ 0.000911,\ \ \textcolor{comment}{//\ Interval\ 111}}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ 0.000904,\ \ \textcolor{comment}{//\ Interval\ 112}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ 0.000896,\ \ \textcolor{comment}{//\ Interval\ 113}}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ 0.000889,\ \ \textcolor{comment}{//\ Interval\ 114}}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ 0.000881,\ \ \textcolor{comment}{//\ Interval\ 115}}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ 0.000874,\ \ \textcolor{comment}{//\ Interval\ 116}}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ 0.000866,\ \ \textcolor{comment}{//\ Interval\ 117}}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ 0.000859,\ \ \textcolor{comment}{//\ Interval\ 118}}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ 0.000851,\ \ \textcolor{comment}{//\ Interval\ 119}}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ 0.000844,\ \ \textcolor{comment}{//\ Interval\ 120}}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ 0.000836,\ \ \textcolor{comment}{//\ Interval\ 121}}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ 0.000829,\ \ \textcolor{comment}{//\ Interval\ 122}}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ 0.000821,\ \ \textcolor{comment}{//\ Interval\ 123}}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ 0.000813,\ \ \textcolor{comment}{//\ Interval\ 124}}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ 0.000806,\ \ \textcolor{comment}{//\ Interval\ 125}}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ 0.000798,\ \ \textcolor{comment}{//\ Interval\ 126}}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ 0.000791,\ \ \textcolor{comment}{//\ Interval\ 127}}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ 0.000783,\ \ \textcolor{comment}{//\ Interval\ 128}}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ 0.000791,\ \ \textcolor{comment}{//\ Interval\ 129}}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ 0.000798,\ \ \textcolor{comment}{//\ Interval\ 130}}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ 0.000806,\ \ \textcolor{comment}{//\ Interval\ 131}}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ 0.000813,\ \ \textcolor{comment}{//\ Interval\ 132}}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ 0.000821,\ \ \textcolor{comment}{//\ Interval\ 133}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ 0.000829,\ \ \textcolor{comment}{//\ Interval\ 134}}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ 0.000836,\ \ \textcolor{comment}{//\ Interval\ 135}}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ 0.000844,\ \ \textcolor{comment}{//\ Interval\ 136}}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ 0.000851,\ \ \textcolor{comment}{//\ Interval\ 137}}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ 0.000859,\ \ \textcolor{comment}{//\ Interval\ 138}}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ 0.000866,\ \ \textcolor{comment}{//\ Interval\ 139}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ 0.000874,\ \ \textcolor{comment}{//\ Interval\ 140}}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ 0.000881,\ \ \textcolor{comment}{//\ Interval\ 141}}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ 0.000889,\ \ \textcolor{comment}{//\ Interval\ 142}}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ 0.000896,\ \ \textcolor{comment}{//\ Interval\ 143}}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ 0.000903,\ \ \textcolor{comment}{//\ Interval\ 144}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ 0.000911,\ \ \textcolor{comment}{//\ Interval\ 145}}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ 0.000918,\ \ \textcolor{comment}{//\ Interval\ 146}}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ 0.000926,\ \ \textcolor{comment}{//\ Interval\ 147}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ 0.000933,\ \ \textcolor{comment}{//\ Interval\ 148}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ 0.000940,\ \ \textcolor{comment}{//\ Interval\ 149}}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ 0.000948,\ \ \textcolor{comment}{//\ Interval\ 150}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ 0.000955,\ \ \textcolor{comment}{//\ Interval\ 151}}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ 0.000962,\ \ \textcolor{comment}{//\ Interval\ 152}}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ 0.000970,\ \ \textcolor{comment}{//\ Interval\ 153}}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ 0.000977,\ \ \textcolor{comment}{//\ Interval\ 154}}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ 0.000984,\ \ \textcolor{comment}{//\ Interval\ 155}}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ 0.000992,\ \ \textcolor{comment}{//\ Interval\ 156}}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ 0.000999,\ \ \textcolor{comment}{//\ Interval\ 157}}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ 0.001006,\ \ \textcolor{comment}{//\ Interval\ 158}}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ 0.001013,\ \ \textcolor{comment}{//\ Interval\ 159}}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ 0.001021,\ \ \textcolor{comment}{//\ Interval\ 160}}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ 0.001028,\ \ \textcolor{comment}{//\ Interval\ 161}}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ 0.001035,\ \ \textcolor{comment}{//\ Interval\ 162}}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ 0.001042,\ \ \textcolor{comment}{//\ Interval\ 163}}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ 0.001050,\ \ \textcolor{comment}{//\ Interval\ 164}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ 0.001057,\ \ \textcolor{comment}{//\ Interval\ 165}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ 0.001064,\ \ \textcolor{comment}{//\ Interval\ 166}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ 0.001071,\ \ \textcolor{comment}{//\ Interval\ 167}}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ 0.001078,\ \ \textcolor{comment}{//\ Interval\ 168}}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ 0.001085,\ \ \textcolor{comment}{//\ Interval\ 169}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ 0.001093,\ \ \textcolor{comment}{//\ Interval\ 170}}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ 0.001100,\ \ \textcolor{comment}{//\ Interval\ 171}}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ 0.001107,\ \ \textcolor{comment}{//\ Interval\ 172}}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ 0.001114,\ \ \textcolor{comment}{//\ Interval\ 173}}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ 0.001121,\ \ \textcolor{comment}{//\ Interval\ 174}}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ 0.001128,\ \ \textcolor{comment}{//\ Interval\ 175}}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ 0.001135,\ \ \textcolor{comment}{//\ Interval\ 176}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ 0.001142,\ \ \textcolor{comment}{//\ Interval\ 177}}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ 0.001149,\ \ \textcolor{comment}{//\ Interval\ 178}}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ 0.001156,\ \ \textcolor{comment}{//\ Interval\ 179}}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ 0.001163,\ \ \textcolor{comment}{//\ Interval\ 180}}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ 0.001170,\ \ \textcolor{comment}{//\ Interval\ 181}}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ 0.001177,\ \ \textcolor{comment}{//\ Interval\ 182}}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ 0.001184,\ \ \textcolor{comment}{//\ Interval\ 183}}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ 0.001191,\ \ \textcolor{comment}{//\ Interval\ 184}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ 0.001198,\ \ \textcolor{comment}{//\ Interval\ 185}}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ 0.001205,\ \ \textcolor{comment}{//\ Interval\ 186}}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ 0.001212,\ \ \textcolor{comment}{//\ Interval\ 187}}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ 0.001219,\ \ \textcolor{comment}{//\ Interval\ 188}}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ 0.001226,\ \ \textcolor{comment}{//\ Interval\ 189}}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ 0.001233,\ \ \textcolor{comment}{//\ Interval\ 190}}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ 0.001240,\ \ \textcolor{comment}{//\ Interval\ 191}}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ 0.001247,\ \ \textcolor{comment}{//\ Interval\ 192}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ 0.001253,\ \ \textcolor{comment}{//\ Interval\ 193}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ 0.001260,\ \ \textcolor{comment}{//\ Interval\ 194}}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ 0.001267,\ \ \textcolor{comment}{//\ Interval\ 195}}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ 0.001274,\ \ \textcolor{comment}{//\ Interval\ 196}}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ 0.001281,\ \ \textcolor{comment}{//\ Interval\ 197}}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ 0.001288,\ \ \textcolor{comment}{//\ Interval\ 198}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ 0.001294,\ \ \textcolor{comment}{//\ Interval\ 199}}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ 0.001301,\ \ \textcolor{comment}{//\ Interval\ 200}}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ 0.001308,\ \ \textcolor{comment}{//\ Interval\ 201}}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ 0.001315,\ \ \textcolor{comment}{//\ Interval\ 202}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ 0.001321,\ \ \textcolor{comment}{//\ Interval\ 203}}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ 0.001328,\ \ \textcolor{comment}{//\ Interval\ 204}}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ 0.001335,\ \ \textcolor{comment}{//\ Interval\ 205}}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ 0.001342,\ \ \textcolor{comment}{//\ Interval\ 206}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ 0.001348,\ \ \textcolor{comment}{//\ Interval\ 207}}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ 0.001355,\ \ \textcolor{comment}{//\ Interval\ 208}}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ 0.001362,\ \ \textcolor{comment}{//\ Interval\ 209}}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ 0.001369,\ \ \textcolor{comment}{//\ Interval\ 210}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ 0.001375,\ \ \textcolor{comment}{//\ Interval\ 211}}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ 0.001382,\ \ \textcolor{comment}{//\ Interval\ 212}}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ 0.001389,\ \ \textcolor{comment}{//\ Interval\ 213}}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ 0.001395,\ \ \textcolor{comment}{//\ Interval\ 214}}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ 0.001402,\ \ \textcolor{comment}{//\ Interval\ 215}}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ 0.001408,\ \ \textcolor{comment}{//\ Interval\ 216}}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ 0.001415,\ \ \textcolor{comment}{//\ Interval\ 217}}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ 0.001422,\ \ \textcolor{comment}{//\ Interval\ 218}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ 0.001428,\ \ \textcolor{comment}{//\ Interval\ 219}}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ 0.001435,\ \ \textcolor{comment}{//\ Interval\ 220}}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ 0.001441,\ \ \textcolor{comment}{//\ Interval\ 221}}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ 0.001448,\ \ \textcolor{comment}{//\ Interval\ 222}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ 0.001455,\ \ \textcolor{comment}{//\ Interval\ 223}}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ 0.001461,\ \ \textcolor{comment}{//\ Interval\ 224}}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ 0.001468,\ \ \textcolor{comment}{//\ Interval\ 225}}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ 0.001474,\ \ \textcolor{comment}{//\ Interval\ 226}}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ 0.001481,\ \ \textcolor{comment}{//\ Interval\ 227}}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ 0.001487,\ \ \textcolor{comment}{//\ Interval\ 228}}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ 0.001494,\ \ \textcolor{comment}{//\ Interval\ 229}}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ 0.001500,\ \ \textcolor{comment}{//\ Interval\ 230}}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ 0.001507,\ \ \textcolor{comment}{//\ Interval\ 231}}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ 0.001513,\ \ \textcolor{comment}{//\ Interval\ 232}}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ 0.001520,\ \ \textcolor{comment}{//\ Interval\ 233}}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ 0.001526,\ \ \textcolor{comment}{//\ Interval\ 234}}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ 0.001533,\ \ \textcolor{comment}{//\ Interval\ 235}}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ 0.001539,\ \ \textcolor{comment}{//\ Interval\ 236}}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ 0.001545,\ \ \textcolor{comment}{//\ Interval\ 237}}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ 0.001552,\ \ \textcolor{comment}{//\ Interval\ 238}}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ 0.001558,\ \ \textcolor{comment}{//\ Interval\ 239}}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ 0.001565,\ \ \textcolor{comment}{//\ Interval\ 240}}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ 0.001571,\ \ \textcolor{comment}{//\ Interval\ 241}}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ 0.001578,\ \ \textcolor{comment}{//\ Interval\ 242}}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ 0.001584,\ \ \textcolor{comment}{//\ Interval\ 243}}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ 0.001590,\ \ \textcolor{comment}{//\ Interval\ 244}}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ 0.001597,\ \ \textcolor{comment}{//\ Interval\ 245}}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ 0.001603,\ \ \textcolor{comment}{//\ Interval\ 246}}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ 0.001609,\ \ \textcolor{comment}{//\ Interval\ 247}}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ 0.001616,\ \ \textcolor{comment}{//\ Interval\ 248}}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ 0.001622,\ \ \textcolor{comment}{//\ Interval\ 249}}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ 0.001628,\ \ \textcolor{comment}{//\ Interval\ 250}}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ 0.001635,\ \ \textcolor{comment}{//\ Interval\ 251}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ 0.001641,\ \ \textcolor{comment}{//\ Interval\ 252}}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ 0.001647,\ \ \textcolor{comment}{//\ Interval\ 253}}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ 0.001653,\ \ \textcolor{comment}{//\ Interval\ 254}}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ 0.001660\ \ \textcolor{comment}{//\ Interval\ 255}}
+\DoxyCodeLine{00539\ \};}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \}\ \ \textcolor{comment}{//\ namespace\ takum::internal::phi}}
+
+\end{DoxyCode}
