@@ -1,0 +1,188 @@
+\doxysection{tau\+\_\+ref.\+h}
+\hypertarget{tau__ref_8h_source}{}\label{tau__ref_8h_source}\index{takum/internal/ref/tau\_ref.h@{takum/internal/ref/tau\_ref.h}}
+\mbox{\hyperlink{tau__ref_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetakum_1_1internal_1_1ref}{takum::internal::ref}}\ \{}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00038\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_a516dda352d764d6b1eda73aab6c37ec5}{encode\_double\_to\_bits}}(\textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{x}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{static\_assert}(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >=\ 12\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64,\ \textcolor{stringliteral}{"{}Takum\ reference\ encoder\ supports\ 12..64\ bits"{}});}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e}}\ =\ std::sqrt(std::exp(1.0));}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ln2}}\ =\ std::log(2.0);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{max\_exp}}\ =\ 255.0;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//\ NaR\ pattern:\ S=1,\ D=0,\ R=000\ (r=7),\ C=0000000\ (7\ bits),\ M\ all\ 0\ (p=N-\/12)}}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{nar\_pattern}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(1)\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1);\ \textcolor{comment}{//\ S=1\ at\ MSB}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::isnan(\mbox{\hyperlink{structtakum_1_1takum}{x}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{nar\_pattern}};}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{x}}\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{structtakum_1_1takum}{u}};}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{x}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{nar\_pattern}};\ \textcolor{comment}{//\ NaR\ for\ inf}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{s}}\ =\ std::signbit(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_x}}\ =\ std::fabs(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_x}}\ <\ std::pow(\mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e}},\ -\/\mbox{\hyperlink{structtakum_1_1takum}{max\_exp}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{s}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{nar\_pattern}}\ :\ 0\mbox{\hyperlink{structtakum_1_1takum}{u}};\ \textcolor{comment}{//\ underflow\ to\ 0\ or\ -\/0,\ but\ since\ packed,\ 0}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_x}}\ >\ std::pow(\mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e}},\ \mbox{\hyperlink{structtakum_1_1takum}{max\_exp}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{nar\_pattern}};\ \textcolor{comment}{//\ overflow\ to\ NaR}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//\ Decompose\ x\ =\ (-\/1)\string^s\ *\ (1\ +\ f)\ *\ 2\string^h\ (IEEE-\/like\ frexp\ for\ base\ 2)}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{h\_exp}};}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{f}}\ =\ std::frexp(\mbox{\hyperlink{structtakum_1_1takum}{abs\_x}},\ \&\mbox{\hyperlink{structtakum_1_1takum}{h\_exp}});\ \textcolor{comment}{//\ f\ in\ [0.5,\ 1),\ h\_exp\ such\ that\ abs\_x\ =\ f\ *\ 2\string^h\_exp}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{significand}}\ =\ 2.0\ *\ \mbox{\hyperlink{structtakum_1_1takum}{f}};\ \textcolor{comment}{//\ now\ [1,\ 2)}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ln\_sig}}\ =\ std::log(\mbox{\hyperlink{structtakum_1_1takum}{significand}});}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ 2.0\ *\ (\mbox{\hyperlink{structtakum_1_1takum}{h\_exp}}\ *\ \mbox{\hyperlink{structtakum_1_1takum}{ln2}}\ +\ \mbox{\hyperlink{structtakum_1_1takum}{ln\_sig}});\ \textcolor{comment}{//\ ℓ\ =\ 2\ *\ ln(|x|)}}
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(std::floor(\mbox{\hyperlink{structtakum_1_1takum}{ell}}));}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}});}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{c}}\ >=\ 0);}
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ =\ std::abs(\mbox{\hyperlink{structtakum_1_1takum}{c}});}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ ==\ 0)\ ?\ 0\ :\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(std::floor(std::log2(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ +\ 1))));}
+\DoxyCodeLine{00070\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ ==\ 0)\ ?\ 0\ :\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(std::floor(std::log2(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}))));}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ std::max(0,\ std::min(7,\ \mbox{\hyperlink{structtakum_1_1takum}{r}}));\ \textcolor{comment}{//\ clamp\ to\ 0..7}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R\_val}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{r}})\ :\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(7\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}});}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{R\_val}}\ \&\ 4)\ >>\ 2\ |\ (\mbox{\hyperlink{structtakum_1_1takum}{R\_val}}\ \&\ 2)\ >>\ 1\ |\ (\mbox{\hyperlink{structtakum_1_1takum}{R\_val}}\ \&\ 1);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ Characteristic\ bits\ C\ (r\ bits)}}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{C\_val}};}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{C\_val}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ -\/\ (1LL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ +\ 1);}
+\DoxyCodeLine{00082\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{C\_val}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ +\ (1LL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ +\ 1))\ -\/\ 1);}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{C}}\ =\ 0;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{r}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{C}}\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{C\_val}}\ \&\ 1u)\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{i}};}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{C\_val}}\ >>=\ 1;}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ Mantissa\ bits\ M\ (p\ =\ N\ -\/\ r\ -\/\ 5\ bits)}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ -\/\ 5;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ <\ 0)\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ 0;\ \textcolor{comment}{//\ though\ for\ N>=12,\ r<=7,\ p>=0}}
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{M\_power}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ ==\ 0)\ ?\ 1ULL\ :\ (1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}});}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{M\_scaled}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(std::floor(\mbox{\hyperlink{structtakum_1_1takum}{m}}\ *\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{M\_power}})));}
+\DoxyCodeLine{00096\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{M\_bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{M\_scaled}};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ Pack:\ S\ (1),\ D\ (1),\ R\ (3),\ C\ (r),\ M\ (p)}}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ =\ 0;}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ |=\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{s}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1);}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ |=\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{D}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 2);}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{R}}\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5));}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{C}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}});}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{p}};}
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{M\_bits}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}});}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}};}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00126\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00127\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_aa394ab044bdf3778be5c6daf7ded5916}{decode\_bits\_to\_double}}(\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{static\_assert}(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >=\ 12\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64,\ \textcolor{stringliteral}{"{}Takum\ reference\ decoder\ supports\ 12..64\ bits"{}});}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e}}\ =\ std::sqrt(std::exp(1.0));}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{//\ NaR:\ S=1,\ D=0,\ R=000,\ C=0000000\ (r=7),\ M=0...0\ (p=N-\/12)}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_nar\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1)))\ !=\ 0;\ \textcolor{comment}{//\ S=1}}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{low\_bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ ((1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1))\ -\/\ 1);}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{low\_bits}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0.0;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1)))\ !=\ 0;}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/2)))\ !=\ 0;}
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/5))\ \&\ 7u;}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}})\ :\ 7\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}});}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00144\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{C}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}})\ \&\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ -\/\ 5;}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{p}};}
+\DoxyCodeLine{00148\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{M}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0)\ ?\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}})\ \&\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}})\ -\/\ 1)\ :\ 0;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//\ Compute\ c}}
+\DoxyCodeLine{00151\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}}\ =\ 0;}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{r}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}}\ +=\ ((\mbox{\hyperlink{structtakum_1_1takum}{C}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{i}})\ \&\ 1)\ *\ (1LL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{i}});}
+\DoxyCodeLine{00154\ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c}};}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ (1LL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1\ +\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}};}
+\DoxyCodeLine{00158\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ -\/\ (1LL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ +\ 1))\ +\ 1\ +\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}};}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{//\ Compute\ m}}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.0;}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0)\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}});}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{M}})\ /\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}};}
+\DoxyCodeLine{00167\ \ \ \ \ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}})\ +\ \mbox{\hyperlink{structtakum_1_1takum}{m}};}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{y}}\ =\ std::pow(\mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e}},\ \mbox{\hyperlink{structtakum_1_1takum}{ell}});}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ ?\ -\/\mbox{\hyperlink{structtakum_1_1takum}{y}}\ :\ \mbox{\hyperlink{structtakum_1_1takum}{y}};}
+\DoxyCodeLine{00172\ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00191\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_acc6e3ca97598eb2f7c88c0ef307939c3}{high\_precision\_decode}}(\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{static\_assert}(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >=\ 12\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64,\ \textcolor{stringliteral}{"{}Takum\ high-\/precision\ decoder\ supports\ 12..64\ bits"{}});}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e\_ld}}\ =\ std::sqrtl(std::expl(1.0L));}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{comment}{//\ NaR\ check}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_nar\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1)))\ !=\ 0;\ \textcolor{comment}{//\ S=1}}
+\DoxyCodeLine{00198\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{low\_bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ ((1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1))\ -\/\ 1);}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{low\_bits}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<long\ double>::quiet\_NaN();}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0.0L;}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/1)))\ !=\ 0;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/2)))\ !=\ 0;}
+\DoxyCodeLine{00204\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}-\/5))\ \&\ 7u;}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}})\ :\ 7\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}});}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00208\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{C}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}})\ \&\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1);}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ -\/\ 5;}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{char\_start}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{p}};}
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{M}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0)\ ?\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{mant\_start}})\ \&\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}})\ -\/\ 1)\ :\ 0;}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{comment}{//\ Compute\ c}}
+\DoxyCodeLine{00215\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}}\ =\ 0;}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{r}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}}\ +=\ ((\mbox{\hyperlink{structtakum_1_1takum}{C}}\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{i}})\ \&\ 1)\ *\ (1LL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{i}});}
+\DoxyCodeLine{00218\ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c}};}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ (1LL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1\ +\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}};}
+\DoxyCodeLine{00222\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ -\/\ (1LL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ +\ 1))\ +\ 1\ +\ \mbox{\hyperlink{structtakum_1_1takum}{c\_sum}};}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{comment}{//\ Compute\ m}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.0L;}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0)\ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}});}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{M}})\ /\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}};}
+\DoxyCodeLine{00231\ \ \ \ \ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}})\ +\ \mbox{\hyperlink{structtakum_1_1takum}{m}};}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{S}})\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ -\/\mbox{\hyperlink{structtakum_1_1takum}{ell}};}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{y}}\ =\ std::powl(\mbox{\hyperlink{structtakum_1_1takum}{sqrt\_e\_ld}},\ \mbox{\hyperlink{structtakum_1_1takum}{ell}});}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ ?\ -\/\mbox{\hyperlink{structtakum_1_1takum}{y}}\ :\ \mbox{\hyperlink{structtakum_1_1takum}{y}};}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \}\ \textcolor{comment}{//\ namespace\ takum::internal::ref}}
+
+\end{DoxyCode}

@@ -1,0 +1,473 @@
+\doxysection{takum\+::takum\texorpdfstring{$<$}{<} N \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{structtakum_1_1takum}{}\label{structtakum_1_1takum}\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+
+
+Configurable-\/width Takum numeric type.  
+
+
+
+
+{\ttfamily \#include $<$core.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{using}} \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} = std\+::conditional\+\_\+t$<$(\mbox{\hyperlink{structtakum_1_1takum}{N}}$<$=32), \mbox{\hyperlink{structtakum_1_1takum}{uint32\+\_\+t}}, std\+::conditional\+\_\+t$<$(\mbox{\hyperlink{structtakum_1_1takum}{N}}$<$=64), \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}}, std\+::array$<$ \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}},(\mbox{\hyperlink{structtakum_1_1takum}{N}}+63)/64 $>$ $>$ $>$
+\begin{DoxyCompactList}\small\item\em Underlying storage type chosen based on the width {\ttfamily N}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{constexpr}} \mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{takum}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}=\mbox{\hyperlink{structtakum_1_1takum}{default}}
+\begin{DoxyCompactList}\small\item\em Default constructs a zero-\/valued {\ttfamily takum}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\+\_\+nar}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Test whether the value is NaR. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{nar}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Construct the canonical NaR (Not-\/a-\/\+Real) pattern. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}} \{\}
+\begin{DoxyCompactList}\small\item\em Raw storage containing the N-\/bit pattern (valid bits are in the low N bits). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Comparison operators}
+These operators implement a total order where NaR is considered the smallest element and all real values are ordered monotonically. \begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a830aff61c2361327a4a12163c9c55f27}{operator==}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a41ba7237e986b38a14d61178f9390015}{operator$<$}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Total-\/order less-\/than comparison. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a77649d8b5e5ac163e56a47512c739f09}{operator$<$=}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_af1d9476d715be22bde789e11c76815e4}{operator$>$}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_af878384b6be895722402c37d39592d6b}{operator$>$=}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_ade6e62b29126eb195b6ad57e4881788d}{operator!=}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \&\mbox{\hyperlink{structtakum_1_1takum}{other}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_a8fdce72098fcfc7c4c45c331d0ca3cbf}{operator\texorpdfstring{$\sim$}{\string~}}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Bitwise complement of the N-\/bit pattern (masked to N bits). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a03eaa4bf55ba83c401164dfa45e78732}{signbit}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Test whether the numeric sign bit is set (value negative). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_adb133982e77fd1810fe9516d6ab026e5}{operator-\/}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Unary negation\+: flips the sign bit. NaR is its own negation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_a392d33bd59572301ef014197a10d7225}{reciprocal}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Compute the reciprocal in the reference codec. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum_ad35bb63b12ae17f21451f7d13b807558}{raw\+\_\+bits}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return raw storage bits. \end{DoxyCompactList}\item 
+std\+::optional$<$ \mbox{\hyperlink{structtakum_1_1takum}{takum}} $>$ \mbox{\hyperlink{structtakum_1_1takum_af0a450f3fb81f1b8a0da3831315d5c65}{to\+\_\+expected}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Convert to optional (nullopt if NaR) for pre-\/\+C++23 builds. \end{DoxyCompactList}\item 
+std\+::bitset$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \mbox{\hyperlink{structtakum_1_1takum_a7f96bfa2c9fac1d28b230ee6ce32eac5}{debug\+\_\+view}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return a bitset view useful for debugging and tests. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8}{is\+\_\+zero}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Test whether the value represents zero. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum_a8fe50ee4d28061551989e178974e8ac4}{takum}} (\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{x}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Convert a host {\ttfamily double} into the reference takum bit pattern. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\+\_\+double}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Convert this takum value to host {\ttfamily double} using the reference codec. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}{get\+\_\+exact\+\_\+ell}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Extract the exact internal logarithmic value ℓ = (-\/1)\texorpdfstring{$^\wedge$}{\string^}S \texorpdfstring{$\ast$}{*} (c + m). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_af721d58ddc31121ce4a423bb634e8216}{minpos}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Smallest positive representable non-\/zero value (pattern with LSB=1). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum_a7401fa15dea41eb634de7fb6a5178f2c}{from\+\_\+raw\+\_\+bits}} (\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{bits}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Create a {\ttfamily takum} from raw storage bits without validation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039}{max\+\_\+finite\+\_\+storage}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Generate the maximum finite positive storage pattern for this format. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{long}} \mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\+\_\+ell}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Get the maximum representable ℓ value for this takum format. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}{encode\+\_\+from\+\_\+double}} (\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{x}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Encode a host {\ttfamily double} into the takum bit pattern using the reference encoding. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84}{encode\+\_\+from\+\_\+double\+\_\+u64}} (\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{x}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Helper to encode double to uint64\+\_\+t for single-\/word takum formats. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{size\+\_\+t}} N$>$\newline
+struct takum\+::takum$<$ N $>$}
+Configurable-\/width Takum numeric type. 
+
+The {\ttfamily takum\texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} template provides an N-\/bit logarithmic-\/like numeric value with a special NaR (Not-\/a-\/\+Real) encoding. The implementation uses an underlying integer or array-\/of-\/uint64\+\_\+t storage depending on {\ttfamily N}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & Bit width in bits; supported range is 2..256 (static\+\_\+assert enforces this). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Member Typedef Documentation}
+\Hypertarget{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}\label{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!storage\_t@{storage\_t}}
+\index{storage\_t@{storage\_t}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{storage\_t}{storage\_t}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{using}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::storage\+\_\+t =  std\+::conditional\+\_\+t$<$(\mbox{\hyperlink{structtakum_1_1takum}{N}} $<$= 32), \mbox{\hyperlink{structtakum_1_1takum}{uint32\+\_\+t}}, std\+::conditional\+\_\+t$<$(\mbox{\hyperlink{structtakum_1_1takum}{N}} $<$= 64), \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}}, std\+::array$<$\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}}, (\mbox{\hyperlink{structtakum_1_1takum}{N}}+63)/64$>$ $>$$>$}
+
+
+
+Underlying storage type chosen based on the width {\ttfamily N}. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}\label{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!takum@{takum}}
+\index{takum@{takum}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{takum()}{takum()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{constexpr}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::takum (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+
+
+Default constructs a zero-\/valued {\ttfamily takum}. 
+
+The default is noexcept and initializes the storage to the zero pattern. \Hypertarget{structtakum_1_1takum_a8fe50ee4d28061551989e178974e8ac4}\label{structtakum_1_1takum_a8fe50ee4d28061551989e178974e8ac4} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!takum@{takum}}
+\index{takum@{takum}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{takum()}{takum()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::takum (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{double}}}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Convert a host {\ttfamily double} into the reference takum bit pattern. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input double. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structtakum_1_1takum_a7f96bfa2c9fac1d28b230ee6ce32eac5}\label{structtakum_1_1takum_a7f96bfa2c9fac1d28b230ee6ce32eac5} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!debug\_view@{debug\_view}}
+\index{debug\_view@{debug\_view}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{debug\_view()}{debug\_view()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+std\+::bitset$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::debug\+\_\+view (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return a bitset view useful for debugging and tests. 
+
+\begin{DoxyReturn}{Returns}
+std\+::bitset$<$\+N$>$ where bit 0 is the least-\/significant stored bit. 
+\end{DoxyReturn}
+\Hypertarget{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}\label{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!encode\_from\_double@{encode\_from\_double}}
+\index{encode\_from\_double@{encode\_from\_double}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{encode\_from\_double()}{encode\_from\_double()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::encode\+\_\+from\+\_\+double (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{double}}}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Encode a host {\ttfamily double} into the takum bit pattern using the reference encoding. 
+
+This function packs S,D,R,C,M fields per the Phase2 reference specification. Special cases\+: zero maps to zero; non-\/finite maps to NaR.
+
+For N\texorpdfstring{$<$}{<}=64 the returned value is stored in a single integer; for larger N the returned value is the multi-\/word storage\+\_\+t. \Hypertarget{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84}\label{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!encode\_from\_double\_u64@{encode\_from\_double\_u64}}
+\index{encode\_from\_double\_u64@{encode\_from\_double\_u64}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{encode\_from\_double\_u64()}{encode\_from\_double\_u64()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::encode\+\_\+from\+\_\+double\+\_\+u64 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{double}}}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Helper to encode double to uint64\+\_\+t for single-\/word takum formats. 
+
+Optimized encoding path for N\texorpdfstring{$<$}{<}=64 bit formats. Implements the full S,D,R,C,M field packing per the reference specification equations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input double value to encode \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+uint64\+\_\+t containing the packed N-\/bit takum representation 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Only used for N\texorpdfstring{$<$}{<}=64; larger formats use the multi-\/word encode path 
+
+Implements equations (14)-\/(24) from the reference specification 
+\end{DoxyNote}
+\Hypertarget{structtakum_1_1takum_a7401fa15dea41eb634de7fb6a5178f2c}\label{structtakum_1_1takum_a7401fa15dea41eb634de7fb6a5178f2c} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!from\_raw\_bits@{from\_raw\_bits}}
+\index{from\_raw\_bits@{from\_raw\_bits}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{from\_raw\_bits()}{from\_raw\_bits()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::from\+\_\+raw\+\_\+bits (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}}}]{bits }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Create a {\ttfamily takum} from raw storage bits without validation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bits} & Raw storage bits (low N bits are used). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}\label{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!get\_exact\_ell@{get\_exact\_ell}}
+\index{get\_exact\_ell@{get\_exact\_ell}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{get\_exact\_ell()}{get\_exact\_ell()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::get\+\_\+exact\+\_\+ell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Extract the exact internal logarithmic value ℓ = (-\/1)\texorpdfstring{$^\wedge$}{\string^}S \texorpdfstring{$\ast$}{*} (c + m). 
+
+Useful for diagnostics\+: returns the characteristic+mantissa with sign applied. For NaR this returns NaN. \Hypertarget{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}\label{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!is\_nar@{is\_nar}}
+\index{is\_nar@{is\_nar}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{is\_nar()}{is\_nar()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::is\+\_\+nar (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Test whether the value is NaR. 
+
+\begin{DoxyReturn}{Returns}
+true if this value is the canonical NaR pattern. 
+\end{DoxyReturn}
+\Hypertarget{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8}\label{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!is\_zero@{is\_zero}}
+\index{is\_zero@{is\_zero}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{is\_zero()}{is\_zero()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::is\+\_\+zero (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Test whether the value represents zero. 
+
+\begin{DoxyReturn}{Returns}
+true if all bits in the storage are zero 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Zero is represented by all bits being zero in the takum format 
+\end{DoxyNote}
+\Hypertarget{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}\label{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!max\_ell@{max\_ell}}
+\index{max\_ell@{max\_ell}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{max\_ell()}{max\_ell()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{long}} \mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::max\+\_\+ell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Get the maximum representable ℓ value for this takum format. 
+
+Returns the logarithmic value ℓ corresponding to the maximum finite representable number in this format. Used for determining dynamic range.
+
+\begin{DoxyReturn}{Returns}
+long double The maximum ℓ value (approximately ±255 for large N) 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+For N\texorpdfstring{$>$}{>}64, uses specification bound of ±255 
+
+For smaller N, computed from the actual maximum finite pattern 
+\end{DoxyNote}
+\Hypertarget{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039}\label{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!max\_finite\_storage@{max\_finite\_storage}}
+\index{max\_finite\_storage@{max\_finite\_storage}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{max\_finite\_storage()}{max\_finite\_storage()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::max\+\_\+finite\+\_\+storage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Generate the maximum finite positive storage pattern for this format. 
+
+Constructs the bit pattern representing the largest representable positive finite value in the takum$<$\+N$>$ format. Used for determining dynamic range and testing boundary conditions.
+
+\begin{DoxyReturn}{Returns}
+uint64\+\_\+t containing the maximum finite positive bit pattern 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+For N\texorpdfstring{$>$}{>}64, returns placeholder value 0; full multi-\/word support pending 
+\end{DoxyNote}
+\Hypertarget{structtakum_1_1takum_af721d58ddc31121ce4a423bb634e8216}\label{structtakum_1_1takum_af721d58ddc31121ce4a423bb634e8216} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!minpos@{minpos}}
+\index{minpos@{minpos}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{minpos()}{minpos()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::minpos (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Smallest positive representable non-\/zero value (pattern with LSB=1). 
+
+\Hypertarget{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}\label{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!nar@{nar}}
+\index{nar@{nar}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{nar()}{nar()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{static}} \mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::nar (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Construct the canonical NaR (Not-\/a-\/\+Real) pattern. 
+
+\begin{DoxyReturn}{Returns}
+A {\ttfamily takum} value representing NaR. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The canonical NaR is represented by the sign bit set and all other bits zero in this reference implementation. 
+\end{DoxyNote}
+\Hypertarget{structtakum_1_1takum_ade6e62b29126eb195b6ad57e4881788d}\label{structtakum_1_1takum_ade6e62b29126eb195b6ad57e4881788d} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator!}}= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{structtakum_1_1takum_adb133982e77fd1810fe9516d6ab026e5}\label{structtakum_1_1takum_adb133982e77fd1810fe9516d6ab026e5} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}-\/ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Unary negation\+: flips the sign bit. NaR is its own negation. 
+
+\Hypertarget{structtakum_1_1takum_a41ba7237e986b38a14d61178f9390015}\label{structtakum_1_1takum_a41ba7237e986b38a14d61178f9390015} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}$<$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Total-\/order less-\/than comparison. 
+
+NaR is ordered below any real value. For real values the comparison is implemented as a signed integer comparison of the N-\/bit pattern (with sign extension) for monotonicity. \Hypertarget{structtakum_1_1takum_a77649d8b5e5ac163e56a47512c739f09}\label{structtakum_1_1takum_a77649d8b5e5ac163e56a47512c739f09} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator$<$=@{operator$<$=}}
+\index{operator$<$=@{operator$<$=}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}$<$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{structtakum_1_1takum_a830aff61c2361327a4a12163c9c55f27}\label{structtakum_1_1takum_a830aff61c2361327a4a12163c9c55f27} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator==@{operator==}}
+\index{operator==@{operator==}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{structtakum_1_1takum_af1d9476d715be22bde789e11c76815e4}\label{structtakum_1_1takum_af1d9476d715be22bde789e11c76815e4} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}$>$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{structtakum_1_1takum_af878384b6be895722402c37d39592d6b}\label{structtakum_1_1takum_af878384b6be895722402c37d39592d6b} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator$>$=@{operator$>$=}}
+\index{operator$>$=@{operator$>$=}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator$>$=()}{operator>=()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{\+::operator}}$>$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{structtakum_1_1takum_a8fdce72098fcfc7c4c45c331d0ca3cbf}\label{structtakum_1_1takum_a8fdce72098fcfc7c4c45c331d0ca3cbf} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!operator\texorpdfstring{$\sim$}{\string~}@{operator\texorpdfstring{$\sim$}{\string~}}}
+\index{operator\texorpdfstring{$\sim$}{\string~}@{operator\texorpdfstring{$\sim$}{\string~}}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\sim$}{\string~}()}{operator\string~()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::operator\texorpdfstring{$\sim$}{\string~} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Bitwise complement of the N-\/bit pattern (masked to N bits). 
+
+\Hypertarget{structtakum_1_1takum_ad35bb63b12ae17f21451f7d13b807558}\label{structtakum_1_1takum_ad35bb63b12ae17f21451f7d13b807558} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!raw\_bits@{raw\_bits}}
+\index{raw\_bits@{raw\_bits}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{raw\_bits()}{raw\_bits()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::raw\+\_\+bits (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return raw storage bits. 
+
+\begin{DoxyReturn}{Returns}
+The underlying storage value(s) containing the N-\/bit pattern. 
+\end{DoxyReturn}
+\Hypertarget{structtakum_1_1takum_a392d33bd59572301ef014197a10d7225}\label{structtakum_1_1takum_a392d33bd59572301ef014197a10d7225} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!reciprocal@{reciprocal}}
+\index{reciprocal@{reciprocal}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{reciprocal()}{reciprocal()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{takum}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::reciprocal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Compute the reciprocal in the reference codec. 
+
+Returns NaR for NaR or zero input. This implements the simple bitwise inverse-\/plus-\/one rule used by the Phase2 reference codec. \Hypertarget{structtakum_1_1takum_a03eaa4bf55ba83c401164dfa45e78732}\label{structtakum_1_1takum_a03eaa4bf55ba83c401164dfa45e78732} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!signbit@{signbit}}
+\index{signbit@{signbit}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{signbit()}{signbit()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::signbit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Test whether the numeric sign bit is set (value negative). 
+
+\begin{DoxyReturn}{Returns}
+true if the sign bit (MSB) is 1. 
+\end{DoxyReturn}
+\Hypertarget{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}\label{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!to\_double@{to\_double}}
+\index{to\_double@{to\_double}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{to\_double()}{to\_double()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::to\+\_\+double (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Convert this takum value to host {\ttfamily double} using the reference codec. 
+
+\begin{DoxyReturn}{Returns}
+Approximate {\ttfamily double} value; NaR converts to quiet NaN. 
+\end{DoxyReturn}
+\Hypertarget{structtakum_1_1takum_af0a450f3fb81f1b8a0da3831315d5c65}\label{structtakum_1_1takum_af0a450f3fb81f1b8a0da3831315d5c65} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!to\_expected@{to\_expected}}
+\index{to\_expected@{to\_expected}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{to\_expected()}{to\_expected()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+std\+::optional$<$ \mbox{\hyperlink{structtakum_1_1takum}{takum}} $>$ \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::to\+\_\+expected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Convert to optional (nullopt if NaR) for pre-\/\+C++23 builds. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}\label{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17} 
+\index{takum::takum$<$ N $>$@{takum::takum$<$ N $>$}!storage@{storage}}
+\index{storage@{storage}!takum::takum$<$ N $>$@{takum::takum$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{storage}{storage}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{takum\+::takum}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{N}} $>$\+::storage \{\}}
+
+
+
+Raw storage containing the N-\/bit pattern (valid bits are in the low N bits). 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+takum/\mbox{\hyperlink{core_8h}{core.\+h}}\end{DoxyCompactItemize}

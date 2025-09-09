@@ -1,0 +1,111 @@
+\doxysection{takum\+::detail\+::expected\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classtakum_1_1detail_1_1expected}{}\label{classtakum_1_1detail_1_1expected}\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+
+
+Fallback implementation of expected-\/like type for pre-\/\+C++23.  
+
+
+
+
+{\ttfamily \#include $<$expected\+\_\+shim.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected_a0c7a317c165d281d2f665804f14b0b4c}{expected}} () \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected_a1c6a3810b60e61da31f06f53093850c1}{expected}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \&\mbox{\hyperlink{classtakum_1_1detail_1_1expected_a72faa1694b8adbea886f6da5e80a52f5}{value}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected_a7761210bf73a7c00e4755e363c281e4b}{expected}} (\mbox{\hyperlink{structtakum_1_1takum__error}{takum\+\_\+error}} \mbox{\hyperlink{classtakum_1_1detail_1_1expected_aef0f9b2f4043284e9565d6d1292b8e7d}{error}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{classtakum_1_1detail_1_1expected_a345c92362d64e3b26158a2e330301691}{has\+\_\+value}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \& \mbox{\hyperlink{classtakum_1_1detail_1_1expected_a72faa1694b8adbea886f6da5e80a52f5}{value}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum__error}{takum\+\_\+error}} \mbox{\hyperlink{classtakum_1_1detail_1_1expected_aef0f9b2f4043284e9565d6d1292b8e7d}{error}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected_ad622baa3dbb764044e609c7816f8e91e}{operator bool}} () \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \& \mbox{\hyperlink{classtakum_1_1detail_1_1expected_ae7caccebcd6f7571fed8c91e10e1282d}{value\+\_\+or}} (\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \&\mbox{\hyperlink{structtakum_1_1takum}{dflt}}) \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}}$>$\newline
+class takum\+::detail\+::expected$<$ T $>$}
+Fallback implementation of expected-\/like type for pre-\/\+C++23. 
+
+Provides a minimal subset of std\+::expected functionality for compatibility with older C++ standards. Only implements the operations needed by the takum library.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The success value type \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classtakum_1_1detail_1_1expected_a0c7a317c165d281d2f665804f14b0b4c}\label{classtakum_1_1detail_1_1expected_a0c7a317c165d281d2f665804f14b0b4c} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!expected@{expected}}
+\index{expected@{expected}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{expected()}{expected()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::expected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_a1c6a3810b60e61da31f06f53093850c1}\label{classtakum_1_1detail_1_1expected_a1c6a3810b60e61da31f06f53093850c1} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!expected@{expected}}
+\index{expected@{expected}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{expected()}{expected()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::expected (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_a7761210bf73a7c00e4755e363c281e4b}\label{classtakum_1_1detail_1_1expected_a7761210bf73a7c00e4755e363c281e4b} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!expected@{expected}}
+\index{expected@{expected}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{expected()}{expected()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::expected (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum__error}{takum\+\_\+error}}}]{error }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classtakum_1_1detail_1_1expected_aef0f9b2f4043284e9565d6d1292b8e7d}\label{classtakum_1_1detail_1_1expected_aef0f9b2f4043284e9565d6d1292b8e7d} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!error@{error}}
+\index{error@{error}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{structtakum_1_1takum__error}{takum\+\_\+error}} \mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_a345c92362d64e3b26158a2e330301691}\label{classtakum_1_1detail_1_1expected_a345c92362d64e3b26158a2e330301691} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!has\_value@{has\_value}}
+\index{has\_value@{has\_value}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{has\_value()}{has\_value()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{bool}} \mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::has\+\_\+value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_ad622baa3dbb764044e609c7816f8e91e}\label{classtakum_1_1detail_1_1expected_ad622baa3dbb764044e609c7816f8e91e} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!operator bool@{operator bool}}
+\index{operator bool@{operator bool}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator bool()}{operator bool()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::operator \mbox{\hyperlink{structtakum_1_1takum}{bool}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_a72faa1694b8adbea886f6da5e80a52f5}\label{classtakum_1_1detail_1_1expected_a72faa1694b8adbea886f6da5e80a52f5} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!value@{value}}
+\index{value@{value}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{value()}{value()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \& \mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{classtakum_1_1detail_1_1expected_ae7caccebcd6f7571fed8c91e10e1282d}\label{classtakum_1_1detail_1_1expected_ae7caccebcd6f7571fed8c91e10e1282d} 
+\index{takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}!value\_or@{value\_or}}
+\index{value\_or@{value\_or}!takum::detail::expected$<$ T $>$@{takum::detail::expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{value\_or()}{value\_or()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{typename}} \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \& \mbox{\hyperlink{classtakum_1_1detail_1_1expected}{takum\+::detail\+::expected}}$<$ \mbox{\hyperlink{structtakum_1_1takum}{T}} $>$\+::value\+\_\+or (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{T}} \&}]{dflt }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+takum/\mbox{\hyperlink{expected__shim_8h}{expected\+\_\+shim.\+h}}\end{DoxyCompactItemize}
