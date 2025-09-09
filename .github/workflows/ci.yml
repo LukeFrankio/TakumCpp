@@ -11,11 +11,11 @@ jobs:
       - name: Install MSYS2 and Ninja (minimal)
         run: choco install msys2 --no-progress; choco install ninja -y
 
-      - name: Install MinGW-w64 toolchain and update MSYS2
-        shell: msys2 {0}
+      - name: Install MinGW-w64 toolchain and update MSYSY
+        shell: bash
         run: |
-          pacman -Syu --noconfirm
-          pacman -S --needed --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake
+          "C:/msys64/usr/bin/bash.exe" -lc "pacman -Syu --noconfirm"
+          "C:/msys64/usr/bin/bash.exe" -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake"
 
       - name: Add MinGW to PATH
         run: echo "C:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
