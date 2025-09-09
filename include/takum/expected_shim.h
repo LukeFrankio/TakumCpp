@@ -2,17 +2,28 @@
 
 /**
  * @file expected_shim.h
- * @brief Small compatibility shim for std::expected used by tests and examples.
+ * @brief Cross-standard compatibility for std::expected functionality.
  *
- * When compiling with a modern standard that provides `std::expected` this
- * header aliases `takum::detail::expected` to `std::expected<T, takum_error>`.
- * For older standards a tiny `expected`-like type is provided that supports the
- * subset the project uses (has_value, value, error, value_or).
+ * This header provides a consistent interface for expected-like error handling
+ * across different C++ standards. For C++23 and later, it aliases std::expected.
+ * For older standards, it provides a compatible implementation with the subset
+ * of functionality used by the takum library.
+ *
+ * @note The shim implementation only supports the operations actually used
+ *       by takum functions and may not be a complete std::expected replacement
  */
 
 #if __cplusplus >= 202302L
 #include <expected>
+/**
+ * @namespace takum::detail
+ * @brief Internal implementation details for the takum library.
+ */
 namespace takum::detail {
+    /**
+     * @brief Type alias for std::expected specialized for takum error handling.
+     * @tparam T The success value type
+     */
     template<typename T>
     using expected = std::expected<T, takum_error>;
 }
@@ -20,6 +31,15 @@ namespace takum::detail {
 #include <optional>
 #include <variant>
 namespace takum::detail {
+    /**
+     * @brief Fallback implementation of expected-like type for pre-C++23.
+     *
+     * Provides a minimal subset of std::expected functionality for compatibility
+     * with older C++ standards. Only implements the operations needed by the
+     * takum library.
+     *
+     * @tparam T The success value type
+     */
     template<typename T>
     class expected {
         std::optional<T> value_;

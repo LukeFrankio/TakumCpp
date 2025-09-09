@@ -2,26 +2,51 @@
 
 /**
  * @file compatibility.h
- * @brief Backwards-compatibility helpers and small shims used by tests/examples.
+ * @brief Backwards-compatibility helpers and shims for legacy APIs.
  *
- * This header contains short-lived aliases (such as `float8_t`) and guards that
- * help older consumers compile the code. Prefer using the core `takum<N>` types
- * directly in new code.
+ * This header contains short-lived aliases and compatibility shims that help
+ * older consumers migrate to the core `takum<N>` types. It includes deprecated
+ * type aliases and fallback implementations for older C++ standards.
+ *
+ * @note Prefer using the core `takum<N>` types directly in new code
+ * @note This header may be removed in future versions after deprecation periods
  */
 
 #include "core.h"
 #include "types.h"
 
-// Deprecated fixed-width shims (e.g., non-standard float8 -> takum<8>)
+/**
+ * @typedef float8_t
+ * @brief Deprecated shim for non-standard 8-bit floating point using takum<8>.
+ *
+ * This type alias provides compatibility for legacy code expecting a float8_t
+ * type. It maps to takum<8> with appropriate zero-padding for the 8-bit format.
+ *
+ * @deprecated Use takum<8> directly instead of float8_t
+ * @note Uses ghost bits (zero-padding) in the packed representation
+ */
 using float8_t = takum::takum<8>;
 
 #pragma message("Deprecated: float8_t is a shim for non-standard float8 using takum<8> with ghost bits. Prefer takum<8>.")
 
 #if __cplusplus < 202302L
-// Shim for std::expected if C++26 not available
-#include <optional>
-
+/**
+ * @brief Compatibility shim for std::expected when C++23 is not available.
+ *
+ * Provides a minimal expected-like interface for use with takum types on
+ * older C++ standards. Only implements the subset of functionality needed
+ * by the takum library.
+ */
 namespace takum {
+/**
+ * @brief Lightweight std::expected-like type for pre-C++23 compatibility.
+ *
+ * Provides basic expected/error handling functionality when std::expected
+ * is not available. Supports the core operations needed by takum library.
+ *
+ * @tparam T The success value type
+ * @tparam E The error type
+ */
 template <typename T, typename E>
 struct expected_shim {
     std::optional<T> value;

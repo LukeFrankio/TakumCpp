@@ -31,6 +31,23 @@
  * for future multi-word support.
  */
 
+/**
+ * @namespace takum
+ * @brief Core namespace for the Takum logarithmic numeric format library.
+ *
+ * This namespace contains the main `takum<N>` template class and supporting
+ * utilities for working with tapered logarithmic number formats. The library
+ * provides a parametric implementation supporting bit widths from 2 to 256 bits.
+ *
+ * Key components:
+ * - `takum<N>`: The main numeric type template
+ * - `takum_error`: Error type for safe operations  
+ * - `takum_floating_point`: Concept for takum-like types
+ * - Encoding/decoding functions following the reference specification
+ *
+ * @note All operations handle the special NaR (Not-a-Real) value following
+ *       the specification's propagation rules.
+ */
 namespace takum {
 
 /**
@@ -668,6 +685,11 @@ private:
         }
     }
 
+    /**
+     * @brief Test whether the value represents zero.
+     * @return true if all bits in the storage are zero
+     * @note Zero is represented by all bits being zero in the takum format
+     */
     bool is_zero() const noexcept {
         if constexpr (N <= 64) return uint64_t(storage) == 0ULL;
         else {
@@ -676,7 +698,17 @@ private:
         }
     }
 
-    // Decode per Def. 2: unpack S,D,R,C,M then compute value per eq. (24)
+    /**
+     * @brief Static helper to decode takum storage to double value.
+     *
+     * Unpacks the S,D,R,C,M fields per Definition 2 and computes the real value
+     * using equation (24) from the specification. Handles both single-word and
+     * multi-word storage formats.
+     *
+     * @param bits_storage The raw storage containing the N-bit takum pattern
+     * @return double The decoded real value, or NaN for NaR patterns
+     * @note This is the main decoding function used by to_double()
+     */
     static double decode_to_double(const storage_t& bits_storage) noexcept {
         // Extract single-word bits for N<=64 to reuse previous logic
         if constexpr (N <= 64) {
@@ -746,6 +778,16 @@ private:
         }
     }
 
+    /**
+     * @brief Helper function to decode single-word takum patterns to double.
+     *
+     * Optimized decode path for N<=64 bit formats. Unpacks S,D,R,C,M fields
+     * from a uint64_t and computes the real value per equation (24).
+     *
+     * @param bits uint64_t containing the N-bit takum pattern
+     * @return double The decoded value following the reference specification
+     * @note Zero patterns return exactly 0.0, NaR patterns return quiet NaN
+     */
     static double decode_u64_to_double(uint64_t bits) noexcept {
         if (bits == 0) return 0.0; // Zero per eq. (24)
         // NaR check: S=1 and D=R=C=M=0 per Def. 2
@@ -781,8 +823,23 @@ private:
 
 } // namespace takum
 
+/**
+ * @namespace std
+ * @brief Standard library namespace extended with takum specializations.
+ */
 namespace std {
 
+/**
+ * @brief Specialization of std::numeric_limits for takum<N> types.
+ *
+ * Provides numeric limits and traits for takum types to integrate with
+ * standard library algorithms and utilities. The traits reflect the
+ * logarithmic nature and limited precision of the takum format.
+ *
+ * @tparam N The bit width of the takum format
+ * @note Some values are approximations based on the bit width and format
+ * @note is_iec559 is false as takum is not IEEE 754 compliant
+ */
 template <size_t N>
 struct numeric_limits<takum::takum<N>> {
     static constexpr bool is_specialized = true;

@@ -78,15 +78,28 @@ inline takum<N> abs(const takum<N>& a) noexcept {
 }
 
 /**
- * @name Safe variants
- * Functions returning `std::expected` when available or `std::optional` as a
- * fallback. These return an error when operands are NaR or the result cannot
- * be represented.
+ * @name Safe arithmetic variants
+ * Functions that provide error handling for arithmetic operations instead of
+ * propagating NaR values. These return `std::expected` when available (C++23+)
+ * or `std::optional` as a fallback for older standards.
+ * 
+ * @note These functions return an error when:
+ *       - Any operand is NaR
+ *       - The result cannot be represented (overflow/underflow to NaR)
+ * @note Prefer these functions when explicit error handling is required
  */
 //@{
 #if __cplusplus >= 202302L
 /**
- * Safe addition returning std::expected<takum, takum_error>.
+ * @brief Safe addition with explicit error handling.
+ * 
+ * Performs addition of two takum values with explicit error reporting
+ * instead of NaR propagation. Returns std::unexpected on error conditions.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a First operand
+ * @param b Second operand
+ * @return std::expected containing result or error information
  */
 template <size_t N>
 inline std::expected<takum<N>, takum_error> safe_add(const takum<N>& a, const takum<N>& b) noexcept {
@@ -97,7 +110,15 @@ inline std::expected<takum<N>, takum_error> safe_add(const takum<N>& a, const ta
 }
 
 /**
- * Safe multiplication returning std::expected<takum, takum_error>.
+ * @brief Safe multiplication with explicit error handling.
+ * 
+ * Performs multiplication of two takum values with explicit error reporting
+ * instead of NaR propagation. Returns std::unexpected on error conditions.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a First operand
+ * @param b Second operand
+ * @return std::expected containing result or error information
  */
 template <size_t N>
 inline std::expected<takum<N>, takum_error> safe_mul(const takum<N>& a, const takum<N>& b) noexcept {
@@ -108,7 +129,15 @@ inline std::expected<takum<N>, takum_error> safe_mul(const takum<N>& a, const ta
 }
 #else
 /**
- * Safe addition returning std::optional<takum> on older standards.
+ * @brief Safe addition for older C++ standards (returns optional).
+ * 
+ * Performs addition of two takum values with error checking, returning
+ * std::nullopt on error conditions instead of propagating NaR.
+ *
+ * @tparam N Bit width of the takum format
+ * @param a First operand
+ * @param b Second operand
+ * @return std::optional containing result or nullopt on error
  */
 template <size_t N>
 inline std::optional<takum<N>> safe_add(const takum<N>& a, const takum<N>& b) noexcept {
