@@ -226,9 +226,31 @@ private:
     }
     
     static constexpr uint32_t extract_exponent(storage_type bits) noexcept {
-        // Implement exponent extraction logic
-        // Placeholder implementation
-        return 0;
+        // Implement exponent extraction logic according to takum specification.
+        // For this example, assume exponent width is 2 bits (can be adjusted as needed).
+        constexpr uint32_t exponent_width = 2;
+        // First, skip the sign bit (N-1), then the regime field.
+        uint32_t regime = extract_regime(bits);
+        // The regime field is variable length; for posit-like formats, regime length = |regime| + 1
+        uint32_t regime_length = std::abs(static_cast<int32_t>(regime)) + 1;
+        uint32_t exponent_shift = N - 1 - regime_length - exponent_width;
+        if constexpr (storage_traits<N>::is_single_word) {
+            return (bits >> exponent_shift) & ((1u << exponent_width) - 1);
+        } else {
+            // For multi-word, extract the relevant bits across word boundaries
+            uint32_t bit_offset = exponent_shift;
+            uint32_t word_idx = bit_offset / 64;
+            uint32_t bit_in_word = bit_offset % 64;
+            uint64_t word = bits[word_idx];
+            uint32_t value = (word >> bit_in_word) & ((1u << exponent_width) - 1);
+            // If the exponent spans two words
+            if (bit_in_word + exponent_width > 64 && word_idx + 1 < storage_traits<N>::word_count) {
+                uint64_t next_word = bits[word_idx + 1];
+                uint32_t bits_from_next = bit_in_word + exponent_width - 64;
+                value |= (next_word & ((1u << bits_from_next) - 1)) << (exponent_width - bits_from_next);
+            }
+            return value;
+        }
     }
     
     static constexpr uint64_t extract_mantissa(storage_type bits) noexcept {
