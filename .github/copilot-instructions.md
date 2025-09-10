@@ -12,12 +12,12 @@ Run these commands in sequence to get a working development environment:
 - `mkdir build` -- Create build directory
 - `python3 scripts/gen_poly_coeffs.py` -- Generate coefficient header (takes 3 seconds)
 - `cmake -S . -B build` -- Configure build system (takes 5 seconds). Set timeout to 30+ seconds.
-- `cmake --build build` -- **NEVER CANCEL: Build takes 50 seconds. Set timeout to 90+ minutes.**
-- `ctest --test-dir build --output-on-failure` -- **NEVER CANCEL: Test suite takes 6 seconds, 63 tests total. Set timeout to 15+ minutes.**
+- `cmake --build build` -- **NEVER CANCEL: Build takes 50 seconds. Set timeout to 5+ minutes.**
+- `ctest --test-dir build --output-on-failure` -- **NEVER CANCEL: Test suite takes 6 seconds, 63 tests total. Set timeout to 1+ minute.**
 
 ### Alternative Quick Build Commands
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release` -- Configure for Release build
-- `cmake --build build --config Release` -- **NEVER CANCEL: Release build takes 47 seconds. Set timeout to 90+ minutes.**
+- `cmake --build build --config Release` -- **NEVER CANCEL: Release build takes 47 seconds. Set timeout to 5+ minutes.**
 
 ### Validate Examples Work
 Always run these after any changes to core functionality:
