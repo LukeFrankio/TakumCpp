@@ -31,6 +31,10 @@ cmake-build-*
 *.test
 *.out
 
+# Debug executables
+debug_*
+debug/debug_*
+
 # Documentation
 *.pdf
 *.docx
