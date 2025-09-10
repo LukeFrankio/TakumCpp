@@ -31,9 +31,33 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
     double da = a.to_double();
     double db = b.to_double();
     if (std::isfinite(da) && std::isfinite(db)) {
-        // This constructs via encode_from_double and ensures bitwise
-        // equality against reference takum(qa+qb) used by tests.
-        // Also handles zero cases.
+#if TAKUM_ENABLE_FAST_ADD
+        // Fast path heuristic: similar magnitudes produce cancellation in fallback log1p path.
+        double abs_da = std::fabs(da);
+        double abs_db = std::fabs(db);
+        if (abs_da != 0.0 && abs_db != 0.0) {
+            double maxv_d = abs_da > abs_db ? abs_da : abs_db;
+            double minv_d = abs_da > abs_db ? abs_db : abs_da;
+            double ratio = minv_d / maxv_d; // (0,1]
+            if (ratio >= 0.5) {
+                // Map ratio to centered domain: r in [0.5,1] -> t in [-0.5,0.5]
+                long double t = (static_cast<long double>(ratio) - 0.75L) * 2.0L;
+                auto ev = takum::internal::phi::phi_eval<N>(t);
+                long double w = ev.value; // monotone ~[0,1]
+                // Candidate forms:
+                //   linear: max*(1+ratio)
+                //   log1p:  max*std::exp(log1p(ratio)-ratio)  (placeholder future improved basis)
+                long double linear = 1.0L + static_cast<long double>(ratio);
+                // Use log1p for numerical stability near ratio~0.5..1 (still safe)
+                long double log1p_term = std::log1pl(static_cast<long double>(ratio));
+                long double refined = 1.0L + std::expl(log1p_term) - 1.0L; // = linear currently
+                // Blend weight w currently redundant; keep hook for future corrective term.
+                long double fused = linear + (refined - linear) * w;
+                long double approx = static_cast<long double>(maxv_d) * fused;
+                return takum<N>(static_cast<double>(approx));
+            }
+        }
+#endif // TAKUM_ENABLE_FAST_ADD
         return takum<N>(da + db);
     }
 
@@ -82,12 +106,7 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
     long double ell_res_mag = maxv + addterm;
     long double ell_res = (Sa ? -ell_res_mag : ell_res_mag);
 
-    // Future optimization hook: use internal::phi to approximate log1p path.
-    // Example (disabled until full Φ formula constants integrated):
-    // if constexpr (true /* placeholder toggle */) {
-    //     using takum::internal::phi::phi;
-    //     // Transform diff to Φ domain (t) if required and reconstruct addterm.
-    // }
+    // Future optimization: re-route long double path via Φ hybrid evaluator for large N.
 
     // Use from_ell to encode result with proper rounding and canonicalization
     return takum<N>::from_ell(Sa, ell_res);

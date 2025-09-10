@@ -81,6 +81,20 @@ if (-not (Test-Path $BuildDir)) {
     New-Item -ItemType Directory -Path $BuildDir | Out-Null
 }
 
+# --- generate phi_coeffs.h (optional pre-step to avoid first build race) ---
+$phiGenScript = Join-Path (Get-Location) "scripts/gen_poly_coeffs.py"
+$phiHeader = Join-Path (Get-Location) "include/takum/internal/generated/phi_coeffs.h"
+if (Test-Path $phiGenScript) {
+    $py = (Get-Command python -ErrorAction SilentlyContinue | Select-Object -First 1).Source
+    if (-not $py) { $py = (Get-Command python3 -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
+    if ($py) {
+        Write-Host "[INFO] Generating Φ coefficients via $py $phiGenScript"
+        & $py $phiGenScript $phiHeader
+    } else {
+        Write-Host "[WARN] Python interpreter not found; skipping coefficient regeneration"
+    }
+}
+
 # --- run cmake configure ---
 Write-Host "[INFO] Configuring project..."
 $cmakeArgs = @(

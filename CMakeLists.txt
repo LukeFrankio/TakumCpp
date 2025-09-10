@@ -17,6 +17,27 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 
+# ---------------------------------------------------------------------------
+# Generated Φ polynomial coefficients
+# ---------------------------------------------------------------------------
+set(PHI_COEFF_HEADER ${CMAKE_SOURCE_DIR}/include/takum/internal/generated/phi_coeffs.h)
+set(PHI_GEN_SCRIPT   ${CMAKE_SOURCE_DIR}/scripts/gen_poly_coeffs.py)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND AND EXISTS ${PHI_GEN_SCRIPT})
+  add_custom_command(
+    OUTPUT ${PHI_COEFF_HEADER}
+    COMMAND ${Python3_EXECUTABLE} ${PHI_GEN_SCRIPT} ${PHI_COEFF_HEADER}
+    DEPENDS ${PHI_GEN_SCRIPT}
+    COMMENT "Generating Φ polynomial coefficient header"
+    VERBATIM
+  )
+  add_custom_target(phi_coeffs_gen DEPENDS ${PHI_COEFF_HEADER})
+else()
+  add_custom_target(phi_coeffs_gen
+    COMMAND ${CMAKE_COMMAND} -E echo "Python3 or script missing; using existing phi_coeffs.h if present"
+  )
+endif()
+
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
@@ -60,8 +81,9 @@ endif()
 include(CTest)
 enable_testing()
 
-# Tests
+# Tests (depend on generated header)
 add_subdirectory(test)
+add_dependencies(tests phi_coeffs_gen)
 
 # Examples
 file(GLOB EXAMPLE_SOURCES "${CMAKE_SOURCE_DIR}/examples/*.cpp")
@@ -69,6 +91,7 @@ foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
     get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
     add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
     target_link_libraries(${EXAMPLE_NAME} PRIVATE TakumCpp)
+  add_dependencies(${EXAMPLE_NAME} phi_coeffs_gen)
     if(BUILD_TESTING)
         add_test(NAME ${EXAMPLE_NAME} COMMAND ${EXAMPLE_NAME})
     endif()
