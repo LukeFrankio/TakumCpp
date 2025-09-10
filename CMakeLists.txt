@@ -19,14 +19,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   # Disable C++26 for AppleClang due to incomplete feature support
   set(HAVE_CXX26_GNU FALSE)
   message(STATUS "Disabling C++26 for AppleClang due to incomplete feature support")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.0")
-  # Disable C++26 for older Clang versions to avoid standard library issues
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+  # Disable C++26 for Clang < 18 due to standard library compatibility issues with C++26
   set(HAVE_CXX26_GNU FALSE)
-  message(STATUS "Disabling C++26 for Clang < 16.0 due to standard library compatibility issues")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13.0")
+  message(STATUS "Disabling C++26 for Clang < 18.0 due to standard library compatibility issues")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.0")
   # Disable C++26 for older GCC versions
   set(HAVE_CXX26_GNU FALSE)
-  message(STATUS "Disabling C++26 for GCC < 13.0 due to incomplete support")
+  message(STATUS "Disabling C++26 for GCC < 14.0 due to incomplete support")
 endif()
 
 # Check for C++23 support  
@@ -78,17 +78,17 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
     message(STATUS "Clang 12+ detected: full C++20/23 support available")
   endif()
-  # Workaround: libstdc++ + clang < 16 has incomplete std::format / ranges / unicode interaction
+  # Workaround: libstdc++ + clang < 18 has incomplete std::format / ranges / unicode interaction
   # that triggers massive constraint failures when building googletest (uses <format> internally).
   # Disable std::format usage in gtest by defining GTEST_INTERNAL_HAS_STD_FORMAT=0 when we detect
-  # a problematic toolchain variant (clang < 16).
-  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.0")
+  # a problematic toolchain variant (clang < 18).
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
   add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
   # Also force-disable libstdc++ std::format machinery which triggers broken
-  # ranges/unicode instantiations under clang 15 + libstdc++14.
+  # ranges/unicode instantiations under clang 17 + libstdc++14.
   add_compile_options(-U_GLIBCXX_USE_STD_FORMAT)
   add_compile_definitions(_GLIBCXX_USE_STD_FORMAT=0)
-  message(STATUS "Disabling std::format (gtest + libstdc++) for clang <16 to work around ranges/unicode issues")
+  message(STATUS "Disabling std::format (gtest + libstdc++) for clang <18 to work around ranges/unicode issues")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
@@ -137,7 +137,7 @@ endif()
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v1.14.0
+  GIT_TAG        v1.15.2
 )
 
 FetchContent_MakeAvailable(googletest)

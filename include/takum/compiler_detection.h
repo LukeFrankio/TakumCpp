@@ -180,13 +180,14 @@
 #endif
 
 // Conservative std::expected detection
-// Only enable if we have the header AND a feature test macro OR known compiler versions
+// Primary reliance on feature test macro, with compiler version fallbacks for known working combinations
 #if TAKUM_HAS_CPP23 && TAKUM_HAS_INCLUDE(<expected>) && !defined(TAKUM_NO_STD_EXPECTED)
-    // Check for the C++23 feature test macro or conservative compiler versions
-    #if defined(__cpp_lib_expected) || \
-        (defined(__GNUC__) && __GNUC__ >= 13) || \
-        (defined(_MSC_VER) && _MSC_VER >= 1930) || \
-        (defined(__clang__) && __clang_major__ >= 15)
+    // Prefer the feature test macro when available (most reliable)
+    #if defined(__cpp_lib_expected)
+        #define TAKUM_HAS_STD_EXPECTED 1
+    // Fallback to conservative compiler + standard library combinations that are known to work
+    #elif (defined(_MSC_VER) && _MSC_VER >= 1930) || \
+          (defined(__GNUC__) && __GNUC__ >= 14 && defined(__GLIBCXX__))
         #define TAKUM_HAS_STD_EXPECTED 1
     #else
         #define TAKUM_HAS_STD_EXPECTED 0

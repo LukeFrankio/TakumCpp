@@ -93,14 +93,14 @@ jobs:
           path: build/test_failures.log
           if-no-files-found: ignore
 
-  # Linux with GCC and Clang - reduced matrix to avoid concurrency issues
+  # Linux with GCC and Clang - updated to newer compiler versions
   linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: 
-          - { cc: gcc-12, cxx: g++-12, name: gcc-12 }
-          - { cc: clang-15, cxx: clang++-15, name: clang-15 }
+          - { cc: gcc-14, cxx: g++-14, name: gcc-14 }
+          - { cc: clang-18, cxx: clang++-18, name: clang-18 }
         build_type: [Debug, Release]
     timeout-minutes: 25
     steps:
