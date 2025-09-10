@@ -12,7 +12,8 @@
 #include <type_traits>
 #include <bit>
 #include <optional>
-#if __cplusplus >= 202302L
+#include "takum/compiler_detection.h"
+#if TAKUM_HAS_STD_EXPECTED
 #include <expected>
 #else
 #include <variant>  // Fallback shim if needed, but use optional for now
@@ -376,7 +377,7 @@ struct takum {
 
     
 
-#if __cplusplus >= 202302L
+#if TAKUM_HAS_STD_EXPECTED
     /**
      * @brief Convert to std::expected, returning unexpected on NaR.
      */

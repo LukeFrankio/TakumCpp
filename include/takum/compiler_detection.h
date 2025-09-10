@@ -161,32 +161,71 @@
 // Feature Detection
 // =============================================================================
 
-// std::expected availability (C++23)
-#if TAKUM_HAS_CPP23 && !defined(TAKUM_NO_STD_EXPECTED)
-    #define TAKUM_HAS_STD_EXPECTED 1
+// Check for header availability first
+#ifdef __has_include
+    #define TAKUM_HAS_INCLUDE(header) __has_include(header)
+#else
+    #define TAKUM_HAS_INCLUDE(header) 0
+#endif
+
+// Conservative std::expected detection
+// Only enable if we have the header AND a feature test macro OR known compiler versions
+#if TAKUM_HAS_CPP23 && TAKUM_HAS_INCLUDE(<expected>) && !defined(TAKUM_NO_STD_EXPECTED)
+    // Check for the C++23 feature test macro or conservative compiler versions
+    #if defined(__cpp_lib_expected) || \
+        (defined(__GNUC__) && __GNUC__ >= 13) || \
+        (defined(_MSC_VER) && _MSC_VER >= 1930)
+        #define TAKUM_HAS_STD_EXPECTED 1
+    #else
+        #define TAKUM_HAS_STD_EXPECTED 0
+    #endif
 #else
     #define TAKUM_HAS_STD_EXPECTED 0
 #endif
 
-// std::bit_cast availability (C++20)
-#if TAKUM_HAS_CPP20 && !defined(TAKUM_NO_STD_BIT_CAST)
+// std::bit_cast availability (C++20 with header check)
+#if TAKUM_HAS_CPP20 && TAKUM_HAS_INCLUDE(<bit>) && !defined(TAKUM_NO_STD_BIT_CAST)
     #define TAKUM_HAS_STD_BIT_CAST 1
 #else
     #define TAKUM_HAS_STD_BIT_CAST 0
 #endif
 
-// std::concepts availability (C++20)
-#if TAKUM_HAS_CPP20 && !defined(TAKUM_NO_STD_CONCEPTS)
+// std::concepts availability (C++20 with header check)
+#if TAKUM_HAS_CPP20 && TAKUM_HAS_INCLUDE(<concepts>) && !defined(TAKUM_NO_STD_CONCEPTS)
     #define TAKUM_HAS_STD_CONCEPTS 1
 #else
     #define TAKUM_HAS_STD_CONCEPTS 0
 #endif
 
-// Constexpr std::bit_width (C++20)
-#if TAKUM_HAS_CPP20 && !defined(TAKUM_NO_CONSTEXPR_BIT_WIDTH)
+// Constexpr std::bit_width (C++20 with bit header)
+#if TAKUM_HAS_STD_BIT_CAST && !defined(TAKUM_NO_CONSTEXPR_BIT_WIDTH)
     #define TAKUM_HAS_CONSTEXPR_BIT_WIDTH 1
 #else
     #define TAKUM_HAS_CONSTEXPR_BIT_WIDTH 0
+#endif
+
+// Additional compiler-specific feature detection
+#if TAKUM_COMPILER_MSVC
+    // MSVC-specific feature detection
+    #if TAKUM_COMPILER_VERSION_MAJOR >= 193  // VS 2022 17.3+
+        #define TAKUM_MSVC_HAS_CPP23_FEATURES 1
+    #else
+        #define TAKUM_MSVC_HAS_CPP23_FEATURES 0
+    #endif
+#elif TAKUM_COMPILER_GCC
+    // GCC-specific feature detection  
+    #if TAKUM_COMPILER_VERSION_MAJOR >= 12
+        #define TAKUM_GCC_HAS_CPP23_FEATURES 1
+    #else
+        #define TAKUM_GCC_HAS_CPP23_FEATURES 0
+    #endif
+#elif TAKUM_COMPILER_CLANG
+    // Clang-specific feature detection
+    #if TAKUM_COMPILER_VERSION_MAJOR >= 15
+        #define TAKUM_CLANG_HAS_CPP23_FEATURES 1
+    #else
+        #define TAKUM_CLANG_HAS_CPP23_FEATURES 0
+    #endif
 #endif
 
 // =============================================================================

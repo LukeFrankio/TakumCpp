@@ -29,7 +29,7 @@ using float8_t = takum::takum<8>;
 
 #pragma message("Deprecated: float8_t is a shim for non-standard float8 using takum<8> with ghost bits. Prefer takum<8>.")
 
-#if __cplusplus < 202302L
+#if !TAKUM_HAS_STD_EXPECTED
 /**
  * @brief Compatibility shim for std::expected when C++23 is not available.
  *
