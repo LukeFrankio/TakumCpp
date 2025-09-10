@@ -49,7 +49,7 @@ TEST_F(CoreTest, RoundTripTakum32) {
 #endif
         } else {
             EXPECT_FALSE(t.is_nar());
-            long double tol = EPS * std::fabsl(static_cast<long double>(inp));
+            long double tol = EPS * fabsl(static_cast<long double>(inp));
             EXPECT_NEAR(back, static_cast<long double>(inp), tol);
         }
     }
@@ -60,7 +60,7 @@ TEST_F(CoreTest, RoundTripTakum64) {
     for (double inp : inputs) {
         takum::takum<64> t(inp);
         long double back = takum::internal::ref::high_precision_decode<64>(t.storage);
-        long double tol = EPS * std::fabsl(static_cast<long double>(inp));
+        long double tol = EPS * fabsl(static_cast<long double>(inp));
         EXPECT_NEAR(back, static_cast<long double>(inp), tol);
     }
 }
@@ -280,7 +280,7 @@ TEST_F(CoreTest, SampledMonotonicityAndUniquenessTakum32) {
 TEST_F(CoreTest, SpecialCases) {
     // 0
     ::takum::takum<32> zero(0.0);
-    long double tol_zero = EPS * std::fabsl(1.0L);
+    long double tol_zero = EPS * fabsl(1.0L);
     EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(zero.storage)), 0.0L, tol_zero);
     EXPECT_FALSE(zero.is_nar());
 
@@ -312,7 +312,7 @@ TEST_F(CoreTest, SpecialCases) {
     // Value within range should decode normally
     double large = std::exp(127.0);
     ::takum::takum<32> t_large(large);
-    long double tol_large = EPS * std::fabsl(static_cast<long double>(large));
+    long double tol_large = EPS * fabsl(static_cast<long double>(large));
     EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(t_large.storage)),
                 static_cast<long double>(large),
                 tol_large);
@@ -321,14 +321,14 @@ TEST_F(CoreTest, SpecialCases) {
     double too_large = std::exp(150.0);
     ::takum::takum<32> t_too_large(too_large);
     long double clamped_ell = t_too_large.get_exact_ell();
-    EXPECT_NEAR(clamped_ell, impl_max_ell, EPS * std::fabsl(impl_max_ell))
+    EXPECT_NEAR(clamped_ell, impl_max_ell, EPS * fabsl(impl_max_ell))
         << "Saturation should clamp to actual max representable ell";
 
     // Round-trip max ell
     ::takum::takum<32> t_max;
     t_max.storage = static_cast<uint32_t>(max_storage);
     long double roundtrip_max_ell = t_max.get_exact_ell();
-    EXPECT_NEAR(roundtrip_max_ell, impl_max_ell, EPS * std::fabsl(impl_max_ell))
+    EXPECT_NEAR(roundtrip_max_ell, impl_max_ell, EPS * fabsl(impl_max_ell))
         << "Max representable ell should round-trip exactly.";
 
     // m_bits rounding corner cases: test values where m ≈ 1 - eps, ensure rounding to max_m without overflow
@@ -336,12 +336,12 @@ TEST_F(CoreTest, SpecialCases) {
         constexpr size_t n = 32;
         uint32_t max_r = 7u;
         size_t p = n - 5 - max_r;  // 20
-        long double max_m_frac = 1.0L - std::ldexpl(1.0L, -static_cast<int>(p));
+        long double max_m_frac = 1.0L - ldexpl(1.0L, -static_cast<int>(p));
         long double max_c = 254.0L;  // for r=7, D=1: ((1<<7)-1) + ((1<<7)-1) = 127 + 127 = 254
-        long double test_ell_pos = max_c + (1.0L - std::ldexpl(1.0L, - (static_cast<int>(p) + 1)));  // m = 1 - 2^{-(p+1)}, m*2^p ≈ 2^p - 0.5, roundl → 2^p then clamp to 2^p -1
+        long double test_ell_pos = max_c + (1.0L - ldexpl(1.0L, - (static_cast<int>(p) + 1)));  // m = 1 - 2^{-(p+1)}, m*2^p ≈ 2^p - 0.5, roundl → 2^p then clamp to 2^p -1
         long double expected_m = (1LL<<p) - 1LL;
-        long double expected_ell = max_c + static_cast<long double>(expected_m) / std::ldexpl(1.0L, static_cast<int>(p));
-        double test_x_pos = std::expl(test_ell_pos * 0.5L);
+        long double expected_ell = max_c + static_cast<long double>(expected_m) / ldexpl(1.0L, static_cast<int>(p));
+        double test_x_pos = expl(test_ell_pos * 0.5L);
         ::takum::takum<32> t_pos(test_x_pos);
         uint32_t packed = static_cast<uint32_t>(t_pos.storage);
         std::cerr << "packed=0x" << std::hex << packed << std::dec << " S=" << ((packed>>(32-1))&1) << " D=" << ((packed>>(32-2))&1) << '\n';
@@ -360,7 +360,7 @@ TEST_F(CoreTest, SpecialCases) {
         EXPECT_EQ(extracted_m, static_cast<uint32_t>(expected_m)) << "m_bits should round to max_m for value just below overflow";
         // Check decoded ell close to expected
         long double decoded_ell = t_pos.get_exact_ell();
-        long double tol_pos = EPS * std::fabsl(expected_ell);
+        long double tol_pos = EPS * fabsl(expected_ell);
         EXPECT_NEAR(decoded_ell, expected_ell, tol_pos) << "Decoded ell should match rounded m";
 
         // Negative side
@@ -378,13 +378,13 @@ TEST_F(CoreTest, SpecialCases) {
                   << " S=" << S_log_neg << " D=" << D_log_neg << " R=" << R_val_log_neg << " r=" << r_log_neg
                   << " p=" << p_log_neg << " extracted_m_neg=" << extracted_m_neg << std::endl;
         long double decoded_ell_neg = t_neg.get_exact_ell();
-        long double tol_neg = EPS * std::fabsl(expected_ell);
+        long double tol_neg = EPS * fabsl(expected_ell);
         EXPECT_NEAR(decoded_ell_neg, -expected_ell, tol_neg) << "Negative m rounding should symmetric";
 
         // Test potential overflow push: but since m clamped <1, try m=0.999... close to 1
-        long double m_near1 = 1.0L - std::ldexpl(1.0L, -static_cast<int>(p*2));  // very close to 1
+        long double m_near1 = 1.0L - ldexpl(1.0L, -static_cast<int>(p*2));  // very close to 1
         long double ell_near_overflow = max_c + m_near1;
-        double x_near = std::expl(ell_near_overflow * 0.5L);
+        double x_near = expl(ell_near_overflow * 0.5L);
         ::takum::takum<32> t_near(x_near);
         uint32_t m_near = static_cast<uint32_t>(t_near.storage) & ((1u << p) - 1u);
         EXPECT_LE(m_near, (1u << p) - 1u) << "m_bits clamped even for m very close to 1";
@@ -400,7 +400,7 @@ TEST_F(CoreTest, SpecialCases) {
                   << " p=" << p_log_near << " extracted_m_near=" << extracted_m_near << std::endl;
         long double clamped_ell = t_near.get_exact_ell();
         long double expected_clamped_ell = max_c + max_m_frac;
-        long double tol_clamped = EPS * std::fabsl(expected_clamped_ell);
+        long double tol_clamped = EPS * fabsl(expected_clamped_ell);
         EXPECT_NEAR(clamped_ell, expected_clamped_ell, tol_clamped) << "ell clamped to max representable";
     }
 }
@@ -609,7 +609,7 @@ TEST_F(CoreTest, FuzzRoundTripAndMonotonicityTakum32) {
         if (inp == 0.0) {
             EXPECT_DOUBLE_EQ(decoded, 0.0) << "Zero round-trip";
         } else {
-            double rel_error = std::fabsl((decoded - inp) / inp);
+            double rel_error = fabsl((decoded - inp) / inp);
             EXPECT_LT(rel_error, static_cast<double>(EPS)) << "Relative error too high for input " << inp;
         }
     }

@@ -1,5 +1,10 @@
 #pragma once
 
+// Enable long double math functions
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include <cstddef>
 #include <cstdint>
 #include <array>
@@ -461,8 +466,8 @@ struct takum {
         // Fallback: decode to double and then extract ell via log
         double v = to_double();
         if (!std::isfinite(v)) return std::numeric_limits<double>::quiet_NaN();
-        long double abs_v = std::fabsl(v);
-        long double ell = 2.0L * std::logl(abs_v);
+        long double abs_v = fabsl(v);
+        long double ell = 2.0L * logl(abs_v);
         return static_cast<double>((v < 0) ? -ell : ell);
     }
 
@@ -544,8 +549,8 @@ struct takum {
             if (!std::isfinite(x)) { out = takum::nar().storage; return out; }
 
             bool S = std::signbit(x);
-            long double abs_x = std::fabsl(x);
-            long double ell = 2.0L * std::logl(abs_x);
+            long double abs_x = fabsl(x);
+            long double ell = 2.0L * logl(abs_x);
 
             long double clamp_pos = max_ell();
             // Per spec: values outside representable dynamic range map to NaR
@@ -554,11 +559,11 @@ struct takum {
                 return out;
             }
 
-            int64_t c = static_cast<int64_t>(std::floorl(ell));
+            int64_t c = static_cast<int64_t>(floorl(ell));
             bool D = (c >= 0);
             int64_t abs_c = D ? c : -c;
             uint32_t r = (abs_c != 0)
-                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                ? static_cast<uint32_t>(floorl(log2l(D ? abs_c + 1 : abs_c)))
                 : 0;
             r = std::min<uint32_t>(7, r);
             uint32_t R = D ? r : (7U - r);
@@ -654,11 +659,11 @@ struct takum {
 
         if constexpr (N <= 64) {
             // Follow encode_from_double_u64 packing but use provided ell
-            int64_t c = static_cast<int64_t>(std::floorl(ell_ld));
+            int64_t c = static_cast<int64_t>(floorl(ell_ld));
             bool D = (c >= 0);
             int64_t abs_c = D ? c : -c;
             uint32_t r = (abs_c != 0)
-                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                ? static_cast<uint32_t>(floorl(log2l(D ? abs_c + 1 : abs_c)))
                 : 0;
             r = std::min<uint32_t>(7, r);
             uint32_t R = D ? r : (7U - r);
@@ -676,9 +681,9 @@ struct takum {
             size_t p = N - 5 - static_cast<size_t>(r);
             uint64_t m_bits = 0ULL;
             if (p > 0 && m > 0.0L) {
-                long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+                long double m_power = ldexpl(1.0L, static_cast<int>(p));
                 long double m_scaled_ld = m * m_power;
-                m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L));
+                m_bits = static_cast<uint64_t>(floorl(m_scaled_ld + 0.5L));
                 uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
                 if (m_bits > max_m) m_bits = max_m;
             }
@@ -699,12 +704,12 @@ struct takum {
             bool D;
             int64_t c;
             {
-                c = static_cast<int64_t>(std::floorl(ell_ld));
+                c = static_cast<int64_t>(floorl(ell_ld));
                 D = (c >= 0);
             }
             int64_t abs_c = D ? c : -c;
             uint32_t r = (abs_c != 0)
-                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                ? static_cast<uint32_t>(floorl(log2l(D ? abs_c + 1 : abs_c)))
                 : 0;
             r = std::min<uint32_t>(7, r);
             uint32_t R = D ? r : (7U - r);
@@ -788,9 +793,9 @@ struct takum {
             if (!std::isfinite(x)) return static_cast<uint64_t>(takum::nar().storage);  // NaN/Inf → NaR per NaR convention in Def. 2
 
             bool S = std::signbit(x); // Sign bit per eq. (14)
-            long double abs_x = std::fabsl(x);
+            long double abs_x = fabsl(x);
 
-            long double ell = 2.0L * std::logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
+            long double ell = 2.0L * logl(abs_x); // Logarithmic value ℓ = 2 * ln(|x|) for base √e, per eq. (23)
 
             // Clamp |ℓ| to representable range |ℓ| < 255 per eq. (23)
             long double clamp_pos = max_ell();
@@ -798,13 +803,13 @@ struct takum {
             if (ell < -clamp_pos) ell = -clamp_pos;
 
             // Decompose ℓ into characteristic c = floor(ℓ) and mantissa m = ℓ - c per eq. (19) and (22)
-            int64_t c = static_cast<int64_t>(std::floorl(ell));
+            int64_t c = static_cast<int64_t>(floorl(ell));
             bool D = (c >= 0); // Direction bit: positive if c >= 0 per eq. (15)
             int64_t abs_c = D ? c : -c;
 
             // Regime r per eq. (17): floor(log2(|c| + D))
             uint32_t r = (abs_c != 0)
-                ? static_cast<uint32_t>(std::floorl(std::log2l(D ? abs_c + 1 : abs_c)))
+                ? static_cast<uint32_t>(floorl(log2l(D ? abs_c + 1 : abs_c)))
                 : 0;
             r = std::min<uint32_t>(7, r); // Clamp to max regime 7
             uint32_t R = D ? r : (7U - r); // Regime bits per eq. (16)
@@ -827,9 +832,9 @@ struct takum {
             size_t p = N - 5 - static_cast<size_t>(r);
             uint64_t m_bits = 0ULL;
             if (p > 0 && m > 0.0L) {
-                long double m_power = std::ldexpl(1.0L, static_cast<int>(p));
+                long double m_power = ldexpl(1.0L, static_cast<int>(p));
                 long double m_scaled_ld = m * m_power;
-                m_bits = static_cast<uint64_t>(std::floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
+                m_bits = static_cast<uint64_t>(floorl(m_scaled_ld + 0.5L)); // Quantize m to p bits
                 uint64_t max_m = (p >= 64) ? ~0ULL : ((1ULL << p) - 1ULL);
                 if (m_bits > max_m) m_bits = max_m; // Clamp
             }
@@ -950,7 +955,7 @@ private:
 
             long double ell = static_cast<long double>(c) + m;
             double value_sign = S ? -1.0 : 1.0;
-            return value_sign * static_cast<double>(std::expl(ell * 0.5L));
+            return value_sign * static_cast<double>(expl(ell * 0.5L));
         }
     }
 
