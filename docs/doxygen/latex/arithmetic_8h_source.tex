@@ -3,6 +3,7 @@
 \mbox{\hyperlink{arithmetic_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
+\DoxyCodeLine{00010\ }
 \DoxyCodeLine{00011\ \textcolor{preprocessor}{\#pragma\ once}}
 \DoxyCodeLine{00012\ }
 \DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{core_8h}{takum/core.h}}"{}}}
@@ -14,117 +15,184 @@
 \DoxyCodeLine{00019\ }
 \DoxyCodeLine{00024\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
 \DoxyCodeLine{00025\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a5f54a9b221a1e3615056ca4f79a2fce6}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
-\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{double}\ db\ =\ b.to\_double();}
-\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(da)\ ||\ !std::isfinite(db))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(\mbox{\hyperlink{structtakum_1_1takum}{da}}\ +\ \mbox{\hyperlink{structtakum_1_1takum}{db}});}
-\DoxyCodeLine{00031\ \}}
-\DoxyCodeLine{00032\ }
-\DoxyCodeLine{00036\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00037\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a3049e21727e438435ee74e0fea9c2f62}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{da}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{db}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{da}})\ ||\ !std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{db}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(\mbox{\hyperlink{structtakum_1_1takum}{da}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{db}});}
-\DoxyCodeLine{00043\ \}}
-\DoxyCodeLine{00044\ }
-\DoxyCodeLine{00048\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00049\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a192fc59979c2d2111ea93bed94b9f666}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{da}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{db}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{da}})\ ||\ !std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{db}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(\mbox{\hyperlink{structtakum_1_1takum}{da}}\ *\ \mbox{\hyperlink{structtakum_1_1takum}{db}});}
-\DoxyCodeLine{00055\ \}}
-\DoxyCodeLine{00056\ }
-\DoxyCodeLine{00060\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00061\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_aa8fe38c7dea02d180625303dfd88e4c9}{operator/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{da}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{db}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{da}})\ ||\ !std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{db}})\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{db}}\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(\mbox{\hyperlink{structtakum_1_1takum}{da}}\ /\ \mbox{\hyperlink{structtakum_1_1takum}{db}});}
-\DoxyCodeLine{00067\ \}}
-\DoxyCodeLine{00068\ }
-\DoxyCodeLine{00072\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00073\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a196327967b7390e1b41e84411d66e477}{abs}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{da}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
-\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{da}}))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
-\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(std::fabs(\mbox{\hyperlink{structtakum_1_1takum}{da}}));}
-\DoxyCodeLine{00078\ \}}
-\DoxyCodeLine{00079\ }
-\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}}
-\DoxyCodeLine{00104\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00105\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_a55fe505184bb8ca00cf24307517299d7}{safe\_add}}(\textcolor{keyword}{const}\ takum<N>\&\ a,\ \textcolor{keyword}{const}\ takum<N>\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
-\DoxyCodeLine{00107\ \ \ \ \ takum<N>\ r\ =\ a\ +\ b;}
-\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
-\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ Phase-\/4\ Gaussian-\/log\ (Φ)\ addition.}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ Prefer\ quantized-\/double\ intermediate\ (matches\ Phase‑3\ behavior/tests):}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{double}\ db\ =\ b.to\_double();}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::isfinite(da)\ \&\&\ std::isfinite(db))\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ constructs\ via\ encode\_from\_double\ and\ ensures\ bitwise}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ equality\ against\ reference\ takum(qa+qb)\ used\ by\ tests.}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Also\ handles\ zero\ cases.}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(da\ +\ db);}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ Fallback\ to\ Phase-\/4\ Gaussian-\/log\ when\ double\ intermediates\ are\ non-\/finite}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ (e.g.,\ overflow)\ or\ unavailable.}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{//\ Extract\ signs\ and\ logits\ ℓ\ =\ 2*ln(|x|)\ in\ long\ double\ precision}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_a\ =\ a.get\_exact\_ell();}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_b\ =\ b.get\_exact\_ell();}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite((\textcolor{keywordtype}{double})ell\_a)\ ||\ !std::isfinite((\textcolor{keywordtype}{double})ell\_b))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{//\ Signs}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{bool}\ Sa\ =\ (ell\_a\ <\ 0.0L);}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ Sb\ =\ (ell\_b\ <\ 0.0L);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ abs\_a\ =\ std::fabsl(ell\_a);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ abs\_b\ =\ std::fabsl(ell\_b);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ Order\ so\ that\ abs\_a\ >=\ abs\_b}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{if}\ (abs\_b\ >\ abs\_a)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ std::swap(abs\_a,\ abs\_b);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ std::swap(Sa,\ Sb);}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//\ If\ magnitudes\ are\ identical\ and\ signs\ cancel\ -\/>\ zero}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{if}\ (abs\_a\ ==\ abs\_b\ \&\&\ Sa\ !=\ Sb)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\{\};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ Compute\ ell\_result\ =\ sign\ *\ (max\ +\ log(1\ +\ sign*exp(min-\/max)))}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ maxv\ =\ abs\_a;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ minv\ =\ abs\_b;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ s\ =\ (Sa\ ==\ Sb)\ ?\ 1.0L\ :\ -\/1.0L;\ \textcolor{comment}{//\ sign\ factor\ for\ addition}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ diff\ =\ minv\ -\/\ maxv;\ \textcolor{comment}{//\ <=\ 0}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//\ Compute\ log1p\ in\ high\ precision:\ log1p(s*exp(diff))\ but\ ensure\ argument\ positive}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ z\ =\ s\ *\ std::expl(diff);}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ If\ |z|\ is\ tiny,\ result\ \string~\ maxv}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ addterm;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::fabsl(z)\ <\ 1e-\/18L)\ addterm\ =\ 0.0L;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ arg\ =\ 1.0L\ +\ z;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (arg\ <=\ 0.0L)\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Numerical\ cancellation\ -\/>\ results\ in\ zero\ or\ NaR}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (arg\ ==\ 0.0L)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\{\};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ addterm\ =\ std::logl(arg);}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_res\_mag\ =\ maxv\ +\ addterm;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_res\ =\ (Sa\ ?\ -\/ell\_res\_mag\ :\ ell\_res\_mag);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ Use\ from\_ell\ to\ encode\ result\ with\ proper\ rounding\ and\ canonicalization}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a47816596eab7d69530e8a73fb62e868a}{takum<N>::from\_ell}}(Sa,\ ell\_res);}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00092\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a3049e21727e438435ee74e0fea9c2f62}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\ Prefer\ double-\/intermediate\ subtraction\ when\ possible}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{double}\ db\ =\ b.to\_double();}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::isfinite(da)\ \&\&\ std::isfinite(db))\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(da\ -\/\ db);}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{//\ Fallback:\ treat\ as\ addition\ with\ flipped\ sign\ via\ from\_ell}}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ nb\ =\ b;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_b\ =\ b.\mbox{\hyperlink{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}{get\_exact\_ell}}();}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite((\textcolor{keywordtype}{double})ell\_b))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{bool}\ Sb\ =\ (ell\_b\ <\ 0.0L);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ mag\_b\ =\ std::fabsl(ell\_b);}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{bool}\ Sb\_flipped\ =\ !Sb;}
+\DoxyCodeLine{00108\ \ \ \ \ nb\ =\ \mbox{\hyperlink{structtakum_1_1takum_a47816596eab7d69530e8a73fb62e868a}{takum<N>::from\_ell}}(Sb\_flipped,\ (Sb\_flipped\ ?\ -\/mag\_b\ :\ mag\_b));}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ +\ nb;}
 \DoxyCodeLine{00110\ \}}
 \DoxyCodeLine{00111\ }
-\DoxyCodeLine{00123\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00124\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_ae7b0630d123d3f7251ea89f869d108ef}{safe\_mul}}(\textcolor{keyword}{const}\ takum<N>\&\ a,\ \textcolor{keyword}{const}\ takum<N>\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
-\DoxyCodeLine{00126\ \ \ \ \ takum<N>\ r\ =\ a\ *\ b;}
-\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
-\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
-\DoxyCodeLine{00129\ \}}
-\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{00142\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00143\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_a55fe505184bb8ca00cf24307517299d7}{safe\_add}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00145\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ +\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
-\DoxyCodeLine{00148\ \}}
-\DoxyCodeLine{00149\ }
-\DoxyCodeLine{00161\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00162\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_ae7b0630d123d3f7251ea89f869d108ef}{safe\_mul}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00164\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ *\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
-\DoxyCodeLine{00167\ \}}
-\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00169\ }
-\DoxyCodeLine{00170\ \textcolor{comment}{//\ Safe\ subtraction\ and\ division\ variants}}
-\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}}
-\DoxyCodeLine{00183\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00184\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_a4022825fc95e9cb450d79361de0c3f59}{safe\_sub}}(\textcolor{keyword}{const}\ takum<N>\&\ a,\ \textcolor{keyword}{const}\ takum<N>\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
-\DoxyCodeLine{00186\ \ \ \ \ takum<N>\ r\ =\ a\ -\/\ b;}
-\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
-\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
-\DoxyCodeLine{00189\ \}}
-\DoxyCodeLine{00190\ }
-\DoxyCodeLine{00203\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00204\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_abcc36be97e5b6d3339175d43321392a9}{safe\_div}}(\textcolor{keyword}{const}\ takum<N>\&\ a,\ \textcolor{keyword}{const}\ takum<N>\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
-\DoxyCodeLine{00206\ \ \ \ \ takum<N>\ r\ =\ a\ /\ b;}
-\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
-\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
-\DoxyCodeLine{00209\ \}}
-\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{00222\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00223\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_a4022825fc95e9cb450d79361de0c3f59}{safe\_sub}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00225\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
-\DoxyCodeLine{00228\ \}}
-\DoxyCodeLine{00229\ }
-\DoxyCodeLine{00241\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00242\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_abcc36be97e5b6d3339175d43321392a9}{safe\_div}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00244\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ /\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
-\DoxyCodeLine{00247\ \}}
-\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00249\ }
-\DoxyCodeLine{00250\ \}\ \textcolor{comment}{//\ namespace\ takum}}
+\DoxyCodeLine{00115\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00116\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a192fc59979c2d2111ea93bed94b9f666}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{double}\ db\ =\ b.to\_double();}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(da)\ ||\ !std::isfinite(db))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(da\ *\ db);}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00127\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00128\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_aa8fe38c7dea02d180625303dfd88e4c9}{operator/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{double}\ db\ =\ b.to\_double();}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(da)\ ||\ !std::isfinite(db)\ ||\ db\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(da\ /\ db);}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00139\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00140\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ \mbox{\hyperlink{namespacetakum_a196327967b7390e1b41e84411d66e477}{abs}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{double}\ da\ =\ a.to\_double();}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(da))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum<N>::nar}}();}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}(std::fabs(da));}
+\DoxyCodeLine{00145\ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00171\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00172\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_a55fe505184bb8ca00cf24307517299d7}{safe\_add}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ +\ b;}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00177\ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00191\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ \mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}>\ \mbox{\hyperlink{namespacetakum_ae7b0630d123d3f7251ea89f869d108ef}{safe\_mul}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
+\DoxyCodeLine{00193\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ *\ b;}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00196\ \}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#else}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00210\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_a55fe505184bb8ca00cf24307517299d7}{safe\_add}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ +\ b;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00228\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00229\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_ae7b0630d123d3f7251ea89f869d108ef}{safe\_mul}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00231\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ *\ b;}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00234\ \}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \textcolor{comment}{//\ Safe\ subtraction\ and\ division\ variants}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00250\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00251\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ takum\_error>\ \mbox{\hyperlink{namespacetakum_a4022825fc95e9cb450d79361de0c3f59}{safe\_sub}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(takum\_error\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ -\/\ b;}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00256\ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00270\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00271\ \textcolor{keyword}{inline}\ std::expected<takum<N>,\ \mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}>\ \mbox{\hyperlink{namespacetakum_abcc36be97e5b6d3339175d43321392a9}{safe\_div}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR\ operand"{}}\});}
+\DoxyCodeLine{00273\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ /\ b;}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{takum\_error::Kind::Overflow}},\ \textcolor{stringliteral}{"{}result\ NaR/overflow"{}}\});}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#else}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00289\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00290\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_a4022825fc95e9cb450d79361de0c3f59}{safe\_sub}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00292\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ -\/\ b;}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00295\ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00308\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00309\ \textcolor{keyword}{inline}\ std::optional<takum<N>>\ \mbox{\hyperlink{namespacetakum_abcc36be97e5b6d3339175d43321392a9}{safe\_div}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\&\ b)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.is\_nar()\ ||\ b.is\_nar())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00311\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{takum<N>}}\ r\ =\ a\ /\ b;}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordflow}{if}\ (r.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00314\ \}}
+\DoxyCodeLine{00315\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \}\ \textcolor{comment}{//\ namespace\ takum}}
 
 \end{DoxyCode}

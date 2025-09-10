@@ -1,6 +1,6 @@
 var structtakum_1_1takum =
 [
-    [ "storage_t", "structtakum_1_1takum.html#afbea5997e74badd9b67eab622e9dca7f", null ],
+    [ "storage_t", "structtakum_1_1takum.html#afc6beeb03e43bac2c39df4628f00920b", null ],
     [ "takum", "structtakum_1_1takum.html#a04f913b0f2566a6547f02e3c0df62e6b", null ],
     [ "takum", "structtakum_1_1takum.html#a8fe50ee4d28061551989e178974e8ac4", null ],
     [ "debug_view", "structtakum_1_1takum.html#a7f96bfa2c9fac1d28b230ee6ce32eac5", null ],

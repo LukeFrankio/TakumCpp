@@ -38,7 +38,7 @@ cmake-build-*
 # DOCS
 Docs/Spec.md
 AcSo/
-Docs/doxygen
+Docs/doxygen/
 
 # OS generated files
 .DS_Store

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['max_5fell_0',['max_ell',['../structtakum_1_1takum.html#a6d3beeb5a357cdc173ef67484abd0ef0',1,'takum::takum']]],
-  ['max_5ffinite_5fstorage_1',['max_finite_storage',['../structtakum_1_1takum.html#a6b0964a8ce01d75f392443e13bc3c039',1,'takum::takum']]],
-  ['minpos_2',['minpos',['../structtakum_1_1takum.html#af721d58ddc31121ce4a423bb634e8216',1,'takum::takum']]]
+  ['lowest_0',['lowest',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#adefff79f9b2c8d79e72dc9bd2953d67f',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]]
 ];

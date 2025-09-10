@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['lut_5fq_5ffrac_5fbits_5ftakum16_0',['LUT_Q_FRAC_BITS_TAKUM16',['../namespacetakum_1_1internal_1_1phi.html#a7564c508ac18826562a5c6953b571f01',1,'takum::internal::phi']]],
-  ['lut_5fq_5ffrac_5fbits_5ftakum32_1',['LUT_Q_FRAC_BITS_TAKUM32',['../namespacetakum_1_1internal_1_1phi.html#af158b7988eb85c911e2ca7b9d6187fc8',1,'takum::internal::phi']]],
-  ['lut_5fq_5ffrac_5fbits_5ftakum64_2',['LUT_Q_FRAC_BITS_TAKUM64',['../namespacetakum_1_1internal_1_1phi.html#aaf62a09a6d7d393e035bb5f7f862ae51',1,'takum::internal::phi']]],
-  ['lut_5fsize_5ftakum16_3',['LUT_SIZE_TAKUM16',['../namespacetakum_1_1internal_1_1phi.html#aec4a23fed783b0a1b3e1533fcafd588c',1,'takum::internal::phi']]],
-  ['lut_5fsize_5ftakum32_4',['LUT_SIZE_TAKUM32',['../namespacetakum_1_1internal_1_1phi.html#a6bdce3940311db7be197f0aa99a0a500',1,'takum::internal::phi']]],
-  ['lut_5fsize_5ftakum64_5',['LUT_SIZE_TAKUM64',['../namespacetakum_1_1internal_1_1phi.html#a00afe0870e92cdbfd2d45362761c3ddb',1,'takum::internal::phi']]]
+  ['is_5fbounded_0',['is_bounded',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a11c606cbfb1f229e3f2041a1da475460',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5fexact_1',['is_exact',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a13a4a19e456bb922b5f1576f4b9415a9',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5fiec559_2',['is_iec559',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a009895958c7675e45b6f6d8214a30cf8',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5finteger_3',['is_integer',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a5fa45111832498d06e2825f2194ba619',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5fmodulo_4',['is_modulo',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#aab34b8c759c6186b70505d4ae71eb6ce',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5fsigned_5',['is_signed',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a7f765d55d31b50a7149e48c7b737ce0d',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]],
+  ['is_5fspecialized_6',['is_specialized',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a1e743e36abcc26c2af99715571a11fdd',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]]
 ];

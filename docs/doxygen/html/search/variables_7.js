@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['q_5ffrac_5fbits_0',['Q_FRAC_BITS',['../namespacetakum_1_1internal_1_1phi.html#acff6a02b0acf5a0a2f12fe7f20076c0e',1,'takum::internal::phi']]]
+  ['num_5fintervals_0',['NUM_INTERVALS',['../namespacetakum_1_1internal_1_1phi.html#ad8447acc7f2385266be34e69fa4f943f',1,'takum::internal::phi::NUM_INTERVALS'],['../namespacetakum_1_1internal_1_1phi_1_1takum_1_1internal_1_1phi.html#a5fc574dfb9c0c0ec4cc1b1c7b0578ef3',1,'takum::internal::phi::takum::internal::phi::NUM_INTERVALS']]]
 ];

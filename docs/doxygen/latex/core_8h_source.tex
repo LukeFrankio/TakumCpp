@@ -22,6 +22,7 @@
 \DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <limits>}}
 \DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <algorithm>}}
 \DoxyCodeLine{00020\ }
+\DoxyCodeLine{00033\ }
 \DoxyCodeLine{00051\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetakum}{takum}}\ \{}
 \DoxyCodeLine{00052\ }
 \DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\ \{}
@@ -36,652 +37,787 @@
 \DoxyCodeLine{00085\ \ \ \ \ \{\ t\ ==\ t\ \}\ -\/>\ std::convertible\_to<bool>;}
 \DoxyCodeLine{00086\ \ \ \ \ \{\ t.to\_double()\ \}\ -\/>\ std::convertible\_to<double>;}
 \DoxyCodeLine{00087\ \ \ \ \ \{\ t.is\_nar()\ \}\ -\/>\ std::convertible\_to<bool>;}
-\DoxyCodeLine{00088\ \}\ \&\&\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structtakum_1_1takum}{T}})\ >\ 0;\ \textcolor{comment}{//\ Ensure\ complete\ type}}
+\DoxyCodeLine{00088\ \}\ \&\&\ \textcolor{keyword}{sizeof}(T)\ >\ 0;\ \textcolor{comment}{//\ Ensure\ complete\ type}}
 \DoxyCodeLine{00089\ }
 \DoxyCodeLine{00090\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
 \DoxyCodeLine{00100\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{namespacetakum}{takum}}\ \{}
-\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{static\_assert}(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >=\ 2\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 256,\ \textcolor{stringliteral}{"{}takum:\ supported\ bit\ widths\ 2..256\ for\ now"{}});}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{static\_assert}(N\ >=\ 2\ \&\&\ N\ <=\ 256,\ \textcolor{stringliteral}{"{}takum:\ supported\ bit\ widths\ 2..256\ for\ now"{}});}
 \DoxyCodeLine{00102\ }
-\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ =\ std::conditional\_t<(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 32),\ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}},}
-\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::conditional\_t<(\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64),\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}},\ std::array<\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}},\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}+63)/64>>>;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ =\ std::conditional\_t<(N\ <=\ 32),\ uint32\_t,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::conditional\_t<(N\ <=\ 64),\ uint64\_t,\ std::array<uint64\_t,\ (N+63)/64>>>;}
 \DoxyCodeLine{00106\ }
-\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ storage\{\};}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\{\};}
 \DoxyCodeLine{00109\ }
-\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{takum}}()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{default}};}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{structtakum_1_1takum_a04f913b0f2566a6547f02e3c0df62e6b}{takum}}()\ noexcept\ =\ default;}
 \DoxyCodeLine{00116\ }
-\DoxyCodeLine{00124\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{static}}\ \mbox{\hyperlink{namespacetakum}{takum}}\ nar()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{t}}\{\};}
-\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{pat}}\ =\ 1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1);\ \ \textcolor{comment}{//\ Only\ sign\ bit\ set\ for\ NaR\ per\ spec}}
-\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{t}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{pat}});}
+\DoxyCodeLine{00124\ \ \ \ \ static\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{nar}}()\ noexcept\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ t\{\};}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ pat\ =\ 1ULL\ <<\ (N\ -\/\ 1);\ \ \textcolor{comment}{//\ Only\ sign\ bit\ set\ for\ NaR\ per\ spec}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ t.storage\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(pat);}
 \DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ large\ N,\ set\ only\ the\ sign\ bit\ (MSB)}}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64;}
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{t}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ =\ 1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}};}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_bit\ =\ (N\ -\/\ 1)\ \%\ 64;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ t.storage[msb\_word]\ =\ 1ULL\ <<\ msb\_bit;}
 \DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ other\ words\ are\ zero\ (already\ default)}}
 \DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{t}};}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
 \DoxyCodeLine{00137\ \ \ \ \ \}}
 \DoxyCodeLine{00138\ }
-\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(storage);}
-\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{pat}}\ =\ 1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1);\ \ \textcolor{comment}{//\ Only\ sign\ bit\ set\ for\ NaR}}
-\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{pat}};}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ w\ =\ uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ pat\ =\ 1ULL\ <<\ (N\ -\/\ 1);\ \ \textcolor{comment}{//\ Only\ sign\ bit\ set\ for\ NaR}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ w\ ==\ pat;}
 \DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ only\ sign\ bit\ (MSB)\ set,\ all\ else\ zero}}
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64;}
-\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ expected\ =\ 1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}};}
-\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (storage[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ !=\ expected)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ storage.size();\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
-\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{i}}\ !=\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ \&\&\ storage[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ !=\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_bit\ =\ (N\ -\/\ 1)\ \%\ 64;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ expected\ =\ 1ULL\ <<\ msb\_bit;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[msb\_word]\ !=\ expected)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();\ ++i)\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ !=\ msb\_word\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[i]\ !=\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
 \DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
 \DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00160\ \ \ \ \ \}}
 \DoxyCodeLine{00161\ }
-\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a830aff61c2361327a4a12163c9c55f27}{operator==}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar()\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ storage\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};\ \ \textcolor{comment}{//\ Bitwise\ equal\ for\ reals}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a830aff61c2361327a4a12163c9c55f27}{operator==}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ \&\&\ other.is\_nar())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ other.is\_nar())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ ==\ other.storage;\ \ \textcolor{comment}{//\ Bitwise\ equal\ for\ reals}}
 \DoxyCodeLine{00172\ \ \ \ \ \}}
 \DoxyCodeLine{00173\ }
-\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a41ba7237e986b38a14d61178f9390015}{operator<}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar()\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \{}
-\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ is\_nar()\ \&\&\ !\mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}();}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a41ba7237e986b38a14d61178f9390015}{operator<}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ ||\ other.is\_nar())\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ \&\&\ !other.is\_nar();}
 \DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Both\ real:\ signed\ integer\ compare\ with\ sign\ extension\ for\ N\ bits}}
-\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >\ 64)\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ >\ 64)\ \{}
 \DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word\ signed\ compare:\ perform\ sign-\/aware\ lexicographic\ compare}}
 \DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Words\ are\ stored\ little-\/endian\ (word\ 0\ is\ least-\/significant).\ Determine}}
 \DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ index\ and\ bit\ of\ the\ sign\ and\ perform\ comparison\ starting\ from}}
 \DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ most-\/significant\ word.}}
-\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{words}}\ =\ storage.size();}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ words\ =\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();}
 \DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ compute\ msb\ word\ index}}
-\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
 \DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Sign\ bits\ assumed\ stored\ in\ msb\_word\ at\ position\ msb\_bit}}
-\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{self\_msw}}\ =\ storage[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}];}
-\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{other\_msw}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}];}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ self\_msw\ =\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[msb\_word];}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ other\_msw\ =\ other.storage[msb\_word];}
 \DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Signed\ compare\ by\ lexicographic\ order\ with\ top\ word\ sign\ extension}}
-\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{wi}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ +\ 1;\ \mbox{\hyperlink{structtakum_1_1takum}{wi}}-\/-\/\ >\ 0;)\ \{}
-\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ =\ storage[\mbox{\hyperlink{structtakum_1_1takum}{wi}}];}
-\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{b}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{wi}}];}
-\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{a}}\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{b}})\ \{}
-\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{wi}}\ ==\ 0)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ wi\ =\ msb\_word\ +\ 1;\ wi-\/-\/\ >\ 0;)\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ a\ =\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[wi];}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ b\ =\ other.storage[wi];}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a\ ==\ b)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wi\ ==\ 0)\ \textcolor{keywordflow}{break};}
 \DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
 \DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ the\ top\ word,\ perform\ signed\ comparison\ limited\ to\ used\ bits}}
-\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{wi}}\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}})\ \{}
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}\ =\ ((\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64)\ +\ 1;}
-\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{mask}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}\ ==\ 64)\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}})\ -\/\ 1ULL);}
-\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{a\_top}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ \&\ \mbox{\hyperlink{structtakum_1_1takum}{mask}};}
-\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{b\_top}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{b}}\ \&\ \mbox{\hyperlink{structtakum_1_1takum}{mask}};}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wi\ ==\ msb\_word)\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ used\_bits\ =\ ((N\ -\/\ 1)\ \%\ 64)\ +\ 1;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (used\_bits\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ used\_bits)\ -\/\ 1ULL);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ a\_top\ =\ a\ \&\ mask;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ b\_top\ =\ b\ \&\ mask;}
 \DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sign-\/extend\ to\ 128-\/bit\ conceptual:\ compare\ as\ signed\ of\ used\_bits}}
-\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{a\_signed}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(\ (\mbox{\hyperlink{structtakum_1_1takum}{a\_top}}\ <<\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}))\ )\ >>\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}});}
-\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{b\_signed}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(\ (\mbox{\hyperlink{structtakum_1_1takum}{b\_top}}\ <<\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}))\ )\ >>\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}});}
-\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{a\_signed}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{b\_signed}};}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ a\_signed\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(\ (a\_top\ <<\ (64\ -\/\ used\_bits))\ )\ >>\ (64\ -\/\ used\_bits);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ b\_signed\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(\ (b\_top\ <<\ (64\ -\/\ used\_bits))\ )\ >>\ (64\ -\/\ used\_bits);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a\_signed\ <\ b\_signed;}
 \DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ full-\/word\ unsigned\ comparison\ suffices\ for\ lower\ words}}
-\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{a}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{b}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{true}}\ :\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a\ <\ b\ ?\ true\ :\ \textcolor{keyword}{false};}
 \DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ equal}}
 \DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Explicit\ sign\ extension\ for\ monotonic\ comparison\ (Gustafson\ criterion\ 6).}}
 \DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Treat\ the\ low\ N\ bits\ as\ a\ signed\ integer\ by\ shifting\ to\ MSB\ and\ arithmetic\ right\ shift.}}
-\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{self\_signed}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(storage)\ <<\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{N}}))\ >>\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{N}});}
-\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{other\_signed}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{other}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}})\ <<\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{N}}))\ >>\ (64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{N}});}
-\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{self\_signed}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{other\_signed}};}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ self\_signed\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}})\ <<\ (64\ -\/\ N))\ >>\ (64\ -\/\ N);}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ other\_signed\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(other.storage)\ <<\ (64\ -\/\ N))\ >>\ (64\ -\/\ N);}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ self\_signed\ <\ other\_signed;}
 \DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00227\ \ \ \ \ \}}
 \DoxyCodeLine{00228\ }
-\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a77649d8b5e5ac163e56a47512c739f09}{operator<=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(\mbox{\hyperlink{structtakum_1_1takum}{other}}\ <\ *\textcolor{keyword}{this});\ \}}
-\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_af1d9476d715be22bde789e11c76815e4}{operator>}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{other}}\ <\ *\textcolor{keyword}{this};\ \}}
-\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_af878384b6be895722402c37d39592d6b}{operator>=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{other}});\ \}}
-\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_ade6e62b29126eb195b6ad57e4881788d}{operator!=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ \mbox{\hyperlink{structtakum_1_1takum}{other}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{other}});\ \}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a77649d8b5e5ac163e56a47512c739f09}{operator<=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(other\ <\ *\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_af1d9476d715be22bde789e11c76815e4}{operator>}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ other\ <\ *\textcolor{keyword}{this};\ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_af878384b6be895722402c37d39592d6b}{operator>=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ <\ other);\ \}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_ade6e62b29126eb195b6ad57e4881788d}{operator!=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespacetakum}{takum}}\&\ other)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ ==\ other);\ \}}
 \DoxyCodeLine{00234\ }
-\DoxyCodeLine{00238\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a8fdce72098fcfc7c4c45c331d0ca3cbf}{operator\string~}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{res}};}
+\DoxyCodeLine{00238\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a8fdce72098fcfc7c4c45c331d0ca3cbf}{operator\string~}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ res;}
 \DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_integral\_v<storage\_t>)\ \{}
-\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{\string~uint64\_t}}(storage);}
-\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ \&=\ nbit\_mask();}
-\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{w}});}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ w\ =\ \string~uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ w\ \&=\ nbit\_mask();}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(w);}
 \DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ =\ \string~storage[\mbox{\hyperlink{structtakum_1_1takum}{i}}];}
-\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ mask\_to\_N(\mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ res.storage.size();\ ++i)\ res.storage[i]\ =\ \string~\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[i];}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ mask\_to\_N(res.storage);}
 \DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{res}};}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
 \DoxyCodeLine{00249\ \ \ \ \ \}}
 \DoxyCodeLine{00250\ }
 \DoxyCodeLine{00251\ }
 \DoxyCodeLine{00252\ }
-\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_af721d58ddc31121ce4a423bb634e8216}{minpos}}()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_af721d58ddc31121ce4a423bb634e8216}{minpos}}()\ noexcept\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ r;}
 \DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_integral\_v<storage\_t>)\ \{}
-\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ 1;\ \textcolor{comment}{//\ LSB\ set\ →\ minimal\ magnitude}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ r.storage\ =\ 1;\ \textcolor{comment}{//\ LSB\ set\ →\ minimal\ magnitude}}
 \DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.fill(0);}
-\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[0]\ =\ 1;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ r.storage.fill(0);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ r.storage[0]\ =\ 1;}
 \DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{r}};}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
 \DoxyCodeLine{00265\ \ \ \ \ \}}
 \DoxyCodeLine{00266\ }
-\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a03eaa4bf55ba83c401164dfa45e78732}{signbit}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a03eaa4bf55ba83c401164dfa45e78732}{signbit}}()\ const\ noexcept\ \{}
 \DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_integral\_v<storage\_t>)\ \{}
-\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (storage\ >>\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1))\ \&\ 1;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ >>\ (N\ -\/\ 1))\ \&\ 1;}
 \DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}}\ \ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64;}
-\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (storage[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit}})\ \&\ 1ULL;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_bit\ \ =\ (N\ -\/\ 1)\ \%\ 64;}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[msb\_word]\ >>\ msb\_bit)\ \&\ 1ULL;}
 \DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00279\ \ \ \ \ \}}
 \DoxyCodeLine{00280\ }
-\DoxyCodeLine{00284\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_adb133982e77fd1810fe9516d6ab026e5}{operator-\/}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};\ \textcolor{comment}{//\ NaR\ is\ its\ own\ negation.}}
+\DoxyCodeLine{00284\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_adb133982e77fd1810fe9516d6ab026e5}{operator-\/}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};\ \textcolor{comment}{//\ NaR\ is\ its\ own\ negation.}}
 \DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{res}}\ =\ *\textcolor{keyword}{this};}
-\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ res\ =\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
 \DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ XOR\ with\ a\ mask\ for\ the\ sign\ bit\ (bit\ N-\/1)}}
-\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ \string^=\ (\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}(1)\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1));}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage\ \string^=\ (\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}(1)\ <<\ (N\ -\/\ 1));}
 \DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ multi-\/word,\ XOR\ the\ sign\ bit\ in\ the\ highest\ word}}
-\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit\_in\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64;}
-\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ \string^=\ (\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(1)\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_bit\_in\_word}});}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_bit\_in\_word\ =\ (N\ -\/\ 1)\ \%\ 64;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage[msb\_word]\ \string^=\ (uint64\_t(1)\ <<\ msb\_bit\_in\_word);}
 \DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{res}};}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
 \DoxyCodeLine{00298\ \ \ \ \ \}}
 \DoxyCodeLine{00299\ }
-\DoxyCodeLine{00306\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a392d33bd59572301ef014197a10d7225}{reciprocal}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ nar();}
+\DoxyCodeLine{00306\ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a392d33bd59572301ef014197a10d7225}{reciprocal}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{nar}}();}
 \DoxyCodeLine{00308\ }
 \DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zero\ →\ NaR}}
 \DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_integral\_v<storage\_t>)\ \{}
-\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (storage\ ==\ 0)\ \textcolor{keywordflow}{return}\ nar();}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{nar}}();}
 \DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{all\_zero}}\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ :\ storage)\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{w}}\ !=\ 0)\ \{\ \mbox{\hyperlink{structtakum_1_1takum}{all\_zero}}\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};\ \}}
-\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{all\_zero}})\ \textcolor{keywordflow}{return}\ nar();}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ all\_zero\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ w\ :\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}})\ \textcolor{keywordflow}{if}\ (w\ !=\ 0)\ \{\ all\_zero\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};\ \}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (all\_zero)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{nar}}();}
 \DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00317\ }
-\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{res}};}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ res;}
 \DoxyCodeLine{00319\ }
-\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(storage);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ bits\ =\ uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
 \DoxyCodeLine{00322\ }
 \DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reciprocal\ core:\ \string~bits\ +\ 1\ (mod\ 2\string^N)}}
-\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{\string~bits}}\ +\ 1ULL)\ \&\ ((\mbox{\hyperlink{structtakum_1_1takum}{N}}\ ==\ 64)\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{N}})\ -\/\ 1ULL));}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ bits\ =\ (\string~bits\ +\ 1ULL)\ \&\ ((N\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ N)\ -\/\ 1ULL));}
 \DoxyCodeLine{00325\ }
 \DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ***\ Fix:\ flip\ sign\ bit\ back\ ***}}
-\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \string^=\ (1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1));}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ bits\ \string^=\ (1ULL\ <<\ (N\ -\/\ 1));}
 \DoxyCodeLine{00328\ }
-\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{bits}});}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(bits);}
 \DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ multiword\ version}}
-\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ =\ \string~storage[\mbox{\hyperlink{structtakum_1_1takum}{i}}];}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ res.storage.size();\ ++i)\ res.storage[i]\ =\ \string~\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[i];}
 \DoxyCodeLine{00333\ }
 \DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ +1\ with\ carry}}
-\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{carry}}\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size()\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{carry}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
-\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{prev}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}];}
-\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ =\ \mbox{\hyperlink{structtakum_1_1takum}{prev}}\ +\ 1ULL;}
-\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{carry}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ ==\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}});}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ carry\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ res.storage.size()\ \&\&\ carry;\ ++i)\ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ prev\ =\ res.storage[i];}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ res.storage[i]\ =\ prev\ +\ 1ULL;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ carry\ =\ (res.storage[i]\ ==\ 0ULL);}
 \DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00341\ }
 \DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mask\ top\ word\ to\ N\ bits}}
-\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64\ +\ 1;}
-\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{mask}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{used\_bits}}\ ==\ 64)\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{used\_bits}})\ -\/\ 1ULL);}
-\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ \&=\ \mbox{\hyperlink{structtakum_1_1takum}{mask}};}
-\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}\ +\ 1;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ =\ 0;}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ used\_bits\ =\ (N\ -\/\ 1)\ \%\ 64\ +\ 1;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (used\_bits\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ used\_bits)\ -\/\ 1ULL);}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage[msb\_word]\ \&=\ mask;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ msb\_word\ +\ 1;\ i\ <\ res.storage.size();\ ++i)\ res.storage[i]\ =\ 0;}
 \DoxyCodeLine{00348\ }
 \DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ***\ Fix:\ flip\ sign\ bit\ back\ ***}}
-\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{res}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[\mbox{\hyperlink{structtakum_1_1takum}{msb\_word}}]\ \string^=\ (1ULL\ <<\ ((\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1)\ \%\ 64));}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ res.storage[msb\_word]\ \string^=\ (1ULL\ <<\ ((N\ -\/\ 1)\ \%\ 64));}
 \DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00352\ }
-\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{res}};}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
 \DoxyCodeLine{00354\ \ \ \ \ \}}
 \DoxyCodeLine{00355\ }
-\DoxyCodeLine{00360\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_ad35bb63b12ae17f21451f7d13b807558}{raw\_bits}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ storage;\ \}}
+\DoxyCodeLine{00360\ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_ad35bb63b12ae17f21451f7d13b807558}{raw\_bits}}()\ const\ noexcept\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};\ \}}
 \DoxyCodeLine{00361\ }
-\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a7401fa15dea41eb634de7fb6a5178f2c}{from\_raw\_bits}}(\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{t}}\{\};}
-\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{t}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bits}};}
-\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{t}};}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a7401fa15dea41eb634de7fb6a5178f2c}{from\_raw\_bits}}(\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ bits)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ t\{\};}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ t.storage\ =\ bits;}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
 \DoxyCodeLine{00370\ \ \ \ \ \}}
 \DoxyCodeLine{00371\ }
-\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}}
-\DoxyCodeLine{00376\ \ \ \ \ std::expected<takum,\ takum\_error>\ to\_expected()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR"{}}\});}
-\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
-\DoxyCodeLine{00379\ \ \ \ \ \}}
-\DoxyCodeLine{00380\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{00384\ \ \ \ \ std::optional<takum>\ \mbox{\hyperlink{structtakum_1_1takum_af0a450f3fb81f1b8a0da3831315d5c65}{to\_expected}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ std::nullopt;}
-\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
-\DoxyCodeLine{00387\ \ \ \ \ \}}
-\DoxyCodeLine{00388\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00389\ }
-\DoxyCodeLine{00394\ \ \ \ \ std::bitset<N>\ \mbox{\hyperlink{structtakum_1_1takum_a7f96bfa2c9fac1d28b230ee6ce32eac5}{debug\_view}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ std::bitset<N>\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{w}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(storage);}
-\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{N}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{w}}\ \&\ (\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(1)\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{i}}))\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.set(\mbox{\hyperlink{structtakum_1_1takum}{i}});}
-\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pack\ from\ storage\ words\ (little-\/endian\ words)}}
-\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{pos}}\ =\ 0;}
-\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{word}}\ :\ storage)\ \{}
-\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ 64\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{pos}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{N}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}},\ ++\mbox{\hyperlink{structtakum_1_1takum}{pos}})\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{word}}\ \&\ (\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(1)\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{i}}))\ \mbox{\hyperlink{structtakum_1_1takum}{b}}.set(\mbox{\hyperlink{structtakum_1_1takum}{pos}});}
-\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{b}};}
-\DoxyCodeLine{00407\ \ \ \ \ \}}
-\DoxyCodeLine{00408\ }
-\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8}{is\_zero}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(storage)\ ==\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ storage.size();\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \textcolor{keywordflow}{if}\ (storage[\mbox{\hyperlink{structtakum_1_1takum}{i}}]\ !=\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00420\ \ \ \ \ \}}
-\DoxyCodeLine{00421\ }
-\DoxyCodeLine{00426\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{structtakum_1_1takum_a8fe50ee4d28061551989e178974e8ac4}{takum}}(\textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{x}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ storage\ =\ \mbox{\hyperlink{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}{takum::encode\_from\_double}}(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
-\DoxyCodeLine{00428\ \ \ \ \ \}}
-\DoxyCodeLine{00429\ }
-\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ takum::decode\_to\_double(storage);}
-\DoxyCodeLine{00436\ \ \ \ \ \}}
-\DoxyCodeLine{00437\ }
-\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}{get\_exact\_ell}}()\ \mbox{\hyperlink{structtakum_1_1takum}{const}}\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Use\ decode\ helper\ that\ works\ for\ any\ N;\ return\ NaN\ for\ NaR}}
-\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ very\ large\ N\ we\ still\ provide\ a\ double\ diagnostic\ only.}}
-\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_zero())\ \textcolor{keywordflow}{return}\ 0.0;}
-\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Use\ high-\/precision\ decode\ where\ available\ for\ N<=64}}
-\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}(storage);}
-\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NaR\ check}}
-\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{bits}}\ >>\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1))\ \&\ 1ULL;}
-\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{lower}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ \&\ ((1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1))\ -\/\ 1ULL);}
-\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{S}}\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{lower}}\ ==\ 0)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
-\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ NaR\ pattern\ via\ is\_nar()}}
-\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
-\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fallback:\ decode\ to\ double\ and\ then\ extract\ ell\ via\ log}}
-\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{v}}\ =\ to\_double();}
-\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{v}}))\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
-\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_v}}\ =\ std::fabsl(\mbox{\hyperlink{structtakum_1_1takum}{v}});}
-\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ 2.0L\ *\ std::logl(\mbox{\hyperlink{structtakum_1_1takum}{abs\_v}});}
-\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}((\mbox{\hyperlink{structtakum_1_1takum}{v}}\ <\ 0)\ ?\ -\/\mbox{\hyperlink{structtakum_1_1takum}{ell}}\ :\ \mbox{\hyperlink{structtakum_1_1takum}{ell}});}
-\DoxyCodeLine{00465\ \ \ \ \ \}}
-\DoxyCodeLine{00466\ }
-\DoxyCodeLine{00477\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039}{max\_finite\_storage}}()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >\ 64)\ \{}
-\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Placeholder\ for\ large\ N;\ full\ multi-\/word\ packing\ later}}
-\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{max\_r}}\ =\ std::min<size\_t>(7,\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5);}
-\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ positive}}
-\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{max\_r}});\ \ \textcolor{comment}{//\ r\ =\ R\ since\ D=1}}
-\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{max\_r}};}
-\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{max\_r}}\ ==\ 0)\ ?\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{max\_r}})\ -\/\ 1ULL);}
-\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{packed}}\ =\ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{S}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1))\ |}
-\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{D}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 2))\ |}
-\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5))\ |}
-\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}});}
-\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_max}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0)\ ?\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}})\ -\/\ 1ULL)\ :\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{packed}}\ |=\ \mbox{\hyperlink{structtakum_1_1takum}{m\_max}};}
-\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{packed}};}
-\DoxyCodeLine{00495\ \ \ \ \ \}}
-\DoxyCodeLine{00496\ \ \ \ \ }
-\DoxyCodeLine{00507\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\_ell}}()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >\ 64)\ \{}
-\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ large\ N\ use\ the\ spec\ dynamic\ range\ bound:\ |ell|\ <=\ 255}}
-\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (the\ tapered\ format\ limits\ ℓ\ to\ roughly\ ±255\ in\ the\ reference\ spec).}}
-\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 255.0L;}
-\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{bits}}\ =\ max\_finite\_storage();}
-\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum}{temp}}\{\};}
-\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{temp}}.\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{bits}});}
-\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{temp}}.\mbox{\hyperlink{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}{get\_exact\_ell}}());}
-\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00518\ \ \ \ \ \}}
-\DoxyCodeLine{00519\ }
-\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}{encode\_from\_double}}(\textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{x}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Small-\/width\ path:\ build\ uint64\_t\ then\ widen/copy}}
-\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{small}}\ =\ encode\_from\_double\_u64(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
-\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{small}});}
-\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word:\ write\ the\ bit\ fields\ across\ the\ words\ using\ helpers.}}
-\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{out}}\{\};}
-\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{out}}.fill(0);}
-\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ x\ is\ zero\ or\ non-\/finite\ the\ small\ path\ already\ encodes\ it\ in\ low\ bits}}
-\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ we\ must\ still\ place\ fields\ at\ correct\ offsets\ across\ words.}}
-\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{x}}\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{out}};}
-\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{x}}))\ \{\ \mbox{\hyperlink{structtakum_1_1takum}{out}}\ =\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{out}};\ \}}
-\DoxyCodeLine{00543\ }
-\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ std::signbit(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
-\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_x}}\ =\ std::fabsl(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
-\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ 2.0L\ *\ std::logl(\mbox{\hyperlink{structtakum_1_1takum}{abs\_x}});}
-\DoxyCodeLine{00547\ }
-\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}}\ =\ max\_ell();}
-\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Per\ spec:\ values\ outside\ representable\ dynamic\ range\ map\ to\ NaR}}
-\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{ell}}\ >\ \mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}}\ ||\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ <\ -\/\mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}})\ \{}
-\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{out}}\ =\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};}
-\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{out}};}
-\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00554\ }
-\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(std::floorl(\mbox{\hyperlink{structtakum_1_1takum}{ell}}));}
-\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{c}}\ >=\ 0);}
-\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ :\ -\/\mbox{\hyperlink{structtakum_1_1takum}{c}};}
-\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ !=\ 0)}
-\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\textcolor{keyword}{>}(std::floorl(std::log2l(\mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ +\ 1\ :\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}})))}
-\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
-\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ std::min<uint32\_t>(7,\ \mbox{\hyperlink{structtakum_1_1takum}{r}});}
-\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ :\ (7U\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}});}
-\DoxyCodeLine{00563\ }
-\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ !=\ 0)\ \{}
-\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ -\/\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1ULL));}
-\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ +\ ((1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}+1))\ -\/\ 1ULL));}
-\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00569\ }
-\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}});}
-\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{m}}\ <\ 0.0L)\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.0L;}
-\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{m}}\ >=\ 1.0L)\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.999999L;}
-\DoxyCodeLine{00573\ }
-\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{r}});}
+\DoxyCodeLine{00372\ \ \ \ \ }
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\#if\ \_\_cplusplus\ >=\ 202302L}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00378\ \ \ \ \ std::expected<takum,\ takum\_error>\ to\_expected()\ const\ noexcept\ \{}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_nar())\ \textcolor{keywordflow}{return}\ std::unexpected(\mbox{\hyperlink{structtakum_1_1takum__error}{takum\_error}}\{\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{takum\_error::Kind::InvalidOperation}},\ \textcolor{stringliteral}{"{}NaR"{}}\});}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00381\ \ \ \ \ \}}
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\#else}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00386\ \ \ \ \ std::optional<takum>\ \mbox{\hyperlink{structtakum_1_1takum_af0a450f3fb81f1b8a0da3831315d5c65}{to\_expected}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00389\ \ \ \ \ \}}
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00396\ \ \ \ \ std::bitset<N>\ \mbox{\hyperlink{structtakum_1_1takum_a7f96bfa2c9fac1d28b230ee6ce32eac5}{debug\_view}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ std::bitset<N>\ b;}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ w\ =\ uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ N;\ ++i)\ \textcolor{keywordflow}{if}\ (w\ \&\ (uint64\_t(1)\ <<\ i))\ b.set(i);}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pack\ from\ storage\ words\ (little-\/endian\ words)}}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pos\ =\ 0;}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (uint64\_t\ word\ :\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}})\ \{}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ 64\ \&\&\ pos\ <\ N;\ ++i,\ ++pos)\ \textcolor{keywordflow}{if}\ (word\ \&\ (uint64\_t(1)\ <<\ i))\ b.set(pos);}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b;}
+\DoxyCodeLine{00409\ \ \ \ \ \}}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00416\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8}{is\_zero}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \textcolor{keywordflow}{return}\ uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}})\ ==\ 0ULL;}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}.size();\ ++i)\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}[i]\ !=\ 0ULL)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00422\ \ \ \ \ \}}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{structtakum_1_1takum_a8fe50ee4d28061551989e178974e8ac4}{takum}}(\textcolor{keywordtype}{double}\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}}\ =\ \mbox{\hyperlink{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}{takum::encode\_from\_double}}(x);}
+\DoxyCodeLine{00430\ \ \ \ \ \}}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ takum::decode\_to\_double(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00438\ \ \ \ \ \}}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00446\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_aab4eefa6186fa793ef30d80fed261cc1}{get\_exact\_ell}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Use\ decode\ helper\ that\ works\ for\ any\ N;\ return\ NaN\ for\ NaR}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ very\ large\ N\ we\ still\ provide\ a\ double\ diagnostic\ only.}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a81be53396ecc938454baf893ed2904f8}{is\_zero}}())\ \textcolor{keywordflow}{return}\ 0.0;}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Use\ high-\/precision\ decode\ where\ available\ for\ N<=64}}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ bits\ =\ uint64\_t(\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NaR\ check}}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ (bits\ >>\ (N\ -\/\ 1))\ \&\ 1ULL;}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ lower\ =\ bits\ \&\ ((1ULL\ <<\ (N\ -\/\ 1))\ -\/\ 1ULL);}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (S\ \&\&\ lower\ ==\ 0)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ NaR\ pattern\ via\ is\_nar()}}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}())\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fallback:\ decode\ to\ double\ and\ then\ extract\ ell\ via\ log}}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ v\ =\ \mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}();}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(v))\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ abs\_v\ =\ std::fabsl(v);}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\ =\ 2.0L\ *\ std::logl(abs\_v);}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}((v\ <\ 0)\ ?\ -\/ell\ :\ ell);}
+\DoxyCodeLine{00467\ \ \ \ \ \}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00479\ \ \ \ \ \textcolor{keyword}{static}\ uint64\_t\ \mbox{\hyperlink{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039}{max\_finite\_storage}}()\ noexcept\ \{}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ >\ 64)\ \{}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Placeholder\ for\ large\ N;\ full\ multi-\/word\ packing\ later}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0ULL;}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_r\ =\ std::min<size\_t>(7,\ N\ -\/\ 5);}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ positive}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(max\_r);\ \ \textcolor{comment}{//\ r\ =\ R\ since\ D=1}}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ max\_r;}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ (max\_r\ ==\ 0)\ ?\ 0ULL\ :\ ((1ULL\ <<\ max\_r)\ -\/\ 1ULL);}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ uint64\_t\ packed\ =\ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(S)\ <<\ (N\ -\/\ 1))\ |}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(D)\ <<\ (N\ -\/\ 2))\ |}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(R)\ <<\ (N\ -\/\ 5))\ |}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c\_bits\ <<\ p);}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ uint64\_t\ m\_max\ =\ (p\ >\ 0)\ ?\ ((1ULL\ <<\ p)\ -\/\ 1ULL)\ :\ 0ULL;}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ packed\ |=\ m\_max;}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ packed;}
+\DoxyCodeLine{00497\ \ \ \ \ \}}
+\DoxyCodeLine{00498\ \ \ \ \ }
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\_ell}}()\ noexcept\ \{}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ >\ 64)\ \{}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ large\ N\ use\ the\ spec\ dynamic\ range\ bound:\ |ell|\ <=\ 255}}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (the\ tapered\ format\ limits\ ℓ\ to\ roughly\ ±255\ in\ the\ reference\ spec).}}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 255.0L;}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ bits\ =\ \mbox{\hyperlink{structtakum_1_1takum_a6b0964a8ce01d75f392443e13bc3c039}{max\_finite\_storage}}();}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ temp\{\};}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ temp.storage\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(bits);}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(temp.get\_exact\_ell());}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00520\ \ \ \ \ \}}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_afd615c8c20d1d3f7643305638af3d263}{encode\_from\_double}}(\textcolor{keywordtype}{double}\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Small-\/width\ path:\ build\ uint64\_t\ then\ widen/copy}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ small\ =\ \mbox{\hyperlink{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84}{encode\_from\_double\_u64}}(x);}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(small);}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word:\ write\ the\ bit\ fields\ across\ the\ words\ using\ helpers.}}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ out\{\};}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ out.fill(0);}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ x\ is\ zero\ or\ non-\/finite\ the\ small\ path\ already\ encodes\ it\ in\ low\ bits}}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ we\ must\ still\ place\ fields\ at\ correct\ offsets\ across\ words.}}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(x))\ \{\ out\ =\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};\ \textcolor{keywordflow}{return}\ out;\ \}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ std::signbit(x);}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ abs\_x\ =\ std::fabsl(x);}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\ =\ 2.0L\ *\ std::logl(abs\_x);}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ clamp\_pos\ =\ \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\_ell}}();}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Per\ spec:\ values\ outside\ representable\ dynamic\ range\ map\ to\ NaR}}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ell\ >\ clamp\_pos\ ||\ ell\ <\ -\/clamp\_pos)\ \{}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ out\ =\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}};}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(std::floorl(ell));}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ (c\ >=\ 0);}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ abs\_c\ =\ D\ ?\ c\ :\ -\/c;}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ (abs\_c\ !=\ 0)}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(std::floorl(std::log2l(D\ ?\ abs\_c\ +\ 1\ :\ abs\_c)))}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ std::min<uint32\_t>(7,\ r);}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ D\ ?\ r\ :\ (7U\ -\/\ r);}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ !=\ 0)\ \{}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ -\/\ ((1ULL\ <<\ r)\ -\/\ 1ULL));}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ +\ ((1ULL\ <<\ (r+1))\ -\/\ 1ULL));}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00571\ }
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ ell\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c);}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ <\ 0.0L)\ m\ =\ 0.0L;}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ >=\ 1.0L)\ m\ =\ 0.999999L;}
 \DoxyCodeLine{00575\ }
-\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Helper\ lambdas\ for\ multi-\/word\ bit\ writes}}
-\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{structtakum_1_1takum}{write\_bit}}\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \&\mbox{\hyperlink{structtakum_1_1takum}{dst}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}},\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{val}})\ \{}
-\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{wi}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}}\ /\ 64;}
-\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{bi}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}}\ \%\ 64;}
-\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ not\ used\ here}}
-\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{val}})\ \mbox{\hyperlink{structtakum_1_1takum}{dst}}[\mbox{\hyperlink{structtakum_1_1takum}{wi}}]\ |=\ (1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{bi}});}
-\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \mbox{\hyperlink{structtakum_1_1takum}{dst}}[\mbox{\hyperlink{structtakum_1_1takum}{wi}}]\ \&=\ \string~(1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{bi}});}
-\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00587\ }
-\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{structtakum_1_1takum}{write\_u64\_at}}\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afbea5997e74badd9b67eab622e9dca7f}{storage\_t}}\ \&\mbox{\hyperlink{structtakum_1_1takum}{dst}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}},\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ value,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{len}})\ \{}
-\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ up\ to\ 64\ bits\ of\ \`{}value`\ starting\ at\ bit\_index\ (LSB-\/first),\ crossing\ words.}}
-\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{remaining}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{len}};}
-\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{pos}}\ =\ 0;}
-\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (\mbox{\hyperlink{structtakum_1_1takum}{remaining}}\ >\ 0)\ \{}
-\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{wi}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}}\ /\ 64;}
-\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{bi}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}}\ \%\ 64;}
-\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{space}}\ =\ 64\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{bi}};}
-\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{take}}\ =\ std::min<size\_t>(\mbox{\hyperlink{structtakum_1_1takum}{remaining}},\ \mbox{\hyperlink{structtakum_1_1takum}{space}});}
-\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{mask}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{take}}\ ==\ 64)\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{take}})\ -\/\ 1ULL);}
-\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{chunk}}\ =\ (value\ >>\ \mbox{\hyperlink{structtakum_1_1takum}{pos}})\ \&\ \mbox{\hyperlink{structtakum_1_1takum}{mask}};}
-\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ clear\ destination\ bits\ then\ set}}
-\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{dst\_mask}}\ =\ \string~(\mbox{\hyperlink{structtakum_1_1takum}{mask}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{bi}});}
-\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{dst}}[\mbox{\hyperlink{structtakum_1_1takum}{wi}}]\ \&=\ \mbox{\hyperlink{structtakum_1_1takum}{dst\_mask}};}
-\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{dst}}[\mbox{\hyperlink{structtakum_1_1takum}{wi}}]\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{chunk}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{bi}});}
-\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{bit\_index}}\ +=\ \mbox{\hyperlink{structtakum_1_1takum}{take}};}
-\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{pos}}\ +=\ \mbox{\hyperlink{structtakum_1_1takum}{take}};}
-\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{remaining}}\ -\/=\ \mbox{\hyperlink{structtakum_1_1takum}{take}};}
-\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00608\ }
-\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Place\ S\ at\ N-\/1}}
-\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{write\_bit}}(\mbox{\hyperlink{structtakum_1_1takum}{out}},\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1,\ \mbox{\hyperlink{structtakum_1_1takum}{S}});}
-\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ D\ at\ N-\/2}}
-\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{write\_bit}}(\mbox{\hyperlink{structtakum_1_1takum}{out}},\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 2,\ \mbox{\hyperlink{structtakum_1_1takum}{D}});}
-\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ R:\ 3\ bits\ at\ positions\ [N-\/5\ ..\ N-\/3]}}
-\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{write\_u64\_at}}(\mbox{\hyperlink{structtakum_1_1takum}{out}},\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5,\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}}),\ 3);}
-\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ C\ bits:\ r\ bits\ at\ offset\ p}}
-\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ >\ 0)\ \mbox{\hyperlink{structtakum_1_1takum}{write\_u64\_at}}(\mbox{\hyperlink{structtakum_1_1takum}{out}},\ \mbox{\hyperlink{structtakum_1_1takum}{p}},\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}},\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{r}}));}
-\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ M\ bits:\ write\ p\ bits\ representing\ fractional\ part\ m;\ generate\ bits\ sequentially}}
-\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{frac}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{m}};}
-\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ =\ 0;\ \mbox{\hyperlink{structtakum_1_1takum}{i}}\ <\ \mbox{\hyperlink{structtakum_1_1takum}{p}};\ ++\mbox{\hyperlink{structtakum_1_1takum}{i}})\ \{}
-\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{frac}}\ *=\ 2.0L;}
-\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{bit}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{frac}}\ >=\ 1.0L);}
-\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{bit}})\ \mbox{\hyperlink{structtakum_1_1takum}{frac}}\ -\/=\ 1.0L;}
-\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{write\_bit}}(\mbox{\hyperlink{structtakum_1_1takum}{out}},\ \mbox{\hyperlink{structtakum_1_1takum}{i}},\ \mbox{\hyperlink{structtakum_1_1takum}{bit}});}
-\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00625\ }
-\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mask\ top\ bits\ just\ in\ case}}
-\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ mask\_to\_N(\mbox{\hyperlink{structtakum_1_1takum}{out}});}
-\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{out}};}
-\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00630\ \ \ \ \ \}}
-\DoxyCodeLine{00631\ }
-\DoxyCodeLine{00643\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84}{encode\_from\_double\_u64}}(\textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{x}})\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ <=\ 64)\ \{}
-\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{x}}\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};\ \textcolor{comment}{//\ Zero\ representation\ per\ eq.\ (24)}}
-\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(\mbox{\hyperlink{structtakum_1_1takum}{x}}))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});\ \ \textcolor{comment}{//\ NaN/Inf\ →\ NaR\ per\ NaR\ convention\ in\ Def.\ 2}}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r);}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Helper\ lambdas\ for\ multi-\/word\ bit\ writes}}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ write\_bit\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \&dst,\ \textcolor{keywordtype}{size\_t}\ bit\_index,\ \textcolor{keywordtype}{bool}\ val)\ \{}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ not\ used\ here}}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val)\ dst[wi]\ |=\ (1ULL\ <<\ bi);}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ dst[wi]\ \&=\ \string~(1ULL\ <<\ bi);}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ write\_u64\_at\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \&dst,\ \textcolor{keywordtype}{size\_t}\ bit\_index,\ uint64\_t\ value,\ \textcolor{keywordtype}{size\_t}\ len)\ \{}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ up\ to\ 64\ bits\ of\ \`{}value`\ starting\ at\ bit\_index\ (LSB-\/first),\ crossing\ words.}}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remaining\ =\ len;}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pos\ =\ 0;}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (remaining\ >\ 0)\ \{}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\ =\ 64\ -\/\ bi;}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ take\ =\ std::min<size\_t>(remaining,\ space);}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (take\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ take)\ -\/\ 1ULL);}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ chunk\ =\ (value\ >>\ pos)\ \&\ mask;}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ clear\ destination\ bits\ then\ set}}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ dst\_mask\ =\ \string~(mask\ <<\ bi);}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dst[wi]\ \&=\ dst\_mask;}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dst[wi]\ |=\ (chunk\ <<\ bi);}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bit\_index\ +=\ take;}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pos\ +=\ take;}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ remaining\ -\/=\ take;}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00610\ }
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Place\ S\ at\ N-\/1}}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ N\ -\/\ 1,\ S);}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ D\ at\ N-\/2}}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ N\ -\/\ 2,\ D);}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ R:\ 3\ bits\ at\ positions\ [N-\/5\ ..\ N-\/3]}}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ write\_u64\_at(out,\ N\ -\/\ 5,\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(R),\ 3);}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ C\ bits:\ r\ bits\ at\ offset\ p}}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ >\ 0)\ write\_u64\_at(out,\ p,\ c\_bits,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r));}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ M\ bits:\ write\ p\ bits\ representing\ fractional\ part\ m;\ generate\ bits\ sequentially}}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ frac\ =\ m;}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ p;\ ++i)\ \{}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frac\ *=\ 2.0L;}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bit\ =\ (frac\ >=\ 1.0L);}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bit)\ frac\ -\/=\ 1.0L;}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ i,\ bit);}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00627\ }
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mask\ top\ bits\ just\ in\ case}}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ \ \ mask\_to\_N(out);}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00632\ \ \ \ \ \}}
+\DoxyCodeLine{00633\ }
+\DoxyCodeLine{00641\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{namespacetakum}{takum}}\ \mbox{\hyperlink{structtakum_1_1takum_a47816596eab7d69530e8a73fb62e868a}{from\_ell}}(\textcolor{keywordtype}{bool}\ S,\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\_ld)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ NaR/NaN}}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite((\textcolor{keywordtype}{double})ell\_ld))\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}();}
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ clamp\_pos\ =\ \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\_ell}}();}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ell\_ld\ >\ clamp\_pos\ ||\ ell\_ld\ <\ -\/clamp\_pos)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}();}
 \DoxyCodeLine{00647\ }
-\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{S}}\ =\ std::signbit(\mbox{\hyperlink{structtakum_1_1takum}{x}});\ \textcolor{comment}{//\ Sign\ bit\ per\ eq.\ (14)}}
-\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_x}}\ =\ std::fabsl(\mbox{\hyperlink{structtakum_1_1takum}{x}});}
-\DoxyCodeLine{00650\ }
-\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ 2.0L\ *\ std::logl(\mbox{\hyperlink{structtakum_1_1takum}{abs\_x}});\ \textcolor{comment}{//\ Logarithmic\ value\ ℓ\ =\ 2\ *\ ln(|x|)\ for\ base\ √e,\ per\ eq.\ (23)}}
-\DoxyCodeLine{00652\ }
-\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clamp\ |ℓ|\ to\ representable\ range\ |ℓ|\ <\ 255\ per\ eq.\ (23)}}
-\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}}\ =\ max\_ell();}
-\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{ell}}\ >\ \mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}})\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}};}
-\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{ell}}\ <\ -\/\mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}})\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ =\ -\/\mbox{\hyperlink{structtakum_1_1takum}{clamp\_pos}};}
-\DoxyCodeLine{00657\ }
-\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Decompose\ ℓ\ into\ characteristic\ c\ =\ floor(ℓ)\ and\ mantissa\ m\ =\ ℓ\ -\/\ c\ per\ eq.\ (19)\ and\ (22)}}
-\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\textcolor{keyword}{>}(std::floorl(\mbox{\hyperlink{structtakum_1_1takum}{ell}}));}
-\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{c}}\ >=\ 0);\ \textcolor{comment}{//\ Direction\ bit:\ positive\ if\ c\ >=\ 0\ per\ eq.\ (15)}}
-\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{int64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{c}}\ :\ -\/\mbox{\hyperlink{structtakum_1_1takum}{c}};}
-\DoxyCodeLine{00662\ }
-\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Regime\ r\ per\ eq.\ (17):\ floor(log2(|c|\ +\ D))}}
-\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ !=\ 0)}
-\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\textcolor{keyword}{>}(std::floorl(std::log2l(\mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}}\ +\ 1\ :\ \mbox{\hyperlink{structtakum_1_1takum}{abs\_c}})))}
-\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
-\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ =\ std::min<uint32\_t>(7,\ \mbox{\hyperlink{structtakum_1_1takum}{r}});\ \textcolor{comment}{//\ Clamp\ to\ max\ regime\ 7}}
-\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint32\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{R}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{D}}\ ?\ \mbox{\hyperlink{structtakum_1_1takum}{r}}\ :\ (7U\ -\/\ \mbox{\hyperlink{structtakum_1_1takum}{r}});\ \textcolor{comment}{//\ Regime\ bits\ per\ eq.\ (16)}}
-\DoxyCodeLine{00669\ }
-\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Characteristic\ bits\ C\ per\ eq.\ (18),\ c\ per\ eq.\ (19)}}
-\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}\ !=\ 0)\ \{}
-\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{D}})\ \{}
-\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ -\/\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{r}})\ -\/\ 1ULL));\ \textcolor{comment}{//\ D=1\ case}}
-\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}}\ +\ ((1ULL\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{r}}+1))\ -\/\ 1ULL));\ \textcolor{comment}{//\ D=0\ case}}
-\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00679\ }
-\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mantissa\ m\ =\ fractional\ part\ of\ ℓ\ per\ eq.\ (22),\ p\ =\ N\ -\/\ 5\ -\/\ r\ per\ eq.\ (20)}}
-\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{ell}}\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{c}});}
-\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{m}}\ <\ 0.0L)\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.0L;}
-\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{m}}\ >=\ 1.0L)\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ =\ 0.999999L;\ \ \textcolor{comment}{//\ avoid\ overflow\ in\ scaling}}
-\DoxyCodeLine{00684\ }
-\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structtakum_1_1takum}{p}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{r}});}
-\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_bits}}\ =\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >\ 0\ \&\&\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ >\ 0.0L)\ \{}
-\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}}\ =\ std::ldexpl(1.0L,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{p}}));}
-\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structtakum_1_1takum}{m\_scaled\_ld}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{m}}\ *\ \mbox{\hyperlink{structtakum_1_1takum}{m\_power}};}
-\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{m\_bits}}\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(std::floorl(\mbox{\hyperlink{structtakum_1_1takum}{m\_scaled\_ld}}\ +\ 0.5L));\ \textcolor{comment}{//\ Quantize\ m\ to\ p\ bits}}
-\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{max\_m}}\ =\ (\mbox{\hyperlink{structtakum_1_1takum}{p}}\ >=\ 64)\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}})\ -\/\ 1ULL);}
-\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structtakum_1_1takum}{m\_bits}}\ >\ \mbox{\hyperlink{structtakum_1_1takum}{max\_m}})\ \mbox{\hyperlink{structtakum_1_1takum}{m\_bits}}\ =\ \mbox{\hyperlink{structtakum_1_1takum}{max\_m}};\ \textcolor{comment}{//\ Clamp}}
-\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00694\ }
-\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pack\ bit\ fields\ into\ storage\ per\ Def.\ 2\ bit\ layout:\ S\ D\ R\ C\ M}}
-\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ \mbox{\hyperlink{structtakum_1_1takum}{packed}}\ =\ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{S}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 1))\ |\ \textcolor{comment}{//\ Sign}}
-\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{D}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 2))\ |\ \textcolor{comment}{//\ Direction}}
-\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum}{R}})\ <<\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ -\/\ 5));\ \textcolor{comment}{//\ Regime}}
-\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{packed}}\ |=\ (\mbox{\hyperlink{structtakum_1_1takum}{c\_bits}}\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{p}});\ \textcolor{comment}{//\ Characteristic}}
-\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum}{packed}}\ |=\ \mbox{\hyperlink{structtakum_1_1takum}{m\_bits}};\ \textcolor{comment}{//\ Mantissa}}
-\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtakum_1_1takum}{packed}};}
-\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ N>64\ this\ helper\ is\ not\ used;\ provide\ a\ safe\ fallback}}
-\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00706\ \ \ \ \ \}}
-\DoxyCodeLine{00707\ }
-\DoxyCodeLine{00708\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00713\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{structtakum_1_1takum}{uint64\_t}}\ nbit\_mask()\ \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}\ \{}
-\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ >=\ 64)\ \textcolor{keywordflow}{return}\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}};}
-\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structtakum_1_1takum}{N}}\ ==\ 64\ ?\ \string~0\mbox{\hyperlink{structtakum_1_1takum}{ULL}}\ :\ ((1ULL\ <<\ \mbox{\hyperlink{structtakum_1_1takum}{N}})\ -\/\ 1ULL));}
-\DoxyCodeLine{00716\ \ \ \ \ \}}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zero\ is\ represented\ by\ an\ all-\/zero\ pattern;\ interpret\ very\ small}}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ negative\ ell\ as\ zero\ (user-\/level\ code\ should\ handle\ exact\ zeros).}}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Here,\ if\ ell\ is\ extremely\ negative,\ produce\ zero.}}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ell\_ld\ <=\ -\/1e300L)\ \{}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacetakum}{takum}}\{\};\ \textcolor{comment}{//\ zero}}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00654\ }
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Follow\ encode\_from\_double\_u64\ packing\ but\ use\ provided\ ell}}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(std::floorl(ell\_ld));}
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ (c\ >=\ 0);}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ abs\_c\ =\ D\ ?\ c\ :\ -\/c;}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ (abs\_c\ !=\ 0)}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(std::floorl(std::log2l(D\ ?\ abs\_c\ +\ 1\ :\ abs\_c)))}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ std::min<uint32\_t>(7,\ r);}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ D\ ?\ r\ :\ (7U\ -\/\ r);}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ !=\ 0)\ \{}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ -\/\ ((1ULL\ <<\ r)\ -\/\ 1ULL));}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ +\ ((1ULL\ <<\ (r+1))\ -\/\ 1ULL));}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ ell\_ld\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c);}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ <\ 0.0L)\ m\ =\ 0.0L;}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ >=\ 1.0L)\ m\ =\ 0.999999L;}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r);}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ m\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ >\ 0\ \&\&\ m\ >\ 0.0L)\ \{}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\_power\ =\ std::ldexpl(1.0L,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p));}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\_scaled\_ld\ =\ m\ *\ m\_power;}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(std::floorl(m\_scaled\_ld\ +\ 0.5L));}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_m\ =\ (p\ >=\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ p)\ -\/\ 1ULL);}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bits\ >\ max\_m)\ m\_bits\ =\ max\_m;}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ packed\ =\ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(S)\ <<\ (N\ -\/\ 1))\ |}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(D)\ <<\ (N\ -\/\ 2))\ |}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(R)\ <<\ (N\ -\/\ 5));}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ packed\ |=\ (c\_bits\ <<\ p);}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ packed\ |=\ m\_bits;}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ t\{\};}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ t.storage\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\textcolor{keyword}{>}(packed);}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word\ packing\ similar\ to\ encode\_from\_double\ multiword\ path}}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ out\{\};}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ out.fill(0);}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D;}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c;}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(std::floorl(ell\_ld));}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ D\ =\ (c\ >=\ 0);}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ abs\_c\ =\ D\ ?\ c\ :\ -\/c;}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ (abs\_c\ !=\ 0)}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(std::floorl(std::log2l(D\ ?\ abs\_c\ +\ 1\ :\ abs\_c)))}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ std::min<uint32\_t>(7,\ r);}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ D\ ?\ r\ :\ (7U\ -\/\ r);}
+\DoxyCodeLine{00711\ }
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ !=\ 0)\ \{}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ -\/\ ((1ULL\ <<\ r)\ -\/\ 1ULL));}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ +\ ((1ULL\ <<\ (r+1))\ -\/\ 1ULL));}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00717\ }
-\DoxyCodeLine{00722\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ mask\_to\_N(storage\_t\&\ s)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
-\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ s\ =\ \textcolor{keyword}{static\_cast<}storage\_t\textcolor{keyword}{>}(uint64\_t(s)\ \&\ nbit\_mask());}
-\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zero\ bits\ above\ N\ in\ the\ top\ word;\ lower\ words\ untouched.}}
-\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
-\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ used\_bits\_top\ =\ ((N\ -\/\ 1)\ \%\ 64)\ +\ 1;}
-\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ top\_mask\ =\ (used\_bits\_top\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ used\_bits\_top)\ -\/\ 1ULL);}
-\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ msb\_word\ +\ 1;\ i\ <\ s.size();\ ++i)\ s[i]\ =\ 0;\ \textcolor{comment}{//\ safety}}
-\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ s[msb\_word]\ \&=\ top\_mask;}
-\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00733\ \ \ \ \ \}}
-\DoxyCodeLine{00734\ }
-\DoxyCodeLine{00746\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ decode\_to\_double(\textcolor{keyword}{const}\ storage\_t\&\ bits\_storage)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ single-\/word\ bits\ for\ N<=64\ to\ reuse\ previous\ logic}}
-\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
-\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(bits\_storage);}
-\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ decode\_u64\_to\_double(bits);}
-\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word\ decode:\ read\ fields\ across\ words\ using\ bit-\/access\ helpers.}}
-\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ read\_bit\ =\ [\&](\textcolor{keywordtype}{size\_t}\ bit\_index)\ -\/>\ \textcolor{keywordtype}{bool}\ \{}
-\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
-\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
-\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((bits\_storage[wi]\ >>\ bi)\ \&\ 1ULL)\ !=\ 0ULL;}
-\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00758\ }
-\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ read\_u64\_at\ =\ [\&](\textcolor{keywordtype}{size\_t}\ bit\_index,\ \textcolor{keywordtype}{size\_t}\ len)\ -\/>\ uint64\_t\ \{}
-\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ up\ to\ 64\ bits\ starting\ at\ bit\_index\ (LSB-\/first)}}
-\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ acc\ =\ 0ULL;}
-\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remaining\ =\ len;}
-\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pos\ =\ 0;}
-\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (remaining\ >\ 0)\ \{}
-\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
-\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
-\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\ =\ 64\ -\/\ bi;}
-\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ take\ =\ std::min<size\_t>(remaining,\ space);}
-\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (take\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ take)\ -\/\ 1ULL);}
-\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ chunk\ =\ (bits\_storage[wi]\ >>\ bi)\ \&\ mask;}
-\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ acc\ |=\ (chunk\ <<\ pos);}
-\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bit\_index\ +=\ take;}
-\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pos\ +=\ take;}
-\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ remaining\ -\/=\ take;}
-\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ acc;}
-\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00778\ }
-\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ sign\ and\ NaR/zero\ checks}}
-\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ read\_bit(N\ -\/\ 1);}
-\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ lower\ (N-\/1)\ bits\ to\ check\ NaR\ or\ zero}}
-\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ lower\_all\_zero\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00783\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ N\ -\/\ 1;\ ++i)\ \textcolor{keywordflow}{if}\ (read\_bit(i))\ \{\ lower\_all\_zero\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};\ \}}
-\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (S\ \&\&\ lower\_all\_zero)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
-\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ sign==0\ and\ all\ lower\ bits\ zero,\ this\ is\ the\ zero\ pattern}}
-\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!S\ \&\&\ lower\_all\_zero)\ \textcolor{keywordflow}{return}\ 0.0;}
-\DoxyCodeLine{00787\ }
-\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ read\_bit(N\ -\/\ 2);}
-\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(read\_u64\_at(N\ -\/\ 5,\ 3));}
-\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ D\ ?\ R\ :\ (7U\ -\/\ R);}
-\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ r;}
-\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ (r\ ==\ 0)\ ?\ 0ULL\ :\ read\_u64\_at(p,\ static\_cast<size\_t>(r));}
-\DoxyCodeLine{00793\ }
-\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ 0;}
-\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ ==\ 0)\ c\ =\ 0;}
-\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(((1ULL\ <<\ r)\ -\/\ 1ULL)\ +\ c\_bits);}
-\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(-\/((1LL\ <<\ (r\ +\ 1))\ )\ +\ 1LL\ +\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(c\_bits));}
-\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00800\ }
-\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ mantissa\ bits\ individually\ to\ build\ fractional\ value\ m}}
-\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ 0.0L;}
-\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ twopow\ =\ 0.5L;}
-\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ p;\ ++i)\ \{}
-\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_bit(i))\ m\ +=\ twopow;}
-\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ twopow\ *=\ 0.5L;}
-\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00808\ }
-\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c)\ +\ m;}
-\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value\_sign\ =\ S\ ?\ -\/1.0\ :\ 1.0;}
-\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value\_sign\ *\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::expl(ell\ *\ 0.5L));}
-\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00813\ \ \ \ \ \}}
-\DoxyCodeLine{00814\ }
-\DoxyCodeLine{00825\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ decode\_u64\_to\_double(uint64\_t\ bits)\ \textcolor{keyword}{noexcept}\ \{}
-\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bits\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0.0;\ \textcolor{comment}{//\ Zero\ per\ eq.\ (24)}}
-\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NaR\ check:\ S=1\ and\ D=R=C=M=0\ per\ Def.\ 2}}
-\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ (bits\ >>\ (N\ -\/\ 1))\ \&\ 1ULL;\ \textcolor{comment}{//\ Sign\ per\ eq.\ (14)}}
-\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ uint64\_t\ lower\ =\ bits\ \&\ ((N\ >=\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ (N\ -\/\ 1))\ -\/\ 1ULL));}
-\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (S\ \&\&\ lower\ ==\ 0)\ \{}
-\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();\ \textcolor{comment}{//\ NaR\ per\ eq.\ (24)}}
-\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ D\ per\ eq.\ (15)}}
-\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ (bits\ >>\ (N\ -\/\ 2))\ \&\ 1ULL;}
-\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ R\ per\ eq.\ (16),\ compute\ r\ per\ eq.\ (17)}}
-\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ ((bits\ >>\ (N\ -\/\ 5))\ \&\ 7ULL);}
-\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ D\ ?\ R\ :\ (7U\ -\/\ R);}
-\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ C\ per\ eq.\ (18),\ compute\ c\ per\ eq.\ (19)}}
-\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ uint64\_t\ c\_mask\ =\ (r\ ==\ 0)\ ?\ 0ULL\ :\ (((1ULL\ <<\ r)\ -\/\ 1ULL)\ <<\ (N\ -\/\ 5\ -\/\ r));}
-\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ (c\_mask\ ==\ 0ULL)\ ?\ 0ULL\ :\ ((bits\ \&\ c\_mask)\ >>\ (N\ -\/\ 5\ -\/\ r));}
-\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ D}
-\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ ?\ (int64\_t(((r\ ==\ 0)\ ?\ 0ULL\ :\ ((1ULL\ <<\ r)\ -\/\ 1ULL))\ +\ c\_bits))\ \textcolor{comment}{//\ D=1\ case\ eq.\ (19)}}
-\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ :\ (int64\_t(-\/((1LL\ <<\ (r\ +\ 1)))\ +\ 1LL\ +\ static\_cast<int64\_t>(c\_bits)));\ \textcolor{comment}{//\ D=0\ case\ eq.\ (19)}}
-\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ p\ per\ eq.\ (20)}}
-\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ r;}
-\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ M\ per\ eq.\ (21),\ compute\ m\ per\ eq.\ (22)}}
-\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ uint64\_t\ m\_bits\ =\ (p\ ==\ 0)\ ?\ 0ULL\ :\ (bits\ \&\ ((1ULL\ <<\ p)\ -\/\ 1ULL));}
-\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ m\ =\ (p\ >\ 0)\ ?\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(m\_bits)\ *\ std::pow(2.0,\ -\/\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p)))\ :\ 0.0;}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ ell\_ld\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c);}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ <\ 0.0L)\ m\ =\ 0.0L;}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ >=\ 1.0L)\ m\ =\ 0.999999L;}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r);}
+\DoxyCodeLine{00723\ }
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ write\_bit\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \&dst,\ \textcolor{keywordtype}{size\_t}\ bit\_index,\ \textcolor{keywordtype}{bool}\ val)\ \{}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val)\ dst[wi]\ |=\ (1ULL\ <<\ bi);}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ dst[wi]\ \&=\ \string~(1ULL\ <<\ bi);}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00730\ }
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ write\_u64\_at\ =\ [\&](\mbox{\hyperlink{structtakum_1_1takum_afc6beeb03e43bac2c39df4628f00920b}{storage\_t}}\ \&dst,\ \textcolor{keywordtype}{size\_t}\ bit\_index,\ uint64\_t\ value,\ \textcolor{keywordtype}{size\_t}\ len)\ \{}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remaining\ =\ len;}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pos\ =\ 0;}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (remaining\ >\ 0)\ \{}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\ =\ 64\ -\/\ bi;}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ take\ =\ std::min<size\_t>(remaining,\ space);}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (take\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ take)\ -\/\ 1ULL);}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ chunk\ =\ (value\ >>\ pos)\ \&\ mask;}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ dst\_mask\ =\ \string~(mask\ <<\ bi);}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dst[wi]\ \&=\ dst\_mask;}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dst[wi]\ |=\ (chunk\ <<\ bi);}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bit\_index\ +=\ take;}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pos\ +=\ take;}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ remaining\ -\/=\ take;}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00749\ }
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Place\ S\ at\ N-\/1}}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ N\ -\/\ 1,\ S);}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ D\ at\ N-\/2}}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ N\ -\/\ 2,\ D);}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ R:\ 3\ bits\ at\ positions\ [N-\/5\ ..\ N-\/3]}}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ write\_u64\_at(out,\ N\ -\/\ 5,\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(R),\ 3);}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ C\ bits:\ r\ bits\ at\ offset\ p}}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ >\ 0)\ write\_u64\_at(out,\ p,\ c\_bits,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r));}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ M\ bits:\ write\ p\ bits\ representing\ fractional\ part\ m;\ generate\ bits\ sequentially}}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ frac\ =\ m;}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ p;\ ++i)\ \{}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frac\ *=\ 2.0L;}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bit\ =\ (frac\ >=\ 1.0L);}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bit)\ frac\ -\/=\ 1.0L;}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ write\_bit(out,\ i,\ bit);}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00766\ }
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ mask\_to\_N(out);}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacetakum}{takum}}\ t\{\};}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ t.storage\ =\ out;}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00772\ \ \ \ \ \}}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00785\ \ \ \ \ \textcolor{keyword}{static}\ uint64\_t\ \mbox{\hyperlink{structtakum_1_1takum_a1657948441fd590672726f4fa0cd3b84}{encode\_from\_double\_u64}}(\textcolor{keywordtype}{double}\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ ==\ 0.0)\ \textcolor{keywordflow}{return}\ 0ULL;\ \textcolor{comment}{//\ Zero\ representation\ per\ eq.\ (24)}}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!std::isfinite(x))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(\mbox{\hyperlink{structtakum_1_1takum_a841a02ee507aab1529d6b7d88443e3ad}{takum::nar}}().\mbox{\hyperlink{structtakum_1_1takum_ab7f039d0a8e5b0bd08fba9e87cf9af17}{storage}});\ \ \textcolor{comment}{//\ NaN/Inf\ →\ NaR\ per\ NaR\ convention\ in\ Def.\ 2}}
+\DoxyCodeLine{00789\ }
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ std::signbit(x);\ \textcolor{comment}{//\ Sign\ bit\ per\ eq.\ (14)}}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ abs\_x\ =\ std::fabsl(x);}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\ =\ 2.0L\ *\ std::logl(abs\_x);\ \textcolor{comment}{//\ Logarithmic\ value\ ℓ\ =\ 2\ *\ ln(|x|)\ for\ base\ √e,\ per\ eq.\ (23)}}
+\DoxyCodeLine{00794\ }
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clamp\ |ℓ|\ to\ representable\ range\ |ℓ|\ <\ 255\ per\ eq.\ (23)}}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ clamp\_pos\ =\ \mbox{\hyperlink{structtakum_1_1takum_a6d3beeb5a357cdc173ef67484abd0ef0}{max\_ell}}();}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ell\ >\ clamp\_pos)\ ell\ =\ clamp\_pos;}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ell\ <\ -\/clamp\_pos)\ ell\ =\ -\/clamp\_pos;}
+\DoxyCodeLine{00799\ }
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Decompose\ ℓ\ into\ characteristic\ c\ =\ floor(ℓ)\ and\ mantissa\ m\ =\ ℓ\ -\/\ c\ per\ eq.\ (19)\ and\ (22)}}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(std::floorl(ell));}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ (c\ >=\ 0);\ \textcolor{comment}{//\ Direction\ bit:\ positive\ if\ c\ >=\ 0\ per\ eq.\ (15)}}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ abs\_c\ =\ D\ ?\ c\ :\ -\/c;}
+\DoxyCodeLine{00804\ }
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Regime\ r\ per\ eq.\ (17):\ floor(log2(|c|\ +\ D))}}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ (abs\_c\ !=\ 0)}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(std::floorl(std::log2l(D\ ?\ abs\_c\ +\ 1\ :\ abs\_c)))}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 0;}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ std::min<uint32\_t>(7,\ r);\ \textcolor{comment}{//\ Clamp\ to\ max\ regime\ 7}}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ D\ ?\ r\ :\ (7U\ -\/\ r);\ \textcolor{comment}{//\ Regime\ bits\ per\ eq.\ (16)}}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Characteristic\ bits\ C\ per\ eq.\ (18),\ c\ per\ eq.\ (19)}}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ !=\ 0)\ \{}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ \{}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ -\/\ ((1ULL\ <<\ r)\ -\/\ 1ULL));\ \textcolor{comment}{//\ D=1\ case}}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(c\ +\ ((1ULL\ <<\ (r+1))\ -\/\ 1ULL));\ \textcolor{comment}{//\ D=0\ case}}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00821\ }
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mantissa\ m\ =\ fractional\ part\ of\ ℓ\ per\ eq.\ (22),\ p\ =\ N\ -\/\ 5\ -\/\ r\ per\ eq.\ (20)}}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ ell\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c);}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ <\ 0.0L)\ m\ =\ 0.0L;}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ >=\ 1.0L)\ m\ =\ 0.999999L;\ \ \textcolor{comment}{//\ avoid\ overflow\ in\ scaling}}
+\DoxyCodeLine{00826\ }
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(r);}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ m\_bits\ =\ 0ULL;}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ >\ 0\ \&\&\ m\ >\ 0.0L)\ \{}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\_power\ =\ std::ldexpl(1.0L,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p));}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\_scaled\_ld\ =\ m\ *\ m\_power;}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(std::floorl(m\_scaled\_ld\ +\ 0.5L));\ \textcolor{comment}{//\ Quantize\ m\ to\ p\ bits}}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_m\ =\ (p\ >=\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ p)\ -\/\ 1ULL);}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bits\ >\ max\_m)\ m\_bits\ =\ max\_m;\ \textcolor{comment}{//\ Clamp}}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00836\ }
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pack\ bit\ fields\ into\ storage\ per\ Def.\ 2\ bit\ layout:\ S\ D\ R\ C\ M}}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ packed\ =\ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(S)\ <<\ (N\ -\/\ 1))\ |\ \textcolor{comment}{//\ Sign}}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(D)\ <<\ (N\ -\/\ 2))\ |\ \textcolor{comment}{//\ Direction}}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(R)\ <<\ (N\ -\/\ 5));\ \textcolor{comment}{//\ Regime}}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \ \ \ \ packed\ |=\ (c\_bits\ <<\ p);\ \textcolor{comment}{//\ Characteristic}}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ packed\ |=\ m\_bits;\ \textcolor{comment}{//\ Mantissa}}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ packed;}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ N>64\ this\ helper\ is\ not\ used;\ provide\ a\ safe\ fallback}}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0ULL;}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00848\ \ \ \ \ \}}
 \DoxyCodeLine{00849\ }
-\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ℓ\ =\ c\ +\ m\ per\ eq.\ (23)}}
-\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ ell\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(c)\ +\ m;}
-\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ value\ =\ (-\/1)\string^S\ *\ exp(ℓ\ /\ 2)\ =\ (-\/1)\string^S\ *\ √e\ \string^\ ℓ\ per\ eq.\ (24)}}
-\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value\_sign\ =\ S\ ?\ -\/1.0\ :\ 1.0;}
-\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value\_sign\ *\ std::exp(ell\ *\ 0.5);}
-\DoxyCodeLine{00855\ \ \ \ \ \}}
-\DoxyCodeLine{00856\ \};}
-\DoxyCodeLine{00857\ }
-\DoxyCodeLine{00858\ \}\ \textcolor{comment}{//\ namespace\ takum}}
+\DoxyCodeLine{00850\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00855\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint64\_t\ nbit\_mask()\ noexcept\ \{}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ >=\ 64)\ \textcolor{keywordflow}{return}\ \string~0ULL;}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{return}\ (N\ ==\ 64\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ N)\ -\/\ 1ULL));}
+\DoxyCodeLine{00858\ \ \ \ \ \}}
 \DoxyCodeLine{00859\ }
-\DoxyCodeLine{00864\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacestd}{std}}\ \{}
-\DoxyCodeLine{00865\ }
-\DoxyCodeLine{00877\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
-\DoxyCodeLine{00878\ \textcolor{keyword}{struct\ }numeric\_limits<\mbox{\hyperlink{namespacetakum}{takum}}::\mbox{\hyperlink{namespacetakum}{takum}}<N>>\ \{}
-\DoxyCodeLine{00879\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_specialized\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00880\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_signed\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00881\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_integer\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00882\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_exact\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00883\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ has\_infinity\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00884\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ has\_quiet\_NaN\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00885\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ has\_signaling\_NaN\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00886\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ float\_denorm\_style\ has\_denorm\ =\ denorm\_absent;}
-\DoxyCodeLine{00887\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ has\_denorm\_loss\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00888\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_iec559\ =\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ Deprecated\ traits:\ not\ IEC\ 559\ compliant}}
-\DoxyCodeLine{00889\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_modulo\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00890\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ traps\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00891\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ tinyness\_before\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00892\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ float\_round\_style\ round\_style\ =\ round\_toward\_zero;}
-\DoxyCodeLine{00893\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ digits\ =\ N;\ \textcolor{comment}{//\ Approximate,\ based\ on\ bit\ width}}
-\DoxyCodeLine{00894\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ p\_min\ =\ std::max<size\_t>(1,\ N\ -\/\ 12);}
-\DoxyCodeLine{00895\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ digits10\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p\_min\ *\ 0.3010);}
-\DoxyCodeLine{00896\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ max\_digits10\ =\ digits10\ +\ 1;}
-\DoxyCodeLine{00897\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ is\_bounded\ =\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00898\ }
-\DoxyCodeLine{00899\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ epsilon()\ noexcept\ \{}
-\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2.0\ *\ std::pow(2.0,\ -\/\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p\_min));\ \textcolor{comment}{//\ 2\ *\ ulp(1.0)\ ≈\ machine\ epsilon}}
-\DoxyCodeLine{00901\ \ \ \ \ \}}
-\DoxyCodeLine{00902\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ round\_error()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ 0.5\ *\ epsilon();\ \}}
-\DoxyCodeLine{00903\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ min()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::exp(-\/255.0\ *\ 0.5);\ \}\ \textcolor{comment}{//\ Approximate\ min\ representable}}
-\DoxyCodeLine{00904\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ max()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::exp(255.0\ *\ 0.5);\ \}\ \textcolor{comment}{//\ Approximate\ max\ representable}}
-\DoxyCodeLine{00905\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ lowest()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ -\/max();\ \}}
-\DoxyCodeLine{00906\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ infinity()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::infinity();\ \}}
-\DoxyCodeLine{00907\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ quiet\_NaN()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();\ \}}
-\DoxyCodeLine{00908\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ signaling\_NaN()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ quiet\_NaN();\ \}}
-\DoxyCodeLine{00909\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ denorm\_min()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ min();\ \}\ \textcolor{comment}{//\ No\ subnormals}}
-\DoxyCodeLine{00910\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ radix\ =\ 2;}
-\DoxyCodeLine{00911\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ max\_exponent\ =\ 128;\ \textcolor{comment}{//\ Approximate}}
-\DoxyCodeLine{00912\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ max\_exponent10\ =\ 38;}
-\DoxyCodeLine{00913\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ min\_exponent\ =\ -\/127;}
-\DoxyCodeLine{00914\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ min\_exponent10\ =\ -\/37;}
-\DoxyCodeLine{00915\ \};}
-\DoxyCodeLine{00916\ }
-\DoxyCodeLine{00917\ \}\ \textcolor{comment}{//\ namespace\ std}}
+\DoxyCodeLine{00864\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ mask\_to\_N(storage\_t\&\ s)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ \ \ \ \ s\ =\ \textcolor{keyword}{static\_cast<}storage\_t\textcolor{keyword}{>}(uint64\_t(s)\ \&\ nbit\_mask());}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00868\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zero\ bits\ above\ N\ in\ the\ top\ word;\ lower\ words\ untouched.}}
+\DoxyCodeLine{00869\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ msb\_word\ =\ (N\ -\/\ 1)\ /\ 64;}
+\DoxyCodeLine{00870\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ used\_bits\_top\ =\ ((N\ -\/\ 1)\ \%\ 64)\ +\ 1;}
+\DoxyCodeLine{00871\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ top\_mask\ =\ (used\_bits\_top\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ used\_bits\_top)\ -\/\ 1ULL);}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ msb\_word\ +\ 1;\ i\ <\ s.size();\ ++i)\ s[i]\ =\ 0;\ \textcolor{comment}{//\ safety}}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ \ \ \ \ s[msb\_word]\ \&=\ top\_mask;}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00875\ \ \ \ \ \}}
+\DoxyCodeLine{00876\ }
+\DoxyCodeLine{00888\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ decode\_to\_double(\textcolor{keyword}{const}\ storage\_t\&\ bits\_storage)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ single-\/word\ bits\ for\ N<=64\ to\ reuse\ previous\ logic}}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (N\ <=\ 64)\ \{}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ bits\ =\ \textcolor{keyword}{static\_cast<}uint64\_t\textcolor{keyword}{>}(bits\_storage);}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ decode\_u64\_to\_double(bits);}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/word\ decode:\ read\ fields\ across\ words\ using\ bit-\/access\ helpers.}}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ read\_bit\ =\ [\&](\textcolor{keywordtype}{size\_t}\ bit\_index)\ -\/>\ \textcolor{keywordtype}{bool}\ \{}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((bits\_storage[wi]\ >>\ bi)\ \&\ 1ULL)\ !=\ 0ULL;}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00900\ }
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ read\_u64\_at\ =\ [\&](\textcolor{keywordtype}{size\_t}\ bit\_index,\ \textcolor{keywordtype}{size\_t}\ len)\ -\/>\ uint64\_t\ \{}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ up\ to\ 64\ bits\ starting\ at\ bit\_index\ (LSB-\/first)}}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ acc\ =\ 0ULL;}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remaining\ =\ len;}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pos\ =\ 0;}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (remaining\ >\ 0)\ \{}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ wi\ =\ bit\_index\ /\ 64;}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bi\ =\ bit\_index\ \%\ 64;}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\ =\ 64\ -\/\ bi;}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ take\ =\ std::min<size\_t>(remaining,\ space);}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ mask\ =\ (take\ ==\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ take)\ -\/\ 1ULL);}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ chunk\ =\ (bits\_storage[wi]\ >>\ bi)\ \&\ mask;}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ acc\ |=\ (chunk\ <<\ pos);}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bit\_index\ +=\ take;}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pos\ +=\ take;}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ remaining\ -\/=\ take;}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ acc;}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00920\ }
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ sign\ and\ NaR/zero\ checks}}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ read\_bit(N\ -\/\ 1);}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ lower\ (N-\/1)\ bits\ to\ check\ NaR\ or\ zero}}
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ lower\_all\_zero\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ N\ -\/\ 1;\ ++i)\ \textcolor{keywordflow}{if}\ (read\_bit(i))\ \{\ lower\_all\_zero\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};\ \}}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (S\ \&\&\ lower\_all\_zero)\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ sign==0\ and\ all\ lower\ bits\ zero,\ this\ is\ the\ zero\ pattern}}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!S\ \&\&\ lower\_all\_zero)\ \textcolor{keywordflow}{return}\ 0.0;}
+\DoxyCodeLine{00929\ }
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ read\_bit(N\ -\/\ 2);}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(read\_u64\_at(N\ -\/\ 5,\ 3));}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ D\ ?\ R\ :\ (7U\ -\/\ R);}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ r;}
+\DoxyCodeLine{00934\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ (r\ ==\ 0)\ ?\ 0ULL\ :\ read\_u64\_at(p,\ static\_cast<size\_t>(r));}
+\DoxyCodeLine{00935\ }
+\DoxyCodeLine{00936\ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ 0;}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ ==\ 0)\ c\ =\ 0;}
+\DoxyCodeLine{00938\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00939\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (D)\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(((1ULL\ <<\ r)\ -\/\ 1ULL)\ +\ c\_bits);}
+\DoxyCodeLine{00940\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ c\ =\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(-\/((1LL\ <<\ (r\ +\ 1))\ )\ +\ 1LL\ +\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(c\_bits));}
+\DoxyCodeLine{00941\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00942\ }
+\DoxyCodeLine{00943\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ mantissa\ bits\ individually\ to\ build\ fractional\ value\ m}}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ m\ =\ 0.0L;}
+\DoxyCodeLine{00945\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ twopow\ =\ 0.5L;}
+\DoxyCodeLine{00946\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ p;\ ++i)\ \{}
+\DoxyCodeLine{00947\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_bit(i))\ m\ +=\ twopow;}
+\DoxyCodeLine{00948\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ twopow\ *=\ 0.5L;}
+\DoxyCodeLine{00949\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00950\ }
+\DoxyCodeLine{00951\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\ ell\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(c)\ +\ m;}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value\_sign\ =\ S\ ?\ -\/1.0\ :\ 1.0;}
+\DoxyCodeLine{00953\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value\_sign\ *\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::expl(ell\ *\ 0.5L));}
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00955\ \ \ \ \ \}}
+\DoxyCodeLine{00956\ }
+\DoxyCodeLine{00967\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ decode\_u64\_to\_double(uint64\_t\ bits)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bits\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0.0;\ \textcolor{comment}{//\ Zero\ per\ eq.\ (24)}}
+\DoxyCodeLine{00969\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NaR\ check:\ S=1\ and\ D=R=C=M=0\ per\ Def.\ 2}}
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ S\ =\ (bits\ >>\ (N\ -\/\ 1))\ \&\ 1ULL;\ \textcolor{comment}{//\ Sign\ per\ eq.\ (14)}}
+\DoxyCodeLine{00971\ \ \ \ \ \ \ \ \ uint64\_t\ lower\ =\ bits\ \&\ ((N\ >=\ 64)\ ?\ \string~0ULL\ :\ ((1ULL\ <<\ (N\ -\/\ 1))\ -\/\ 1ULL));}
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (S\ \&\&\ lower\ ==\ 0)\ \{}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();\ \textcolor{comment}{//\ NaR\ per\ eq.\ (24)}}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ D\ per\ eq.\ (15)}}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ D\ =\ (bits\ >>\ (N\ -\/\ 2))\ \&\ 1ULL;}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ R\ per\ eq.\ (16),\ compute\ r\ per\ eq.\ (17)}}
+\DoxyCodeLine{00978\ \ \ \ \ \ \ \ \ uint32\_t\ R\ =\ ((bits\ >>\ (N\ -\/\ 5))\ \&\ 7ULL);}
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ D\ ?\ R\ :\ (7U\ -\/\ R);}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ C\ per\ eq.\ (18),\ compute\ c\ per\ eq.\ (19)}}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ uint64\_t\ c\_mask\ =\ (r\ ==\ 0)\ ?\ 0ULL\ :\ (((1ULL\ <<\ r)\ -\/\ 1ULL)\ <<\ (N\ -\/\ 5\ -\/\ r));}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ uint64\_t\ c\_bits\ =\ (c\_mask\ ==\ 0ULL)\ ?\ 0ULL\ :\ ((bits\ \&\ c\_mask)\ >>\ (N\ -\/\ 5\ -\/\ r));}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ int64\_t\ c\ =\ D}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ ?\ (int64\_t(((r\ ==\ 0)\ ?\ 0ULL\ :\ ((1ULL\ <<\ r)\ -\/\ 1ULL))\ +\ c\_bits))\ \textcolor{comment}{//\ D=1\ case\ eq.\ (19)}}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \ \ \ \ :\ (int64\_t(-\/((1LL\ <<\ (r\ +\ 1)))\ +\ 1LL\ +\ \textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(c\_bits)));\ \textcolor{comment}{//\ D=0\ case\ eq.\ (19)}}
+\DoxyCodeLine{00986\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ p\ per\ eq.\ (20)}}
+\DoxyCodeLine{00987\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ p\ =\ N\ -\/\ 5\ -\/\ r;}
+\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ M\ per\ eq.\ (21),\ compute\ m\ per\ eq.\ (22)}}
+\DoxyCodeLine{00989\ \ \ \ \ \ \ \ \ uint64\_t\ m\_bits\ =\ (p\ ==\ 0)\ ?\ 0ULL\ :\ (bits\ \&\ ((1ULL\ <<\ p)\ -\/\ 1ULL));}
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ m\ =\ (p\ >\ 0)\ ?\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(m\_bits)\ *\ std::pow(2.0,\ -\/\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(p)))\ :\ 0.0;}
+\DoxyCodeLine{00991\ }
+\DoxyCodeLine{00992\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ℓ\ =\ c\ +\ m\ per\ eq.\ (23)}}
+\DoxyCodeLine{00993\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ ell\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(c)\ +\ m;}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ value\ =\ (-\/1)\string^S\ *\ exp(ℓ\ /\ 2)\ =\ (-\/1)\string^S\ *\ √e\ \string^\ ℓ\ per\ eq.\ (24)}}
+\DoxyCodeLine{00995\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value\_sign\ =\ S\ ?\ -\/1.0\ :\ 1.0;}
+\DoxyCodeLine{00996\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value\_sign\ *\ std::exp(ell\ *\ 0.5);}
+\DoxyCodeLine{00997\ \ \ \ \ \}}
+\DoxyCodeLine{00998\ \};}
+\DoxyCodeLine{00999\ }
+\DoxyCodeLine{01000\ \}\ \textcolor{comment}{//\ namespace\ takum}}
+\DoxyCodeLine{01001\ }
+\DoxyCodeLine{01006\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacestd}{std}}\ \{}
+\DoxyCodeLine{01007\ }
+\DoxyCodeLine{01019\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{01020\ \textcolor{keyword}{struct\ }numeric\_limits<\mbox{\hyperlink{namespacetakum}{takum}}::\mbox{\hyperlink{namespacetakum}{takum}}<N>>\ \{}
+\DoxyCodeLine{01021\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a1e743e36abcc26c2af99715571a11fdd}{is\_specialized}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01022\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a7f765d55d31b50a7149e48c7b737ce0d}{is\_signed}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01023\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a5fa45111832498d06e2825f2194ba619}{is\_integer}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01024\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a13a4a19e456bb922b5f1576f4b9415a9}{is\_exact}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01025\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_ad54e30d75ff2d3376609417b48c30103}{has\_infinity}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01026\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aa96274da06d1c59342fa37123f168a6f}{has\_quiet\_NaN}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01027\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a04a0fb5efc5d78c46b9162f1a685b962}{has\_signaling\_NaN}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01028\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ float\_denorm\_style\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a251eef2c273212d4bdbffd0255248dc7}{has\_denorm}}\ =\ denorm\_absent;}
+\DoxyCodeLine{01029\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a40ff7084c82b2a5b32b220c393a23442}{has\_denorm\_loss}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01030\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a009895958c7675e45b6f6d8214a30cf8}{is\_iec559}}\ =\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ Deprecated\ traits:\ not\ IEC\ 559\ compliant}}
+\DoxyCodeLine{01031\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aab34b8c759c6186b70505d4ae71eb6ce}{is\_modulo}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01032\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_ac3217a1d22d14062d02932ba7e48d668}{traps}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01033\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aa2977b7f768557572bce87863e082963}{tinyness\_before}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01034\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ float\_round\_style\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a81c171f74eee934a46c868f1871ac0b1}{round\_style}}\ =\ round\_toward\_zero;}
+\DoxyCodeLine{01035\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a33fad7249ae35c52dd5d84b37f2cd010}{digits}}\ =\ N;\ \textcolor{comment}{//\ Approximate,\ based\ on\ bit\ width}}
+\DoxyCodeLine{01036\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a765468dbd45185c104a0bc462d43f1d8}{p\_min}}\ =\ std::max<size\_t>(1,\ N\ -\/\ 12);}
+\DoxyCodeLine{01037\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aca54b0636cc2da7e410064b64ce951ec}{digits10}}\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a765468dbd45185c104a0bc462d43f1d8}{p\_min}}\ *\ 0.3010);}
+\DoxyCodeLine{01038\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a43e869596e84e056680a7e506811e6fb}{max\_digits10}}\ =\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aca54b0636cc2da7e410064b64ce951ec}{digits10}}\ +\ 1;}
+\DoxyCodeLine{01039\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a11c606cbfb1f229e3f2041a1da475460}{is\_bounded}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01040\ }
+\DoxyCodeLine{01041\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_accb60b8e088e50a83d6d241ca3bb13da}{epsilon}}()\ noexcept\ \{}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2.0\ *\ std::pow(2.0,\ -\/\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a765468dbd45185c104a0bc462d43f1d8}{p\_min}}));\ \textcolor{comment}{//\ 2\ *\ ulp(1.0)\ ≈\ machine\ epsilon}}
+\DoxyCodeLine{01043\ \ \ \ \ \}}
+\DoxyCodeLine{01044\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a0a76854d7cb282f236d1deb85f32b5e0}{round\_error}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ 0.5\ *\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_accb60b8e088e50a83d6d241ca3bb13da}{epsilon}}();\ \}}
+\DoxyCodeLine{01045\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_ada3ddf57b9c5fa02ac7eb778b9933cf9}{min}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::exp(-\/255.0\ *\ 0.5);\ \}\ \textcolor{comment}{//\ Approximate\ min\ representable}}
+\DoxyCodeLine{01046\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aacb51dc63eeb258053ea034d2c0c472e}{max}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::exp(255.0\ *\ 0.5);\ \}\ \textcolor{comment}{//\ Approximate\ max\ representable}}
+\DoxyCodeLine{01047\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_adefff79f9b2c8d79e72dc9bd2953d67f}{lowest}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ -\/\mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aacb51dc63eeb258053ea034d2c0c472e}{max}}();\ \}}
+\DoxyCodeLine{01048\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_af2e2284255c99a51e011154633667fe7}{infinity}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::infinity();\ \}}
+\DoxyCodeLine{01049\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a6f0c8498dc02b6dcd7ad0925907b6624}{quiet\_NaN}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ std::numeric\_limits<double>::quiet\_NaN();\ \}}
+\DoxyCodeLine{01050\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a7da676a235b1e9296e8830699f399947}{signaling\_NaN}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a6f0c8498dc02b6dcd7ad0925907b6624}{quiet\_NaN}}();\ \}}
+\DoxyCodeLine{01051\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_aac26011ad23ab7c264a3bbfede4727d3}{denorm\_min}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_ada3ddf57b9c5fa02ac7eb778b9933cf9}{min}}();\ \}\ \textcolor{comment}{//\ No\ subnormals}}
+\DoxyCodeLine{01052\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a855b22df000096d00ae5be2f978ed341}{radix}}\ =\ 2;}
+\DoxyCodeLine{01053\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a16e925d87826aaaf35dad22b1fa2e1c5}{max\_exponent}}\ =\ 128;\ \textcolor{comment}{//\ Approximate}}
+\DoxyCodeLine{01054\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a4581c10a0bfebbbbb64cc50458a8a021}{max\_exponent10}}\ =\ 38;}
+\DoxyCodeLine{01055\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_a88456969d65ccab1b27a651d4bdc60e2}{min\_exponent}}\ =\ -\/127;}
+\DoxyCodeLine{01056\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4_ae9a37f7b03d7f9b265695db31b9bb51e}{min\_exponent10}}\ =\ -\/37;}
+\DoxyCodeLine{01057\ \};}
+\DoxyCodeLine{01058\ }
+\DoxyCodeLine{01059\ \}\ \textcolor{comment}{//\ namespace\ std}}
 
 \end{DoxyCode}

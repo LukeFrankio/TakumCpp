@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['takum_0',['takum',['../structtakum_1_1takum.html#a04f913b0f2566a6547f02e3c0df62e6b',1,'takum::takum::takum() noexcept=default'],['../structtakum_1_1takum.html#a8fe50ee4d28061551989e178974e8ac4',1,'takum::takum::takum(double x) noexcept']]],
-  ['to_5fdouble_1',['to_double',['../structtakum_1_1takum.html#a62ce74ae66cd876d34489273ca85d6dc',1,'takum::takum']]],
-  ['to_5fexpected_2',['to_expected',['../structtakum_1_1takum.html#af0a450f3fb81f1b8a0da3831315d5c65',1,'takum::takum']]]
+  ['raw_5fbits_0',['raw_bits',['../structtakum_1_1takum.html#ad35bb63b12ae17f21451f7d13b807558',1,'takum::takum']]],
+  ['reciprocal_1',['reciprocal',['../structtakum_1_1takum.html#a392d33bd59572301ef014197a10d7225',1,'takum::takum']]],
+  ['round_5ferror_2',['round_error',['../structstd_1_1numeric__limits_3_01takum_1_1takum_3_01_n_01_4_01_4.html#a0a76854d7cb282f236d1deb85f32b5e0',1,'std::numeric_limits&lt; takum::takum&lt; N &gt; &gt;']]]
 ];

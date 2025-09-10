@@ -15,9 +15,9 @@ Minimal concept describing the takum-\/like public API used by the library and t
 \DoxyCodeLine{\textcolor{keyword}{template}<>}
 \DoxyCodeLine{\textcolor{keyword}{concept\ }\mbox{\hyperlink{concepttakum_1_1takum__floating__point}{takum::takum\_floating\_point}}\ =\ \ \textcolor{keyword}{requires}(T\ t)\ \{}
 \DoxyCodeLine{\ \ \ \ \{\ t\ <\ t\ \}\ -\/>\ std::convertible\_to<bool>;}
-\DoxyCodeLine{\ \ \ \ \{\ \mbox{\hyperlink{structtakum_1_1takum}{t}}\ ==\ \mbox{\hyperlink{structtakum_1_1takum}{t}}\ \}\ -\/>\ std::convertible\_to<bool>;}
-\DoxyCodeLine{\ \ \ \ \{\ t.\mbox{\hyperlink{structtakum_1_1takum_a62ce74ae66cd876d34489273ca85d6dc}{to\_double}}()\ \}\ -\/>\ std::convertible\_to<double>;}
-\DoxyCodeLine{\ \ \ \ \{\ t.\mbox{\hyperlink{structtakum_1_1takum_a882e54ab3dd637f6f34c82f3f7a9f9fa}{is\_nar}}()\ \}\ -\/>\ std::convertible\_to<bool>;}
+\DoxyCodeLine{\ \ \ \ \{\ t\ ==\ t\ \}\ -\/>\ std::convertible\_to<bool>;}
+\DoxyCodeLine{\ \ \ \ \{\ t.to\_double()\ \}\ -\/>\ std::convertible\_to<double>;}
+\DoxyCodeLine{\ \ \ \ \{\ t.is\_nar()\ \}\ -\/>\ std::convertible\_to<bool>;}
 \DoxyCodeLine{\}\ \&\&\ \textcolor{keyword}{sizeof}(T)\ >\ 0}
 
 \end{DoxyCode}
@@ -30,4 +30,4 @@ Types satisfying this concept must provide comparable semantics, a conversion to
 
 This is intentionally lightweight — it mirrors the methods used in tests and utilities.
 
-@requirements The type must be a complete type (sizeof(\+T) \texorpdfstring{$>$}{>} 0). 
+The type must be a complete type (sizeof(\+T) \texorpdfstring{$>$}{>} 0). 
