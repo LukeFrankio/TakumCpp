@@ -123,7 +123,7 @@ Always run these after any changes to core functionality:
 ### Performance and Timing Validation
 - Debug build: **50 seconds** (add 50% buffer = 75 second timeout)
 - Release build: **47 seconds** (add 50% buffer = 70 second timeout)  
-- Test suite: **6 seconds** (add 150% buffer = 15 second timeout)
+- Test suite: **6 seconds** (recommend 15+ minute timeout = 900+ seconds, very large buffer)
 
 ## Critical Constraints and Standards
 
