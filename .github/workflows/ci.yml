@@ -9,16 +9,24 @@ jobs:
     strategy:
       matrix:
         build_type: [Debug, Release]
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate polynomial coefficients
+        timeout-minutes: 2
+        run: python3 scripts/gen_poly_coeffs.py
+
       - name: Configure with MSVC
+        timeout-minutes: 3
         run: cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build with MSVC
+        timeout-minutes: 10
         run: cmake --build build --config ${{ matrix.build_type }}
 
       - name: Test with MSVC
+        timeout-minutes: 3
         run: cmake --build build --target ci_test_wrapper --config ${{ matrix.build_type }}
         continue-on-error: true
 
@@ -32,13 +40,16 @@ jobs:
   # Windows with MinGW (existing workflow)
   windows-mingw:
     runs-on: windows-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
       - name: Install MSYS2 and Ninja (minimal)
+        timeout-minutes: 5
         run: choco install msys2 --no-progress; choco install ninja -y
 
       - name: Install MinGW-w64 toolchain and update MSYS2
+        timeout-minutes: 8
         shell: bash
         run: |
           "C:/msys64/usr/bin/bash.exe" -lc "pacman -Syu --noconfirm"
@@ -50,12 +61,18 @@ jobs:
       - name: Check CMake version
         run: cmake --version
 
+      - name: Generate polynomial coefficients
+        timeout-minutes: 2
+        run: python3 scripts/gen_poly_coeffs.py
+
       - name: Configure and build (Ninja + GCC, CMake all the way)
+        timeout-minutes: 10
         run: |
           cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="C:/msys64/mingw64/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/msys64/mingw64/bin/g++.exe"
           cmake --build build --config Debug
 
       - name: Run tests and capture failures
+        timeout-minutes: 3
         run: cmake --build build --target ci_test_wrapper --config Debug
         continue-on-error: true
 
@@ -66,36 +83,43 @@ jobs:
           path: build/test_failures.log
           if-no-files-found: ignore
 
-  # Linux with GCC and Clang
+  # Linux with GCC and Clang - reduced matrix to avoid concurrency issues
   linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: 
-          - { cc: gcc-11, cxx: g++-11, name: gcc-11 }
           - { cc: gcc-12, cxx: g++-12, name: gcc-12 }
-          - { cc: clang-14, cxx: clang++-14, name: clang-14 }
           - { cc: clang-15, cxx: clang++-15, name: clang-15 }
         build_type: [Debug, Release]
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - name: Install compilers
+        timeout-minutes: 5
         run: |
           sudo apt-get update
           sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }} ninja-build python3
 
+      - name: Generate polynomial coefficients
+        timeout-minutes: 2
+        run: python3 scripts/gen_poly_coeffs.py
+
       - name: Configure with ${{ matrix.compiler.name }}
+        timeout-minutes: 3
         env:
           CC: ${{ matrix.compiler.cc }}
           CXX: ${{ matrix.compiler.cxx }}
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build with ${{ matrix.compiler.name }}
+        timeout-minutes: 8
         run: cmake --build build
 
       - name: Test with ${{ matrix.compiler.name }}
-        run: ctest --test-dir build --output-on-failure
+        timeout-minutes: 3
+        run: cmake --build build --target ci_test_wrapper
         continue-on-error: true
 
       - name: Upload failure log if present
@@ -111,21 +135,30 @@ jobs:
     strategy:
       matrix:
         build_type: [Debug, Release]
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
+        timeout-minutes: 5
         run: |
           brew install ninja python3
 
+      - name: Generate polynomial coefficients
+        timeout-minutes: 2
+        run: python3 scripts/gen_poly_coeffs.py
+
       - name: Configure with Clang
+        timeout-minutes: 3
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build with Clang
+        timeout-minutes: 8
         run: cmake --build build
 
       - name: Test with Clang
-        run: ctest --test-dir build --output-on-failure
+        timeout-minutes: 3
+        run: cmake --build build --target ci_test_wrapper
         continue-on-error: true
 
       - name: Upload failure log if present
