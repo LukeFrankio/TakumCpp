@@ -64,10 +64,10 @@ static_assert(HYBRID_LUT_SIZE > 0 && HYBRID_LUT_SIZE <= 4096,
     "HYBRID_LUT_SIZE must be in (0, 4096] for phi_hybrid_eval");
 struct HybridCoarseLUT {
     std::array<long double, HYBRID_LUT_SIZE + 1> v{}; // endpoints inclusive
-    // NOTE: This cannot be constexpr under clang-15 because it calls phi_poly_eval(t),
-    // which is not constexpr. Older GCC accepted it as an extension. Making it a
-    // normal runtime constructor avoids a compile error while retaining the lazy
-    // static initialization semantics we want.
+    // NOTE: This constructor cannot be constexpr because it calls phi_poly_eval(t),
+    // which is not declared constexpr. Making it a normal runtime constructor
+    // ensures correct initialization while retaining the lazy static initialization
+    // semantics we want.
     HybridCoarseLUT() noexcept : v{} {
         for (int i = 0; i <= HYBRID_LUT_SIZE; ++i) {
             long double t = -0.5L + (static_cast<long double>(i) / HYBRID_LUT_SIZE);
