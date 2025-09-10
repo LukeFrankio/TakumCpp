@@ -17,6 +17,23 @@
 
 namespace takum::internal::ref {
 
+/**
+ * @brief Reference implementation to encode a double into takum<N> bit pattern.
+ *
+ * This function provides a clear, auditable encoding that mirrors the library's
+ * packing format. It is intentionally readable rather than optimized and is
+ * primarily used for tests and specification validation.
+ *
+ * @tparam N Bit width of the takum format (must be between 12 and 64 bits)
+ * @param x Input double value to encode
+ * @return uint64_t containing the N-bit takum representation
+ * 
+ * @note Special cases:
+ *       - Zero maps to zero bit pattern
+ *       - NaN and infinity map to canonical NaR (sign bit set, rest zero)
+ *       - Underflow/overflow also maps to appropriate patterns
+ * @note The encoding follows the tapered logarithmic format per the reference specification
+ */
 template <size_t N>
 inline uint64_t encode_double_to_bits(double x) noexcept {
     static_assert(N >= 12 && N <= 64, "Takum reference encoder supports 12..64 bits");
@@ -91,6 +108,21 @@ inline uint64_t encode_double_to_bits(double x) noexcept {
     return bits;
 }
 
+/**
+ * @brief Reference implementation to decode takum<N> bit pattern to double.
+ *
+ * This function provides a clear, auditable decoding that mirrors the library's
+ * unpacking format. It reconstructs the original double value from the
+ * S,D,R,C,M fields following the tapered logarithmic specification.
+ *
+ * @tparam N Bit width of the takum format (must be between 12 and 64 bits)
+ * @param bits N-bit takum representation as uint64_t
+ * @return double Decoded value, or NaN for NaR patterns
+ * 
+ * @note NaR patterns (canonical: sign bit set, rest zero) decode to quiet NaN
+ * @note Zero patterns decode to exactly 0.0 
+ * @note The decoding follows eq. (24) from the reference specification
+ */
 template <size_t N>
 inline double decode_bits_to_double(uint64_t bits) noexcept {
     static_assert(N >= 12 && N <= 64, "Takum reference decoder supports 12..64 bits");
@@ -139,6 +171,22 @@ inline double decode_bits_to_double(uint64_t bits) noexcept {
     return S ? -y : y;
 }
 
+/**
+ * @brief High-precision reference decoder using long double arithmetic.
+ *
+ * This function provides higher precision decoding than the standard 
+ * decode_bits_to_double function by using long double internally for
+ * calculations. Useful for testing and validation where extra precision
+ * is needed to verify correctness.
+ *
+ * @tparam N Bit width of the takum format (must be between 12 and 64 bits)
+ * @param bits N-bit takum representation as uint64_t
+ * @return long double Decoded value with extended precision, or NaN for NaR
+ * 
+ * @note Uses long double sqrt and exp functions for higher precision
+ * @note Follows the same specification as decode_bits_to_double but with extended precision
+ * @note Primarily intended for testing and reference validation purposes
+ */
 template <size_t N>
 inline long double high_precision_decode(uint64_t bits) noexcept {
     static_assert(N >= 12 && N <= 64, "Takum high-precision decoder supports 12..64 bits");

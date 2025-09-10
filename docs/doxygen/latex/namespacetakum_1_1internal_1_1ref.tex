@@ -1,0 +1,116 @@
+\doxysection{takum\+::internal\+::ref Namespace Reference}
+\hypertarget{namespacetakum_1_1internal_1_1ref}{}\label{namespacetakum_1_1internal_1_1ref}\index{takum::internal::ref@{takum::internal::ref}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ }\\\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_a516dda352d764d6b1eda73aab6c37ec5}{encode\+\_\+double\+\_\+to\+\_\+bits}} (\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{structtakum_1_1takum}{x}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Reference implementation to encode a double into takum$<$\+N$>$ bit pattern. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ }\\\mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_aa394ab044bdf3778be5c6daf7ded5916}{decode\+\_\+bits\+\_\+to\+\_\+double}} (\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{bits}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Reference implementation to decode takum$<$\+N$>$ bit pattern to double. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ }\\\mbox{\hyperlink{structtakum_1_1takum}{long}} \mbox{\hyperlink{structtakum_1_1takum}{double}} \mbox{\hyperlink{namespacetakum_1_1internal_1_1ref_acc6e3ca97598eb2f7c88c0ef307939c3}{high\+\_\+precision\+\_\+decode}} (\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} \mbox{\hyperlink{structtakum_1_1takum}{bits}}) \mbox{\hyperlink{structtakum_1_1takum}{noexcept}}
+\begin{DoxyCompactList}\small\item\em High-\/precision reference decoder using long double arithmetic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacetakum_1_1internal_1_1ref_aa394ab044bdf3778be5c6daf7ded5916}\label{namespacetakum_1_1internal_1_1ref_aa394ab044bdf3778be5c6daf7ded5916} 
+\index{takum::internal::ref@{takum::internal::ref}!decode\_bits\_to\_double@{decode\_bits\_to\_double}}
+\index{decode\_bits\_to\_double@{decode\_bits\_to\_double}!takum::internal::ref@{takum::internal::ref}}
+\doxysubsubsection{\texorpdfstring{decode\_bits\_to\_double()}{decode\_bits\_to\_double()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{double}} takum\+::internal\+::ref\+::decode\+\_\+bits\+\_\+to\+\_\+double (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}}}]{bits }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Reference implementation to decode takum$<$\+N$>$ bit pattern to double. 
+
+This function provides a clear, auditable decoding that mirrors the library\textquotesingle{}s unpacking format. It reconstructs the original double value from the S,D,R,C,M fields following the tapered logarithmic specification.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & Bit width of the takum format (must be between 12 and 64 bits) \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em bits} & N-\/bit takum representation as uint64\+\_\+t \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double Decoded value, or NaN for NaR patterns
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+NaR patterns (canonical\+: sign bit set, rest zero) decode to quiet NaN 
+
+Zero patterns decode to exactly 0.\+0 
+
+The decoding follows eq. (24) from the reference specification 
+\end{DoxyNote}
+\Hypertarget{namespacetakum_1_1internal_1_1ref_a516dda352d764d6b1eda73aab6c37ec5}\label{namespacetakum_1_1internal_1_1ref_a516dda352d764d6b1eda73aab6c37ec5} 
+\index{takum::internal::ref@{takum::internal::ref}!encode\_double\_to\_bits@{encode\_double\_to\_bits}}
+\index{encode\_double\_to\_bits@{encode\_double\_to\_bits}!takum::internal::ref@{takum::internal::ref}}
+\doxysubsubsection{\texorpdfstring{encode\_double\_to\_bits()}{encode\_double\_to\_bits()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}} takum\+::internal\+::ref\+::encode\+\_\+double\+\_\+to\+\_\+bits (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{double}}}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Reference implementation to encode a double into takum$<$\+N$>$ bit pattern. 
+
+This function provides a clear, auditable encoding that mirrors the library\textquotesingle{}s packing format. It is intentionally readable rather than optimized and is primarily used for tests and specification validation.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & Bit width of the takum format (must be between 12 and 64 bits) \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input double value to encode \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+uint64\+\_\+t containing the N-\/bit takum representation
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Special cases\+:
+\begin{DoxyItemize}
+\item Zero maps to zero bit pattern
+\item NaN and infinity map to canonical NaR (sign bit set, rest zero)
+\item Underflow/overflow also maps to appropriate patterns 
+\end{DoxyItemize}
+
+The encoding follows the tapered logarithmic format per the reference specification 
+\end{DoxyNote}
+\Hypertarget{namespacetakum_1_1internal_1_1ref_acc6e3ca97598eb2f7c88c0ef307939c3}\label{namespacetakum_1_1internal_1_1ref_acc6e3ca97598eb2f7c88c0ef307939c3} 
+\index{takum::internal::ref@{takum::internal::ref}!high\_precision\_decode@{high\_precision\_decode}}
+\index{high\_precision\_decode@{high\_precision\_decode}!takum::internal::ref@{takum::internal::ref}}
+\doxysubsubsection{\texorpdfstring{high\_precision\_decode()}{high\_precision\_decode()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{structtakum_1_1takum}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structtakum_1_1takum}{long}} \mbox{\hyperlink{structtakum_1_1takum}{double}} takum\+::internal\+::ref\+::high\+\_\+precision\+\_\+decode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtakum_1_1takum}{uint64\+\_\+t}}}]{bits }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+High-\/precision reference decoder using long double arithmetic. 
+
+This function provides higher precision decoding than the standard decode\+\_\+bits\+\_\+to\+\_\+double function by using long double internally for calculations. Useful for testing and validation where extra precision is needed to verify correctness.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & Bit width of the takum format (must be between 12 and 64 bits) \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em bits} & N-\/bit takum representation as uint64\+\_\+t \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+long double Decoded value with extended precision, or NaN for NaR
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Uses long double sqrt and exp functions for higher precision 
+
+Follows the same specification as decode\+\_\+bits\+\_\+to\+\_\+double but with extended precision 
+
+Primarily intended for testing and reference validation purposes 
+\end{DoxyNote}

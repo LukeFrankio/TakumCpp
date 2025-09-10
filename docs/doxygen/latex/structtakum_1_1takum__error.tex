@@ -1,0 +1,99 @@
+\doxysection{takum\+::takum\+\_\+error Struct Reference}
+\hypertarget{structtakum_1_1takum__error}{}\label{structtakum_1_1takum__error}\index{takum::takum\_error@{takum::takum\_error}}
+
+
+Lightweight error value returned by expected/optional helpers.  
+
+
+
+
+{\ttfamily \#include $<$core.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f}{Kind}} \{ \newline
+\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa975bdf758f1a3bd1b4826bee2f21eb0a}{Domain\+Error}}
+, \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}{Overflow}}
+, \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa07f6a565e17a0b5f7341422b6f9101cc}{Underflow}}
+, \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}{Invalid\+Operation}}
+, \newline
+\mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fab134e606ec723970cb829ae8dd2988b7}{Inexact}}
+, \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4faafbf0897a5a83fdd873dfb032ec695d3}{Internal}}
+ \}
+\begin{DoxyCompactList}\small\item\em Broad classification of the error. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{enum}} \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f}{takum\+::takum\+\_\+error\+::\+Kind}} \mbox{\hyperlink{structtakum_1_1takum__error_a538f14764f007602d89737c2b17b6fd5}{kind}}
+\item 
+\mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{char}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structtakum_1_1takum__error_a9a89eb011bad4d28226fcf04a9330e93}{message}} = \mbox{\hyperlink{structtakum_1_1takum}{nullptr}}
+\begin{DoxyCompactList}\small\item\em Optional NUL-\/terminated explanatory string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Lightweight error value returned by expected/optional helpers. 
+
+Used to indicate domain/representation errors when converting or operating on {\ttfamily takum} values. The {\ttfamily message} pointer is optional and may be nullptr. 
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f} 
+\index{takum::takum\_error@{takum::takum\_error}!Kind@{Kind}}
+\index{Kind@{Kind}!takum::takum\_error@{takum::takum\_error}}
+\doxysubsubsection{\texorpdfstring{Kind}{Kind}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structtakum_1_1takum}{enum}} \mbox{\hyperlink{structtakum_1_1takum}{class}} \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f}{takum\+::takum\+\_\+error\+::\+Kind}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Broad classification of the error. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DomainError@{DomainError}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!DomainError@{DomainError}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa975bdf758f1a3bd1b4826bee2f21eb0a}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa975bdf758f1a3bd1b4826bee2f21eb0a} 
+Domain\+Error&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Overflow@{Overflow}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!Overflow@{Overflow}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa129e8109f319870e328cc7a1d5b5cae3} 
+Overflow&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Underflow@{Underflow}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!Underflow@{Underflow}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa07f6a565e17a0b5f7341422b6f9101cc}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa07f6a565e17a0b5f7341422b6f9101cc} 
+Underflow&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{InvalidOperation@{InvalidOperation}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!InvalidOperation@{InvalidOperation}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fa1cd5ecce6fe138df5c3f7e8854a1a66d} 
+Invalid\+Operation&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Inexact@{Inexact}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!Inexact@{Inexact}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fab134e606ec723970cb829ae8dd2988b7}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4fab134e606ec723970cb829ae8dd2988b7} 
+Inexact&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Internal@{Internal}!takum::takum\_error@{takum::takum\_error}}\index{takum::takum\_error@{takum::takum\_error}!Internal@{Internal}}}\Hypertarget{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4faafbf0897a5a83fdd873dfb032ec695d3}\label{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4faafbf0897a5a83fdd873dfb032ec695d3} 
+Internal&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structtakum_1_1takum__error_a538f14764f007602d89737c2b17b6fd5}\label{structtakum_1_1takum__error_a538f14764f007602d89737c2b17b6fd5} 
+\index{takum::takum\_error@{takum::takum\_error}!kind@{kind}}
+\index{kind@{kind}!takum::takum\_error@{takum::takum\_error}}
+\doxysubsubsection{\texorpdfstring{kind}{kind}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structtakum_1_1takum}{enum}} \mbox{\hyperlink{structtakum_1_1takum__error_a718985ea0bc50c480f0062ee53045c4f}{takum\+::takum\+\_\+error\+::\+Kind}} takum\+::takum\+\_\+error\+::kind}
+
+\Hypertarget{structtakum_1_1takum__error_a9a89eb011bad4d28226fcf04a9330e93}\label{structtakum_1_1takum__error_a9a89eb011bad4d28226fcf04a9330e93} 
+\index{takum::takum\_error@{takum::takum\_error}!message@{message}}
+\index{message@{message}!takum::takum\_error@{takum::takum\_error}}
+\doxysubsubsection{\texorpdfstring{message}{message}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structtakum_1_1takum}{const}} \mbox{\hyperlink{structtakum_1_1takum}{char}}\texorpdfstring{$\ast$}{*} takum\+::takum\+\_\+error\+::message = \mbox{\hyperlink{structtakum_1_1takum}{nullptr}}}
+
+
+
+Optional NUL-\/terminated explanatory string. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+takum/\mbox{\hyperlink{core_8h}{core.\+h}}\end{DoxyCompactItemize}
