@@ -314,10 +314,19 @@ private:
         return mantissa;
     }
     
+    // Assuming es and mantissa_bits are defined for the takum format.
+    // If not, define reasonable defaults here.
+    static constexpr size_t es = 2; // Exponent size (number of bits for exponent)
+    static constexpr size_t mantissa_bits = N - 1 - es - 5; // Example: N - sign - regime (max 5 bits) - es
+
     static constexpr double compute_value(uint32_t regime, uint32_t exponent, uint64_t mantissa) noexcept {
-        // Implement value computation from components
-        // Placeholder implementation
-        return 1.0;
+        // Compute useed = 2^(2^es)
+        constexpr double useed = static_cast<double>(1ULL << (1 << es));
+        // Compute fraction = 1 + mantissa / 2^mantissa_bits
+        double fraction = 1.0 + (static_cast<double>(mantissa) / static_cast<double>(1ULL << mantissa_bits));
+        // Compute value = useed^regime * 2^exponent * fraction
+        double value = std::pow(useed, static_cast<int>(regime)) * std::pow(2.0, static_cast<int>(exponent)) * fraction;
+        return value;
     }
     
     static constexpr double max_representable_value() noexcept {
