@@ -13,7 +13,8 @@
  *       by takum functions and may not be a complete std::expected replacement
  */
 
-#if __cplusplus >= 202302L
+#include "takum/compiler_detection.h"
+#if TAKUM_HAS_STD_EXPECTED
 #include <expected>
 /**
  * @namespace takum::detail

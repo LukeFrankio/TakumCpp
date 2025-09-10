@@ -1,19 +1,115 @@
 cmake_minimum_required(VERSION 3.20)
 project(TakumCpp LANGUAGES CXX)
 
+# =============================================================================
+# Compiler and C++ Standard Detection
+# =============================================================================
+
 # Pick a preferred C++ standard dynamically. Some toolchains / CMake
 # installations do not know the cxx_std_26 feature or do not support /std:c++26.
-# Probe for support and fall back to C++23 when necessary.
+# Probe for support and fall back to older standards when necessary.
 include(CheckCXXCompilerFlag)
+
+# Check for C++26 support - be conservative with older compilers and AppleClang
 check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
 check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
+
+# Be conservative about C++26 - limit to known working combinations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  # Disable C++26 for AppleClang due to incomplete feature support
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for AppleClang due to incomplete feature support")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+  # Disable C++26 for Clang < 18 due to standard library compatibility issues with C++26
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for Clang < 18.0 due to standard library compatibility issues")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.0")
+  # Disable C++26 for older GCC versions
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for GCC < 14.0 due to incomplete support")
+endif()
+
+# Check for C++23 support  
+check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
+check_cxx_compiler_flag("/std:c++23" HAVE_CXX23_MSVC)
+
+# Check for C++20 support
+check_cxx_compiler_flag("-std=c++20" HAVE_CXX20_GNU)
+check_cxx_compiler_flag("/std:c++20" HAVE_CXX20_MSVC)
+
+# Set C++ standard based on what's available
 if(HAVE_CXX26_GNU OR HAVE_CXX26_MSVC)
   set(CMAKE_CXX_STANDARD 26)
-else()
+  message(STATUS "Using C++26 standard")
+elseif(HAVE_CXX23_GNU OR HAVE_CXX23_MSVC)
   set(CMAKE_CXX_STANDARD 23)
+  message(STATUS "Using C++23 standard")
+elseif(HAVE_CXX20_GNU OR HAVE_CXX20_MSVC)
+  set(CMAKE_CXX_STANDARD 20)
+  message(STATUS "Using C++20 standard")
+else()
+  message(FATAL_ERROR "At least C++20 is required. Please use a newer compiler.")
 endif()
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# =============================================================================
+# Compiler-Specific Configurations
+# =============================================================================
+
+# Detect compiler type for specific configurations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message(STATUS "Detected MSVC compiler")
+  # MSVC-specific flags
+  add_compile_options(/W4)  # Warning level 4
+  add_compile_options(/permissive-)  # Strict standards conformance
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message(STATUS "Detected GCC compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # GCC-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0")
+    message(STATUS "GCC 9+ detected: enabling enhanced constexpr support")
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message(STATUS "Detected Clang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # Clang-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
+    message(STATUS "Clang 12+ detected: full C++20/23 support available")
+  endif()
+  # Workaround: libstdc++ + clang < 18 has incomplete std::format / ranges / unicode interaction
+  # that triggers massive constraint failures when building googletest (uses <format> internally).
+  # Disable std::format usage in gtest by defining GTEST_INTERNAL_HAS_STD_FORMAT=0 when we detect
+  # a problematic toolchain variant (clang < 18).
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+    add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
+    # Also force-disable libstdc++ std::format machinery which triggers broken
+    # ranges/unicode instantiations under clang 17 + libstdc++14.
+    add_compile_options(-U_GLIBCXX_USE_STD_FORMAT)
+    add_compile_definitions(_GLIBCXX_USE_STD_FORMAT=0)
+    message(STATUS "Disabling std::format (gtest + libstdc++) for clang <18 to work around ranges/unicode issues")
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # AppleClang-specific flags - more conservative with C++ standards
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  message(STATUS "AppleClang detected: using conservative C++ standard support")
+else()
+  message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
+endif()
+
+# Platform-specific configurations
+if(WIN32)
+  message(STATUS "Configuring for Windows platform")
+  # Windows-specific settings
+elseif(APPLE)
+  message(STATUS "Configuring for macOS platform")
+  # macOS-specific settings
+elseif(UNIX)
+  message(STATUS "Configuring for Unix/Linux platform")
+  # Unix/Linux-specific settings
+endif()
 
 include(FetchContent)
 
@@ -41,7 +137,7 @@ endif()
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v1.14.0
+  GIT_TAG        v1.15.2
 )
 
 FetchContent_MakeAvailable(googletest)
@@ -49,28 +145,15 @@ FetchContent_MakeAvailable(googletest)
 # Provide an INTERFACE target for header-only library usage
 add_library(TakumCpp INTERFACE)
 target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
-check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
-check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
-check_cxx_compiler_flag("/std:c++23" HAVE_CXX23_MSVC)
-check_cxx_compiler_flag("-std=c++20" HAVE_CXX20_GNU)
-check_cxx_compiler_flag("/std:c++20" HAVE_CXX20_MSVC)
-if(HAVE_CXX26_GNU OR HAVE_CXX26_MSVC)
-  set(CMAKE_CXX_STANDARD 26)
-elseif(HAVE_CXX23_GNU OR HAVE_CXX23_MSVC)
-  set(CMAKE_CXX_STANDARD 23)
-elseif(HAVE_CXX20_GNU OR HAVE_CXX20_MSVC)
-  set(CMAKE_CXX_STANDARD 20)
-else()
-  message(FATAL_ERROR "At least C++20 is required")
-endif()
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Use the detected standard for target features
+# Use the detected standard for target features - be conservative about C++26
 if(CMAKE_CXX_STANDARD EQUAL 26)
-  target_compile_features(TakumCpp INTERFACE cxx_std_26)
+  # Only use cxx_std_26 if we're sure it's supported
+  # For now, fall back to setting standard directly for C++26
+  set_target_properties(TakumCpp PROPERTIES 
+    CXX_STANDARD 26
+    CXX_STANDARD_REQUIRED ON)
+  message(STATUS "Using C++26 with direct standard setting (avoiding cxx_std_26 feature)")
 elseif(CMAKE_CXX_STANDARD EQUAL 23)
   target_compile_features(TakumCpp INTERFACE cxx_std_23)
 elseif(CMAKE_CXX_STANDARD EQUAL 20)

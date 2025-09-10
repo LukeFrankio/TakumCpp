@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 
+#include "takum/compiler_detection.h"
 #include "takum/compatibility.h"
 #include "takum/core.h"
 
@@ -44,7 +45,7 @@ TEST_F(CompatibilityTest, Float8ShimRoundTrip) {
     EXPECT_TRUE(std::isnan(nar.to_double()));
 }
 
-#if __cplusplus < 202302L
+#if !TAKUM_HAS_STD_EXPECTED
 TEST_F(CompatibilityTest, ExpectedShim) {
     using E = takum::expected_shim<takum::takum<32>, takum::takum_error>;
 

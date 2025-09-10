@@ -179,7 +179,7 @@ inline takum<N> abs(const takum<N>& a) noexcept {
  * @note Prefer these functions when explicit error handling is required
  */
 //@{
-#if __cplusplus >= 202302L
+#if TAKUM_HAS_STD_EXPECTED
 /**
  * @brief Safe addition with explicit error handling.
  * 
@@ -310,10 +310,10 @@ inline std::optional<takum<N>> safe_div(const takum<N>& a, const takum<N>& b) no
     if (r.is_nar()) return std::nullopt;
     return r;
 }
-#endif // __cplusplus >= 202302L
+#endif // TAKUM_HAS_STD_EXPECTED
 
 // Optional path (pre-C++23) safe_abs & safe_recip equivalents
-#if __cplusplus < 202302L
+#if !TAKUM_HAS_STD_EXPECTED
 template <size_t N>
 inline std::optional<takum<N>> safe_abs(const takum<N>& a) noexcept {
     if (a.is_nar()) return std::nullopt;
@@ -328,6 +328,6 @@ inline std::optional<takum<N>> safe_recip(const takum<N>& a) noexcept {
     if (r.is_nar()) return std::nullopt;
     return r;
 }
-#endif // __cplusplus >= 202302L
+#endif // !TAKUM_HAS_STD_EXPECTED
 
 } // namespace takum
