@@ -29,10 +29,18 @@
     #define TAKUM_COMPILER_VERSION_MINOR ((_MSC_VER % 100) / 10)
     #define TAKUM_COMPILER_NAME "MSVC"
 #elif defined(__clang__)
-    #define TAKUM_COMPILER_CLANG 1
+    // AppleClang has different capabilities than regular Clang
+    #if defined(__apple_build_version__)
+        #define TAKUM_COMPILER_APPLE_CLANG 1
+        #define TAKUM_COMPILER_CLANG 0
+        #define TAKUM_COMPILER_NAME "AppleClang"
+    #else
+        #define TAKUM_COMPILER_CLANG 1
+        #define TAKUM_COMPILER_APPLE_CLANG 0
+        #define TAKUM_COMPILER_NAME "Clang"
+    #endif
     #define TAKUM_COMPILER_VERSION_MAJOR __clang_major__
     #define TAKUM_COMPILER_VERSION_MINOR __clang_minor__
-    #define TAKUM_COMPILER_NAME "Clang"
 #elif defined(__GNUC__)
     #define TAKUM_COMPILER_GCC 1
     #define TAKUM_COMPILER_VERSION_MAJOR __GNUC__
@@ -54,6 +62,9 @@
 #endif
 #ifndef TAKUM_COMPILER_CLANG
     #define TAKUM_COMPILER_CLANG 0
+#endif
+#ifndef TAKUM_COMPILER_APPLE_CLANG
+    #define TAKUM_COMPILER_APPLE_CLANG 0
 #endif
 #ifndef TAKUM_COMPILER_UNKNOWN
     #define TAKUM_COMPILER_UNKNOWN 0

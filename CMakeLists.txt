@@ -10,9 +10,24 @@ project(TakumCpp LANGUAGES CXX)
 # Probe for support and fall back to older standards when necessary.
 include(CheckCXXCompilerFlag)
 
-# Check for C++26 support
+# Check for C++26 support - be conservative with older compilers and AppleClang
 check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
 check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
+
+# Be conservative about C++26 - limit to known working combinations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  # Disable C++26 for AppleClang due to incomplete feature support
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for AppleClang due to incomplete feature support")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.0")
+  # Disable C++26 for older Clang versions to avoid standard library issues
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for Clang < 16.0 due to standard library compatibility issues")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13.0")
+  # Disable C++26 for older GCC versions
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for GCC < 13.0 due to incomplete support")
+endif()
 
 # Check for C++23 support  
 check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
@@ -63,6 +78,11 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
     message(STATUS "Clang 12+ detected: full C++20/23 support available")
   endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # AppleClang-specific flags - more conservative with C++ standards
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  message(STATUS "AppleClang detected: using conservative C++ standard support")
 else()
   message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
@@ -114,9 +134,14 @@ FetchContent_MakeAvailable(googletest)
 add_library(TakumCpp INTERFACE)
 target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
 
-# Use the detected standard for target features
+# Use the detected standard for target features - be conservative about C++26
 if(CMAKE_CXX_STANDARD EQUAL 26)
-  target_compile_features(TakumCpp INTERFACE cxx_std_26)
+  # Only use cxx_std_26 if we're sure it's supported
+  # For now, fall back to setting standard directly for C++26
+  set_target_properties(TakumCpp PROPERTIES 
+    CXX_STANDARD 26
+    CXX_STANDARD_REQUIRED ON)
+  message(STATUS "Using C++26 with direct standard setting (avoiding cxx_std_26 feature)")
 elseif(CMAKE_CXX_STANDARD EQUAL 23)
   target_compile_features(TakumCpp INTERFACE cxx_std_23)
 elseif(CMAKE_CXX_STANDARD EQUAL 20)
