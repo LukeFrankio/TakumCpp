@@ -151,7 +151,7 @@
     #define TAKUM_HAS_CPP26 1
     #define TAKUM_HAS_CPP23 1
     #define TAKUM_HAS_CPP20 1
-#elif __cplusplus >= 202302L
+#elif __cplusplus >= 202100L // Partial C++23 implementations (e.g., GCC 13 with -std=c++23)
     #define TAKUM_CPP_VERSION 23
     #define TAKUM_HAS_CPP26 0
     #define TAKUM_HAS_CPP23 1
@@ -185,7 +185,8 @@
     // Check for the C++23 feature test macro or conservative compiler versions
     #if defined(__cpp_lib_expected) || \
         (defined(__GNUC__) && __GNUC__ >= 13) || \
-        (defined(_MSC_VER) && _MSC_VER >= 1930)
+        (defined(_MSC_VER) && _MSC_VER >= 1930) || \
+        (defined(__clang__) && __clang_major__ >= 15)
         #define TAKUM_HAS_STD_EXPECTED 1
     #else
         #define TAKUM_HAS_STD_EXPECTED 0
