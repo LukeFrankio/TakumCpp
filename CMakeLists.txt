@@ -1,223 +1,205 @@
 cmake_minimum_required(VERSION 3.20)
+project(TakumCpp LANGUAGES CXX)
 
 # =============================================================================
-# Project Configuration
-# =============================================================================
-project(TakumCpp 
-    VERSION 2.0.0
-    DESCRIPTION "Modern C++ implementation of logarithmic tapered floating-point arithmetic"
-    LANGUAGES CXX
-)
-
-# =============================================================================
-# Modern C++ Standard Detection
+# Compiler and C++ Standard Detection
 # =============================================================================
 
-# Simplified C++ standard detection
+# Pick a preferred C++ standard dynamically. Some toolchains / CMake
+# installations do not know the cxx_std_26 feature or do not support /std:c++26.
+# Probe for support and fall back to older standards when necessary.
 include(CheckCXXCompilerFlag)
 
-# Test for C++23 support
-check_cxx_compiler_flag("-std=c++23" COMPILER_SUPPORTS_CXX23)
-if(COMPILER_SUPPORTS_CXX23)
-    set(CMAKE_CXX_STANDARD 23)
-    message(STATUS "Using C++23 standard")
+# Check for C++26 support - be conservative with older compilers and AppleClang
+check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
+check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
+
+# Be conservative about C++26 - limit to known working combinations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  # Disable C++26 for AppleClang due to incomplete feature support
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for AppleClang due to incomplete feature support")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+  # Disable C++26 for Clang < 18 due to standard library compatibility issues with C++26
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for Clang < 18.0 due to standard library compatibility issues")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.0")
+  # Disable C++26 for older GCC versions
+  set(HAVE_CXX26_GNU FALSE)
+  message(STATUS "Disabling C++26 for GCC < 14.0 due to incomplete support")
+endif()
+
+# Check for C++23 support  
+check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
+check_cxx_compiler_flag("/std:c++23" HAVE_CXX23_MSVC)
+
+# Check for C++20 support
+check_cxx_compiler_flag("-std=c++20" HAVE_CXX20_GNU)
+check_cxx_compiler_flag("/std:c++20" HAVE_CXX20_MSVC)
+
+# Set C++ standard based on what's available
+if(HAVE_CXX26_GNU OR HAVE_CXX26_MSVC)
+  set(CMAKE_CXX_STANDARD 26)
+  message(STATUS "Using C++26 standard")
+elseif(HAVE_CXX23_GNU OR HAVE_CXX23_MSVC)
+  set(CMAKE_CXX_STANDARD 23)
+  message(STATUS "Using C++23 standard")
+elseif(HAVE_CXX20_GNU OR HAVE_CXX20_MSVC)
+  set(CMAKE_CXX_STANDARD 20)
+  message(STATUS "Using C++20 standard")
 else()
-    # Fallback to C++20 
-    check_cxx_compiler_flag("-std=c++20" COMPILER_SUPPORTS_CXX20)
-    if(COMPILER_SUPPORTS_CXX20)
-        set(CMAKE_CXX_STANDARD 20)
-        message(STATUS "Using C++20 standard")
-    else()
-        message(FATAL_ERROR "Compiler does not support C++20 or later")
-    endif()
+  message(FATAL_ERROR "At least C++20 is required. Please use a newer compiler.")
 endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # =============================================================================
-# Build Configuration Options
+# Compiler-Specific Configurations
 # =============================================================================
 
-option(TAKUM_BUILD_TESTS "Build TakumCpp tests" ON)
-option(TAKUM_BUILD_EXAMPLES "Build TakumCpp examples" ON)
-option(TAKUM_BUILD_BENCHMARKS "Build TakumCpp benchmarks" OFF)
-option(TAKUM_BUILD_DOCS "Build TakumCpp documentation" OFF)
-option(TAKUM_ENABLE_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-
-# =============================================================================
-# Compiler-Specific Configurations  
-# =============================================================================
-
-# Modern compiler flags
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    add_compile_options(
-        -Wall -Wextra -Wpedantic
-        -Wconversion -Wsign-conversion
-        -Wunused -Wundef
-        -Wcast-qual -Wcast-align
-        -Wmissing-declarations
-    )
-    
-    if(TAKUM_ENABLE_WARNINGS_AS_ERRORS)
-        add_compile_options(-Werror)
-    endif()
-    
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(
-        /W4 /permissive-
-        /w14242 /w14254 /w14263 /w14265 /w14287
-        /we4289 /w14296 /w14311 /w14545 /w14546
-        /w14547 /w14549 /w14555 /w14619 /w14640
-        /w14826 /w14905 /w14906 /w14928
-    )
-    
-    if(TAKUM_ENABLE_WARNINGS_AS_ERRORS)
-        add_compile_options(/WX)
-    endif()
+# Detect compiler type for specific configurations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message(STATUS "Detected MSVC compiler")
+  # MSVC-specific flags
+  add_compile_options(/W4)  # Warning level 4
+  add_compile_options(/permissive-)  # Strict standards conformance
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message(STATUS "Detected GCC compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # GCC-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0")
+    message(STATUS "GCC 9+ detected: enabling enhanced constexpr support")
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message(STATUS "Detected Clang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # Clang-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
+    message(STATUS "Clang 12+ detected: full C++20/23 support available")
+  endif()
+  # Workaround: libstdc++ + clang < 18 has incomplete std::format / ranges / unicode interaction
+  # that triggers massive constraint failures when building googletest (uses <format> internally).
+  # Disable std::format usage in gtest by defining GTEST_INTERNAL_HAS_STD_FORMAT=0 when we detect
+  # a problematic toolchain variant (clang < 18).
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+    add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
+    # Also force-disable libstdc++ std::format machinery which triggers broken
+    # ranges/unicode instantiations under clang 17 + libstdc++14.
+    add_compile_options(-U_GLIBCXX_USE_STD_FORMAT)
+    add_compile_definitions(_GLIBCXX_USE_STD_FORMAT=0)
+    message(STATUS "Disabling std::format (gtest + libstdc++) for clang <18 to work around ranges/unicode issues")
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # AppleClang-specific flags - more conservative with C++ standards
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  message(STATUS "AppleClang detected: using conservative C++ standard support")
+else()
+  message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
-# =============================================================================
-# Code Generation Integration
-# =============================================================================
+# Platform-specific configurations
+if(WIN32)
+  message(STATUS "Configuring for Windows platform")
+  # Windows-specific settings
+elseif(APPLE)
+  message(STATUS "Configuring for macOS platform")
+  # macOS-specific settings
+elseif(UNIX)
+  message(STATUS "Configuring for Unix/Linux platform")
+  # Unix/Linux-specific settings
+endif()
 
-# Find Python for coefficient generation
-find_package(Python3 COMPONENTS Interpreter REQUIRED)
+include(FetchContent)
 
-# Custom target for generating polynomial coefficients
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/include/takum/internal/generated/phi_coeffs.h
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_poly_coeffs.py
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_poly_coeffs.py
-    COMMENT "Generating polynomial coefficients"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+# ---------------------------------------------------------------------------
+# Generated Φ polynomial coefficients
+# ---------------------------------------------------------------------------
+set(PHI_COEFF_HEADER ${CMAKE_SOURCE_DIR}/include/takum/internal/generated/phi_coeffs.h)
+set(PHI_GEN_SCRIPT   ${CMAKE_SOURCE_DIR}/scripts/gen_poly_coeffs.py)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND AND EXISTS ${PHI_GEN_SCRIPT})
+  add_custom_command(
+    OUTPUT ${PHI_COEFF_HEADER}
+    COMMAND ${Python3_EXECUTABLE} ${PHI_GEN_SCRIPT} ${PHI_COEFF_HEADER}
+    DEPENDS ${PHI_GEN_SCRIPT}
+    COMMENT "Generating Φ polynomial coefficient header"
+    VERBATIM
+  )
+  add_custom_target(phi_coeffs_gen DEPENDS ${PHI_COEFF_HEADER})
+else()
+  add_custom_target(phi_coeffs_gen
+    COMMAND ${CMAKE_COMMAND} -E echo "Python3 or script missing; using existing phi_coeffs.h if present"
+  )
+endif()
+
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        v1.15.2
 )
 
-add_custom_target(generate_coefficients
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/takum/internal/generated/phi_coeffs.h
-)
+FetchContent_MakeAvailable(googletest)
 
-# =============================================================================
-# Main Library Target
-# =============================================================================
-
-# Header-only library target with modern CMake practices
+# Provide an INTERFACE target for header-only library usage
 add_library(TakumCpp INTERFACE)
-add_library(TakumCpp::TakumCpp ALIAS TakumCpp)
+target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
 
-# Add dependency on coefficient generation
-add_dependencies(TakumCpp generate_coefficients)
-
-target_include_directories(TakumCpp INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-
-target_compile_features(TakumCpp INTERFACE cxx_std_20) # Minimum standard
-
-# Conditional features based on detected standard
-if(CMAKE_CXX_STANDARD GREATER_EQUAL 23)
-    target_compile_definitions(TakumCpp INTERFACE TAKUM_HAS_CXX23=1)
+# Use the detected standard for target features - be conservative about C++26
+if(CMAKE_CXX_STANDARD EQUAL 26)
+  # Only use cxx_std_26 if we're sure it's supported
+  # For now, fall back to setting standard directly for C++26
+  set_target_properties(TakumCpp PROPERTIES 
+    CXX_STANDARD 26
+    CXX_STANDARD_REQUIRED ON)
+  message(STATUS "Using C++26 with direct standard setting (avoiding cxx_std_26 feature)")
+elseif(CMAKE_CXX_STANDARD EQUAL 23)
+  target_compile_features(TakumCpp INTERFACE cxx_std_23)
+elseif(CMAKE_CXX_STANDARD EQUAL 20)
+  target_compile_features(TakumCpp INTERFACE cxx_std_20)
 endif()
 
-if(CMAKE_CXX_STANDARD GREATER_EQUAL 26)
-    target_compile_definitions(TakumCpp INTERFACE TAKUM_HAS_CXX26=1 TAKUM_HAS_STD_EXPECTED=1)
+# Enable CTest
+include(CTest)
+enable_testing()
+
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
+option(TAKUM_ENABLE_AUTOTEST_LOGS "Run tests automatically after build of 'tests' target and write log + JUnit files" ON)
+
+# Tests (depend on generated header)
+add_subdirectory(test)
+add_dependencies(tests phi_coeffs_gen)
+
+# Examples
+file(GLOB EXAMPLE_SOURCES "${CMAKE_SOURCE_DIR}/examples/*.cpp")
+foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+    get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
+    add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
+    target_link_libraries(${EXAMPLE_NAME} PRIVATE TakumCpp)
+  add_dependencies(${EXAMPLE_NAME} phi_coeffs_gen)
+    if(BUILD_TESTING)
+        add_test(NAME ${EXAMPLE_NAME} COMMAND ${EXAMPLE_NAME})
+    endif()
+endforeach()
+
+# Doxygen documentation: try to find a doxygen executable either in PATH
+# or at a common installation location on Windows. If not found we still
+# expose a `docs` target that will show an informative error when built.
+find_program(DOXYGEN_EXECUTABLE NAMES doxygen HINTS "C:/Program Files/doxygen/bin" "C:/Program Files (x86)/doxygen/bin")
+if(DOXYGEN_EXECUTABLE)
+  add_custom_target(docs
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/Doxyfile"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+  )
+else()
+  add_custom_target(docs
+    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen executable not found. Install Doxygen or add it to PATH to build docs."
+    COMMENT "Doxygen not found: docs target is a no-op"
+  )
+  message(WARNING "Doxygen not found; 'docs' target will be a no-op. Install doxygen to enable documentation generation.")
 endif()
-
-# =============================================================================
-# Testing Configuration
-# =============================================================================
-
-if(TAKUM_BUILD_TESTS)
-    enable_testing()
-    
-    # Modern GoogleTest integration
-    include(FetchContent)
-    FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/03597a01ee50e33f9fade55a85b11106a5b2ac58.zip
-        URL_HASH SHA256=ffa17fbc5953900994e2deec164bb8949879ea09b411e07f215bfbb1f87f4632
-    )
-    
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-    
-    # Test discovery with modern pattern
-    file(GLOB_RECURSE TEST_SOURCES "test/*.test.cpp")
-    
-    add_executable(takum_tests ${TEST_SOURCES})
-    target_link_libraries(takum_tests 
-        PRIVATE 
-            TakumCpp::TakumCpp
-            gtest_main
-            gmock_main
-    )
-    
-    # Enable better test discovery
-    include(GoogleTest)
-    gtest_discover_tests(takum_tests
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    )
-    
-    # Add test helper target
-    add_library(test_helpers INTERFACE)
-    target_include_directories(test_helpers INTERFACE test/)
-    target_link_libraries(takum_tests PRIVATE test_helpers)
-endif()
-
-# =============================================================================
-# Examples Configuration
-# =============================================================================
-
-if(TAKUM_BUILD_EXAMPLES)
-    # Modern example targets
-    file(GLOB EXAMPLE_SOURCES "examples/*.cpp")
-    
-    foreach(example_source ${EXAMPLE_SOURCES})
-        get_filename_component(example_name ${example_source} NAME_WE)
-        add_executable(${example_name} ${example_source})
-        target_link_libraries(${example_name} PRIVATE TakumCpp::TakumCpp)
-        
-        # Set output directory for examples
-        set_target_properties(${example_name} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
-        )
-    endforeach()
-endif()
-
-# =============================================================================
-# Documentation Configuration
-# =============================================================================
-
-if(TAKUM_BUILD_DOCS)
-    find_package(Doxygen REQUIRED)
-    
-    set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_GENERATE_MAN NO)
-    set(DOXYGEN_EXTRACT_ALL YES)
-    set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
-    
-    doxygen_add_docs(docs
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/Docs
-        COMMENT "Generating API documentation with Doxygen"
-    )
-endif()
-
-# =============================================================================
-# Status Summary
-# =============================================================================
-
-message(STATUS "")
-message(STATUS "TakumCpp Configuration Summary:")
-message(STATUS "  Version:              ${PROJECT_VERSION}")
-message(STATUS "  C++ Standard:         C++${CMAKE_CXX_STANDARD}")
-message(STATUS "  Compiler:             ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "  Build Type:           ${CMAKE_BUILD_TYPE}")
-message(STATUS "  Build Tests:          ${TAKUM_BUILD_TESTS}")
-message(STATUS "  Build Examples:       ${TAKUM_BUILD_EXAMPLES}")
-message(STATUS "  Build Benchmarks:     ${TAKUM_BUILD_BENCHMARKS}")
-message(STATUS "  Build Documentation:  ${TAKUM_BUILD_DOCS}")
-message(STATUS "  Warnings as Errors:   ${TAKUM_ENABLE_WARNINGS_AS_ERRORS}")
-message(STATUS "")

@@ -13,6 +13,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <type_traits>
 #include <memory>
 #include <mutex>
 #include <functional>
@@ -53,6 +54,20 @@ public:
     
     T get() const { return value_; }
     void set(T new_value) { value_ = new_value; }
+    
+    option_type type() const noexcept override {
+        if constexpr (std::is_same_v<T, bool>) {
+            return option_type::boolean;
+        } else if constexpr (std::is_integral_v<T>) {
+            return option_type::integer;
+        } else if constexpr (std::is_floating_point_v<T>) {
+            return option_type::floating_point;
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return option_type::string;
+        } else {
+            return option_type::strategy_selector;
+        }
+    }
     
     std::string to_string() const override;
     void from_string(const std::string& str) override;
