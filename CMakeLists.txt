@@ -83,8 +83,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   # Disable std::format usage in gtest by defining GTEST_INTERNAL_HAS_STD_FORMAT=0 when we detect
   # a problematic toolchain variant (clang < 16).
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.0")
-    add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
-    message(STATUS "Disabling std::format in GoogleTest for clang <16 (GTEST_INTERNAL_HAS_STD_FORMAT=0)")
+  add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
+  # Also force-disable libstdc++ std::format machinery which triggers broken
+  # ranges/unicode instantiations under clang 15 + libstdc++14.
+  add_compile_options(-U_GLIBCXX_USE_STD_FORMAT)
+  add_compile_definitions(_GLIBCXX_USE_STD_FORMAT=0)
+  message(STATUS "Disabling std::format (gtest + libstdc++) for clang <16 to work around ranges/unicode issues")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
