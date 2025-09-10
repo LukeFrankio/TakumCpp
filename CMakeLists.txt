@@ -1,19 +1,83 @@
 cmake_minimum_required(VERSION 3.20)
 project(TakumCpp LANGUAGES CXX)
 
+# =============================================================================
+# Compiler and C++ Standard Detection
+# =============================================================================
+
 # Pick a preferred C++ standard dynamically. Some toolchains / CMake
 # installations do not know the cxx_std_26 feature or do not support /std:c++26.
-# Probe for support and fall back to C++23 when necessary.
+# Probe for support and fall back to older standards when necessary.
 include(CheckCXXCompilerFlag)
+
+# Check for C++26 support
 check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
 check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
+
+# Check for C++23 support  
+check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
+check_cxx_compiler_flag("/std:c++23" HAVE_CXX23_MSVC)
+
+# Check for C++20 support
+check_cxx_compiler_flag("-std=c++20" HAVE_CXX20_GNU)
+check_cxx_compiler_flag("/std:c++20" HAVE_CXX20_MSVC)
+
+# Set C++ standard based on what's available
 if(HAVE_CXX26_GNU OR HAVE_CXX26_MSVC)
   set(CMAKE_CXX_STANDARD 26)
-else()
+  message(STATUS "Using C++26 standard")
+elseif(HAVE_CXX23_GNU OR HAVE_CXX23_MSVC)
   set(CMAKE_CXX_STANDARD 23)
+  message(STATUS "Using C++23 standard")
+elseif(HAVE_CXX20_GNU OR HAVE_CXX20_MSVC)
+  set(CMAKE_CXX_STANDARD 20)
+  message(STATUS "Using C++20 standard")
+else()
+  message(FATAL_ERROR "At least C++20 is required. Please use a newer compiler.")
 endif()
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# =============================================================================
+# Compiler-Specific Configurations
+# =============================================================================
+
+# Detect compiler type for specific configurations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message(STATUS "Detected MSVC compiler")
+  # MSVC-specific flags
+  add_compile_options(/W4)  # Warning level 4
+  add_compile_options(/permissive-)  # Strict standards conformance
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message(STATUS "Detected GCC compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # GCC-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0")
+    message(STATUS "GCC 9+ detected: enabling enhanced constexpr support")
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message(STATUS "Detected Clang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
+  # Clang-specific flags
+  add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
+    message(STATUS "Clang 12+ detected: full C++20/23 support available")
+  endif()
+else()
+  message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
+endif()
+
+# Platform-specific configurations
+if(WIN32)
+  message(STATUS "Configuring for Windows platform")
+  # Windows-specific settings
+elseif(APPLE)
+  message(STATUS "Configuring for macOS platform")
+  # macOS-specific settings
+elseif(UNIX)
+  message(STATUS "Configuring for Unix/Linux platform")
+  # Unix/Linux-specific settings
+endif()
 
 include(FetchContent)
 
@@ -49,24 +113,6 @@ FetchContent_MakeAvailable(googletest)
 # Provide an INTERFACE target for header-only library usage
 add_library(TakumCpp INTERFACE)
 target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++26" HAVE_CXX26_GNU)
-check_cxx_compiler_flag("/std:c++26" HAVE_CXX26_MSVC)
-check_cxx_compiler_flag("-std=c++23" HAVE_CXX23_GNU)
-check_cxx_compiler_flag("/std:c++23" HAVE_CXX23_MSVC)
-check_cxx_compiler_flag("-std=c++20" HAVE_CXX20_GNU)
-check_cxx_compiler_flag("/std:c++20" HAVE_CXX20_MSVC)
-if(HAVE_CXX26_GNU OR HAVE_CXX26_MSVC)
-  set(CMAKE_CXX_STANDARD 26)
-elseif(HAVE_CXX23_GNU OR HAVE_CXX23_MSVC)
-  set(CMAKE_CXX_STANDARD 23)
-elseif(HAVE_CXX20_GNU OR HAVE_CXX20_MSVC)
-  set(CMAKE_CXX_STANDARD 20)
-else()
-  message(FATAL_ERROR "At least C++20 is required")
-endif()
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Use the detected standard for target features
 if(CMAKE_CXX_STANDARD EQUAL 26)

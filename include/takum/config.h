@@ -2,6 +2,8 @@
 // Central configuration & feature toggles for TakumCpp Phase-4.
 #pragma once
 
+#include "compiler_detection.h"
+
 // Enable fast heuristic add pre-pass (may trade some accuracy for speed).
 #ifndef TAKUM_ENABLE_FAST_ADD
 #define TAKUM_ENABLE_FAST_ADD 0

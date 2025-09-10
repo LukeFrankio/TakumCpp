@@ -3,7 +3,34 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  # Windows with MSVC
+  windows-msvc:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure with MSVC
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build with MSVC
+        run: cmake --build build --config ${{ matrix.build_type }}
+
+      - name: Test with MSVC
+        run: cmake --build build --target ci_test_wrapper --config ${{ matrix.build_type }}
+        continue-on-error: true
+
+      - name: Upload MSVC failure log if present
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures-msvc-${{ matrix.build_type }}
+          path: build/test_failures.log
+          if-no-files-found: ignore
+
+  # Windows with MinGW (existing workflow)
+  windows-mingw:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,7 +38,7 @@ jobs:
       - name: Install MSYS2 and Ninja (minimal)
         run: choco install msys2 --no-progress; choco install ninja -y
 
-      - name: Install MinGW-w64 toolchain and update MSYSY
+      - name: Install MinGW-w64 toolchain and update MSYS2
         shell: bash
         run: |
           "C:/msys64/usr/bin/bash.exe" -lc "pacman -Syu --noconfirm"
@@ -32,9 +59,78 @@ jobs:
         run: cmake --build build --target ci_test_wrapper --config Debug
         continue-on-error: true
 
+      - name: Upload MinGW failure log if present
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures-mingw
+          path: build/test_failures.log
+          if-no-files-found: ignore
+
+  # Linux with GCC and Clang
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: 
+          - { cc: gcc-11, cxx: g++-11, name: gcc-11 }
+          - { cc: gcc-12, cxx: g++-12, name: gcc-12 }
+          - { cc: clang-14, cxx: clang++-14, name: clang-14 }
+          - { cc: clang-15, cxx: clang++-15, name: clang-15 }
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install compilers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }} ninja-build python3
+
+      - name: Configure with ${{ matrix.compiler.name }}
+        env:
+          CC: ${{ matrix.compiler.cc }}
+          CXX: ${{ matrix.compiler.cxx }}
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build with ${{ matrix.compiler.name }}
+        run: cmake --build build
+
+      - name: Test with ${{ matrix.compiler.name }}
+        run: ctest --test-dir build --output-on-failure
+        continue-on-error: true
+
       - name: Upload failure log if present
         uses: actions/upload-artifact@v4
         with:
-          name: test-failures
+          name: test-failures-${{ matrix.compiler.name }}-${{ matrix.build_type }}
+          path: build/test_failures.log
+          if-no-files-found: ignore
+
+  # macOS with Clang
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install ninja python3
+
+      - name: Configure with Clang
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build with Clang
+        run: cmake --build build
+
+      - name: Test with Clang
+        run: ctest --test-dir build --output-on-failure
+        continue-on-error: true
+
+      - name: Upload failure log if present
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures-macos-${{ matrix.build_type }}
           path: build/test_failures.log
           if-no-files-found: ignore
