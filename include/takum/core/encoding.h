@@ -191,9 +191,38 @@ private:
     }
     
     static constexpr uint32_t extract_regime(storage_type bits) noexcept {
-        // Implement regime extraction logic
-        // Placeholder implementation
-        return 0;
+        // Takum regime extraction: count run of identical bits after sign bit.
+        // For posit-like regime: regime = (run of 1s) ? run_length - 1 : -run_length
+        constexpr size_t nbits = N;
+        size_t regime_start = nbits - 2; // Bit after sign
+        bool regime_bit;
+        size_t run_length = 0;
+        if constexpr (storage_traits<N>::is_single_word) {
+            regime_bit = (bits >> regime_start) & 1;
+            // Count run of regime_bit
+            while (regime_start < nbits && ((bits >> regime_start) & 1) == regime_bit) {
+                ++run_length;
+                if (regime_start == 0) break;
+                --regime_start;
+            }
+        } else {
+            // Multi-word: treat as big-endian bit array
+            size_t bit_index = nbits - 2;
+            size_t word_index = bit_index / 64;
+            size_t bit_in_word = bit_index % 64;
+            regime_bit = (bits[word_index] >> bit_in_word) & 1;
+            while (bit_index < nbits) {
+                if (((bits[word_index] >> bit_in_word) & 1) != regime_bit) break;
+                ++run_length;
+                if (bit_index == 0) break;
+                --bit_index;
+                word_index = bit_index / 64;
+                bit_in_word = bit_index % 64;
+            }
+        }
+        // Compute regime value
+        int32_t regime_value = regime_bit ? (int32_t)run_length - 1 : -(int32_t)run_length;
+        return static_cast<uint32_t>(regime_value);
     }
     
     static constexpr uint32_t extract_exponent(storage_type bits) noexcept {
