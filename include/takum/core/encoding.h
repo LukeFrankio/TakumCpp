@@ -254,9 +254,64 @@ private:
     }
     
     static constexpr uint64_t extract_mantissa(storage_type bits) noexcept {
-        // Implement mantissa extraction logic
-        // Placeholder implementation
-        return 0;
+        // Mantissa extraction logic according to takum specification:
+        // 1. Skip sign bit (N-1)
+        // 2. Skip regime bits (variable length, determined by regime run)
+        // 3. Skip exponent bits (fixed length, e.g., ES bits if takum is posit-like)
+        // 4. The remaining bits are the mantissa (fraction)
+        //
+        // For this implementation, we assume:
+        // - 1 sign bit
+        // - regime length determined by extract_regime (number of regime bits)
+        // - exponent length is fixed (e.g., ES = 2), can be adjusted as needed
+        // - mantissa is the remaining bits
+        constexpr size_t ES = 2; // Example exponent size, adjust as per takum spec
+        constexpr size_t Nbits = N;
+        size_t regime_length = 0;
+        {
+            // Determine regime length by scanning bits after sign
+            // Regime is a run of identical bits starting at (N-2)
+            bool regime_sign;
+            if constexpr (storage_traits<N>::is_single_word) {
+                regime_sign = (bits >> (Nbits - 2)) & 1;
+                size_t i = Nbits - 2;
+                while (i > 0 && ((bits >> (i - 1)) & 1) == regime_sign) {
+                    --i;
+                }
+                regime_length = (Nbits - 2) - i + 1;
+            } else {
+                // Multi-word: extract bits manually
+                size_t i = Nbits - 2;
+                regime_sign = (bits[storage_traits<N>::word_count - 1] >> ((i) % 64)) & 1;
+                while (i > 0) {
+                    size_t word_idx = i / 64;
+                    size_t bit_idx = i % 64;
+                    bool bit = (bits[word_idx] >> bit_idx) & 1;
+                    if (bit != regime_sign) break;
+                    --i;
+                }
+                regime_length = (Nbits - 2) - i + 1;
+            }
+        }
+        size_t mantissa_start = 1 + regime_length + ES; // sign + regime + exponent
+        if (mantissa_start >= Nbits) return 0;
+        size_t mantissa_length = Nbits - mantissa_start;
+        if (mantissa_length == 0) return 0;
+        uint64_t mantissa = 0;
+        if constexpr (storage_traits<N>::is_single_word) {
+            mantissa = (bits >> (Nbits - mantissa_start - mantissa_length)) & ((uint64_t(1) << mantissa_length) - 1);
+        } else {
+            // Multi-word: extract mantissa bits across array
+            size_t bit_pos = Nbits - mantissa_start - mantissa_length;
+            for (size_t i = 0; i < mantissa_length; ++i) {
+                size_t abs_bit = bit_pos + i;
+                size_t word_idx = abs_bit / 64;
+                size_t bit_idx = abs_bit % 64;
+                bool bit = (bits[word_idx] >> bit_idx) & 1;
+                mantissa = (mantissa << 1) | bit;
+            }
+        }
+        return mantissa;
     }
     
     static constexpr double compute_value(uint32_t regime, uint32_t exponent, uint64_t mantissa) noexcept {
