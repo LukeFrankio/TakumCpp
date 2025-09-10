@@ -41,19 +41,39 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
     bool Sb = (ell_b < 0.0L);
     long double mag_a = fabsl(ell_a);
     long double mag_b = fabsl(ell_b);
-    if (mag_b > mag_a) { std::swap(mag_a, mag_b); std::swap(Sa, Sb); }
+    
+    // Handle cases where one operand is 1.0 (ell = 0)
+    if (mag_a == 0.0L && mag_b == 0.0L) {
+        // Both are 1.0 or -1.0: result is 2.0 or 0.0
+        return takum<N>((Sa ? -1.0 : 1.0) + (Sb ? -1.0 : 1.0));
+    }
+    if (mag_a == 0.0L || mag_b == 0.0L) {
+        // One operand is ±1.0, but still exercise Phi path for diagnostics
+        // Fall through to normal path with ratio = 0
+        if (mag_a == 0.0L) {
+            std::swap(mag_a, mag_b); 
+            std::swap(Sa, Sb);
+        }
+        // Now mag_a > 0, mag_b = 0, so ratio = 0
+    } else {
+        if (mag_b > mag_a) { std::swap(mag_a, mag_b); std::swap(Sa, Sb); }
+    }
+    
     if (mag_a == mag_b && Sa != Sb) return takum<N>{}; // perfect cancellation
 
     long double ratio = (mag_a == 0.0L) ? 0.0L : (mag_b / mag_a);
-    if (ratio < 1e-6L) { // negligible addend
-        long double final_ell = (Sa ? -mag_a : mag_a);
-        return takum<N>::from_ell(Sa, final_ell);
+    
+    // Check if the smaller value is negligible compared to the larger value
+    // Convert ell magnitudes back to actual value magnitudes for comparison
+    long double val_a = (mag_a == 0.0L) ? 1.0L : expl(mag_a / 2.0L);
+    long double val_b = (mag_b == 0.0L) ? 1.0L : expl(mag_b / 2.0L);
+    long double val_ratio = val_b / val_a;
+    
+    if (val_ratio < 1e-6L) { // negligible addend in actual value space
+        return takum<N>::from_ell(Sa, mag_a);
     }
 
     long double t = (ratio - 0.5L); // map to [-0.5,0.5]
-    // NOTE: inside namespace takum, qualifying again with takum:: would
-    // select the class template name (ambiguous with namespace). Use the
-    // relative qualification to reach internal::phi helpers.
     auto phi_res = internal::phi::phi_eval<N>(t);
     bool ok = internal::phi::within_phi_budget<N>(phi_res);
     internal::phi::record_phi<N>(phi_res, ok);
@@ -68,19 +88,29 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
         if (ell_res_mag < 0.0L) force_fallback = true;
     }
     if (!ok || force_fallback) {
-        long double maxv = mag_a;
-        long double minv = mag_b;
+        // For simple cases, use double arithmetic to maintain exact precision
+        double da = a.to_double();
+        double db = b.to_double();
+        double result = da + db;
+        if (std::isfinite(result)) {
+            return takum<N>(result);
+        }
+        
+        // Fallback to log-sum-exp for edge cases
+        long double log_a = mag_a / 2.0L;  // log(|a|) = ell_a/2
+        long double log_b = mag_b / 2.0L;  // log(|b|) = ell_b/2
         long double s = (Sa == Sb) ? 1.0L : -1.0L;
-        long double diff = minv - maxv;
-        long double z = s * expl(diff);
-        if (fabsl(z) < 1e-24L) ell_res_mag = maxv; else {
+        long double diff = log_b - log_a;  // log(|b|/|a|)
+        long double z = s * expl(diff);    // ±|b|/|a|
+        if (fabsl(z) < 1e-24L) {
+            ell_res_mag = mag_a;
+        } else {
             long double arg = 1.0L + z;
             if (arg <= 0.0L) return (arg == 0.0L) ? takum<N>{} : takum<N>::nar();
-            ell_res_mag = maxv + logl(arg);
+            ell_res_mag = 2.0L * (log_a + logl(arg));  // Convert back to ell = 2*log
         }
     }
-    long double final_ell = (Sa ? -ell_res_mag : ell_res_mag);
-    return takum<N>::from_ell(Sa, final_ell);
+    return takum<N>::from_ell(Sa, ell_res_mag);
 }
 
 /**
@@ -98,7 +128,7 @@ inline takum<N> operator-(const takum<N>& a, const takum<N>& b) noexcept {
     }
     bool Sb = (eb < 0.0L);
     long double mb = fabsl(eb);
-    takum<N> negb = takum<N>::from_ell(!Sb, (Sb ? mb : -mb));
+    takum<N> negb = takum<N>::from_ell(!Sb, mb);
     return a + negb;
 }
 
