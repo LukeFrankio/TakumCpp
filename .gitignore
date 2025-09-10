@@ -1,55 +1,43 @@
-# Build directories
+# Build directories and artifacts
 build/
-out/
-.DS_Store
+build_*/
 build-*/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Testing/
+cmake-build-*
+_deps/
 
-# Dependencies
+# Executables and libraries
+*.exe
+*.out
+*.app
 *.a
 *.lib
 *.dll
 *.so
 *.dylib
 
-# CMake
-CMakeFiles/
-Makefile
-cmake_install.cmake
-install_manifest.txt
-CMakeCache.txt
-CTestTestfile.cmake
-Testing/
-cmake-build-*
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Tests
+# Generated files
 *.test
-*.out
+test_results.log
+junit_results.xml
 
 # Debug executables
 debug_*
 debug/debug_*
 
-# Documentation
-*.pdf
-*.docx
-
-# DOCS
-Docs/Spec.md
-AcSo/
-Docs/doxygen/
-# Also ignore lowercase doxygen output directory (build script may emit to 'docs/')
-docs/doxygen/
-# Ignore any nested html/latex outputs explicitly (redundant but future-proof)
-Docs/doxygen/html/
-Docs/doxygen/latex/
-docs/doxygen/html/
-docs/doxygen/latex/
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.kate-swp
+.vs/
 
 # OS generated files
 .DS_Store
@@ -60,6 +48,22 @@ docs/doxygen/latex/
 ehthumbs.db
 Thumbs.db
 
-# Plan
+# Documentation artifacts
+Docs/doxygen/
+docs/doxygen/
+Docs/doxygen/html/
+Docs/doxygen/latex/
+docs/doxygen/html/
+docs/doxygen/latex/
+*.pdf
+*.docx
+
+# Development artifacts
+AcSo/
 Docs/Plan.md
 Docs/Spec.md
+
+# Temporary files
+*.tmp
+*.temp
+*~

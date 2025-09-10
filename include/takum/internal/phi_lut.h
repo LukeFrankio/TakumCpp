@@ -37,7 +37,8 @@ namespace detail {
             for (size_t i = 0; i <= S; ++i) {
                 long double t = domain_min + (span * static_cast<long double>(i) / static_cast<long double>(S));
                 long double v = phi_ref(t);
-                if (v < 0) v = 0; if (v > 1) v = 1; // clamp safety
+                if (v < 0) v = 0; 
+                if (v > 1) v = 1; // clamp safety
                 uint32_t q = static_cast<uint32_t>(std::llround(v * (1ull << 16)));
                 data[i] = q;
             }
