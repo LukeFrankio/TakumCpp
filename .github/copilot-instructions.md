@@ -100,7 +100,7 @@ Always run these after any changes to core functionality:
 1. Create `YourFeature.test.cpp` in `test/` directory
 2. Use GoogleTest macros: `TEST(TestSuite, TestName) { ... }`
 3. Include required headers: `#include "takum/core.h"` etc.
-4. Build and run: **NEVER CANCEL: Build + test cycle takes 56 seconds total**
+4. Build and run: **NEVER CANCEL: Build + test cycle takes 61 seconds total**
 
 ### Modifying Core Encoding/Decoding
 1. Edit `include/takum/core.h` -- Maintain NaR patterns and monotonic ordering  
