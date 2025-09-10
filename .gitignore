@@ -39,6 +39,13 @@ cmake-build-*
 Docs/Spec.md
 AcSo/
 Docs/doxygen/
+# Also ignore lowercase doxygen output directory (build script may emit to 'docs/')
+docs/doxygen/
+# Ignore any nested html/latex outputs explicitly (redundant but future-proof)
+Docs/doxygen/html/
+Docs/doxygen/latex/
+docs/doxygen/html/
+docs/doxygen/latex/
 
 # OS generated files
 .DS_Store
