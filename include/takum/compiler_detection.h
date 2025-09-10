@@ -186,8 +186,8 @@
     #if defined(__cpp_lib_expected)
         #define TAKUM_HAS_STD_EXPECTED 1
     // Fallback to conservative compiler + standard library combinations that are known to work
-    #elif (defined(_MSC_VER) && _MSC_VER >= 1930) || \
-          (defined(__GNUC__) && __GNUC__ >= 14 && defined(__GLIBCXX__))
+    #elif (defined(_MSC_VER) && _MSC_VER >= 1930) /* MSVC 2022 17.0+ (_MSC_VER 1930) */ || \
+          (defined(__GNUC__) && __GNUC__ >= 14 /* GCC 14+ */ && defined(__GLIBCXX__))
         #define TAKUM_HAS_STD_EXPECTED 1
     #else
         #define TAKUM_HAS_STD_EXPECTED 0
