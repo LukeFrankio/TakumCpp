@@ -102,15 +102,39 @@ jobs:
           - { cc: gcc-12, cxx: g++-12, name: gcc-12 }
           - { cc: clang-15, cxx: clang++-15, name: clang-15 }
         build_type: [Debug, Release]
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        timeout-minutes: 5
 
-      - name: Install compilers
-        timeout-minutes: 8
+      - name: Debug initial environment
+        timeout-minutes: 2
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }} ninja-build python3
+          echo "Starting Linux CI job at $(date)"
+          echo "Runner: $(uname -a)"
+          echo "Available space: $(df -h /)"
+          echo "Network connectivity test:"
+          ping -c 3 archive.ubuntu.com || echo "Network test failed"
+
+      - name: Install compilers with retries
+        timeout-minutes: 12
+        run: |
+          echo "Starting package installation at $(date)"
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt: Updating package lists..."
+            if timeout 300 sudo apt-get update; then
+              echo "Package list update successful"
+              break
+            else
+              echo "Attempt $attempt failed, waiting 30 seconds..."
+              sleep 30
+            fi
+          done
+          
+          echo "Installing compilers and dependencies..."
+          timeout 600 sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }} ninja-build python3
+          echo "Package installation completed at $(date)"
 
       - name: Generate polynomial coefficients
         timeout-minutes: 3
