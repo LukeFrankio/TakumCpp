@@ -10,9 +10,8 @@ using namespace takum::types;
 
 // Helper to iterate SI (signed-integer) order for N bits: start at sign bit set
 static std::vector<uint64_t> si_order_indices(size_t N) {
-    uint64_t total = (N >= 64) ? 0 : (1ull << N);
     std::vector<uint64_t> order;
-    if (N >= 64) return order; // guard
+    if (N >= 64) return order; // guard for large N to prevent overflow
     // SI order: start from (1<<(N-1)) .. (2^N-1), then 0 .. (1<<(N-1))-1
     uint64_t start = (1ull << (N - 1));
     for (uint64_t i = start; i < (1ull << N); ++i) order.push_back(i);

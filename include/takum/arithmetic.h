@@ -213,35 +213,205 @@ inline takum<N> operator-(const takum<N>& a, const takum<N>& b) noexcept {
 /**
  * Multiply two takum values.
  */
+/**
+ * @brief Multiply two takum values using double-precision intermediate arithmetic.
+ *
+ * This function computes the product of two takum values using a straightforward
+ * approach that converts both operands to double precision, performs the
+ * multiplication, and converts the result back to takum format. While simpler
+ * than the Phase-4 Φ-enhanced addition, this approach provides reliable accuracy
+ * for most practical applications.
+ *
+ * MATHEMATICAL PROPERTIES:
+ * =======================
+ * - **Commutativity**: a * b = b * a for all valid inputs
+ * - **Associativity**: Approximate (a * b) * c ≈ a * (b * c) within rounding error
+ * - **Identity**: a * takum(1.0) = a for all finite a
+ * - **Zero**: a * takum(0.0) = takum(0.0) for all finite a
+ * - **NaR Propagation**: Any NaR operand produces NaR result
+ *
+ * IMPLEMENTATION STRATEGY:
+ * =======================
+ * The algorithm follows these steps:
+ * 1. Early NaR detection and propagation
+ * 2. Conversion to double precision for both operands
+ * 3. Domain validation (finite value checks)
+ * 4. Standard IEEE 754 double multiplication
+ * 5. Result conversion back to takum with proper saturation
+ *
+ * This approach prioritizes simplicity and correctness over maximum precision.
+ * Future Phase-5 optimizations may implement native takum multiplication
+ * in the logarithmic domain for enhanced accuracy.
+ *
+ * EDGE CASE HANDLING:
+ * ==================
+ * - **NaR Operands**: Immediate NaR propagation (consistent with all operators)
+ * - **Zero Multiplication**: Exact zero result when one operand is zero
+ * - **Overflow**: Large products saturate to NaR rather than infinity
+ * - **Underflow**: Small products may lose precision or become zero
+ * - **Sign Handling**: Follows IEEE 754 sign rules (-) * (+) = (-)
+ *
+ * @tparam N Bit width of the takum type (must be ≥ 12 for valid takum)
+ * @param a First takum operand for multiplication
+ * @param b Second takum operand for multiplication  
+ * @return Product a * b as a takum<N> value, or NaR if invalid
+ *
+ * @note Function is marked noexcept for use in performance-critical contexts
+ * @note Uses double intermediate arithmetic for IEEE 754 compatibility
+ * @note Future versions may implement logarithmic-domain multiplication for better accuracy
+ *
+ * @see operator/(const takum<N>&, const takum<N>&) for corresponding division
+ * @see safe_mul() for exception-safe variant returning std::expected/std::optional
+ */
 template <size_t N>
 inline takum<N> operator*(const takum<N>& a, const takum<N>& b) noexcept {
+    // NaR propagation: multiplication involving undefined values is undefined
     if (a.is_nar() || b.is_nar()) return takum<N>::nar();
+    
+    // Convert operands to double precision for arithmetic
     double da = a.to_double();
     double db = b.to_double();
+    
+    // Domain validation: ensure both operands are finite and arithmetically valid
     if (!std::isfinite(da) || !std::isfinite(db)) return takum<N>::nar();
+    
+    // Perform multiplication and convert result back to takum
     return takum<N>(da * db);
 }
 
 /**
- * Divide two takum values. Division by zero yields NaR.
+ * @brief Divide two takum values with proper zero-division handling.
+ *
+ * This function computes the quotient of two takum values using double-precision
+ * intermediate arithmetic. Division by zero is explicitly detected and results
+ * in NaR (Not-a-Real) following the takum specification's approach to undefined
+ * operations.
+ *
+ * MATHEMATICAL PROPERTIES:
+ * =======================
+ * - **Identity**: a / takum(1.0) = a for all finite a
+ * - **Zero Dividend**: takum(0.0) / a = takum(0.0) for all finite non-zero a
+ * - **Zero Divisor**: a / takum(0.0) = NaR for all a (undefined operation)
+ * - **Self Division**: a / a = takum(1.0) for all finite non-zero a
+ * - **NaR Propagation**: Any NaR operand produces NaR result
+ * - **Sign Handling**: Follows IEEE 754 sign rules (-) / (+) = (-)
+ *
+ * IMPLEMENTATION STRATEGY:
+ * =======================
+ * The algorithm follows these steps:
+ * 1. Early NaR detection and propagation
+ * 2. Conversion to double precision for both operands
+ * 3. Domain validation (finite value checks)
+ * 4. Explicit zero-divisor detection (division by zero)
+ * 5. Standard IEEE 754 double division
+ * 6. Result conversion back to takum with proper saturation
+ *
+ * The explicit zero check is crucial because takum uses NaR instead of
+ * IEEE 754 infinity to represent undefined division results.
+ *
+ * EDGE CASE HANDLING:
+ * ==================
+ * - **NaR Operands**: Immediate NaR propagation (consistent with all operators)
+ * - **Division by Zero**: Explicit detection returns NaR (not infinity)
+ * - **Zero Dividend**: Returns exact zero when numerator is zero
+ * - **Overflow**: Large quotients saturate to NaR rather than infinity
+ * - **Underflow**: Small quotients may lose precision or become zero
+ * - **Near-Zero Divisors**: May amplify numerical errors in the result
+ *
+ * @tparam N Bit width of the takum type (must be ≥ 12 for valid takum)
+ * @param a Dividend (numerator) takum operand
+ * @param b Divisor (denominator) takum operand
+ * @return Quotient a / b as a takum<N> value, or NaR if invalid/undefined
+ *
+ * @note Function is marked noexcept for use in performance-critical contexts  
+ * @note Division by zero explicitly returns NaR (not IEEE 754 infinity)
+ * @note Uses double intermediate arithmetic for IEEE 754 compatibility
+ * @note Future versions may implement logarithmic-domain division for better accuracy
+ *
+ * @see operator*(const takum<N>&, const takum<N>&) for corresponding multiplication
+ * @see safe_div() for exception-safe variant returning std::expected/std::optional
  */
 template <size_t N>
 inline takum<N> operator/(const takum<N>& a, const takum<N>& b) noexcept {
+    // NaR propagation: division involving undefined values is undefined
     if (a.is_nar() || b.is_nar()) return takum<N>::nar();
+    
+    // Convert operands to double precision for arithmetic
     double da = a.to_double();
     double db = b.to_double();
+    
+    // Domain validation: ensure operands are finite and divisor is non-zero
+    // Note: explicit zero check required as takum uses NaR instead of infinity
     if (!std::isfinite(da) || !std::isfinite(db) || db == 0.0) return takum<N>::nar();
+    
+    // Perform division and convert result back to takum
     return takum<N>(da / db);
 }
 
 /**
  * Absolute value for takum.
  */
+/**
+ * @brief Compute the absolute value of a takum number.
+ *
+ * This function returns the absolute (non-negative) value of the input takum number.
+ * The implementation handles all special cases according to the takum specification,
+ * including proper NaR (Not-a-Real) propagation and domain validation.
+ *
+ * MATHEMATICAL PROPERTIES:
+ * =======================
+ * - abs(x) ≥ 0 for all finite x
+ * - abs(x) = abs(-x) for all x
+ * - abs(0) = 0 exactly
+ * - abs(x) = x when x ≥ 0
+ * - abs(x) = -x when x < 0
+ * - abs(NaR) = NaR (propagation rule)
+ *
+ * IMPLEMENTATION STRATEGY:
+ * =======================
+ * The function uses a straightforward approach:
+ * 1. Early NaR detection and propagation
+ * 2. Conversion to double for standard library abs operation
+ * 3. Domain validation to ensure result is representable
+ * 4. Reconstruction as takum with proper encoding
+ *
+ * This approach prioritizes correctness and clarity over micro-optimization,
+ * as absolute value operations are typically not performance-critical in
+ * most takum applications.
+ *
+ * EDGE CASE HANDLING:
+ * ==================
+ * - **NaR Input**: Returns NaR immediately (consistent propagation)
+ * - **Infinite Values**: Converts to NaR as takum cannot represent infinity
+ * - **Zero**: Preserves exact zero representation
+ * - **Maximum Values**: Handles saturation cases gracefully
+ *
+ * @tparam N Bit width of the takum type (must be ≥ 12 for valid takum)
+ * @param a Input takum value for absolute value computation
+ * @return |a| as a takum<N> value, or NaR if input is invalid
+ *
+ * @note Function is marked noexcept for use in performance-critical contexts
+ * @note Result is guaranteed to be non-negative unless NaR
+ * @note Implementation uses double intermediate for IEEE 754 abs() semantics
+ *
+ * @see operator-(const takum<N>&) for unary negation
+ * @see safe_abs() for exception-safe variant returning std::expected/std::optional
+ */
 template <size_t N>
 inline takum<N> abs(const takum<N>& a) noexcept {
+    // STEP 1: NaR propagation - absolute value of undefined is undefined
     if (a.is_nar()) return takum<N>::nar();
+    
+    // STEP 2: Convert to double for standard library absolute value operation
+    // This leverages well-tested IEEE 754 semantics for edge cases
     double da = a.to_double();
+    
+    // STEP 3: Domain validation - ensure intermediate result is finite and valid
+    // Non-finite values (infinity, NaN) cannot be represented in takum format
     if (!std::isfinite(da)) return takum<N>::nar();
+    
+    // STEP 4: Compute absolute value and reconstruct as takum
+    // std::fabs handles all IEEE 754 special cases correctly
     return takum<N>(std::fabs(da));
 }
 
