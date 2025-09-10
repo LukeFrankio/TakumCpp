@@ -11,7 +11,8 @@
 #pragma once
 
 #include "takum/core.h"
-#include "takum/internal/phi_eval.h" // Phase-4 Φ evaluator (currently polynomial placeholder)
+#include "takum/internal/phi_eval.h" // Phase-4 Φ evaluator
+#include "takum/config.h"
 
 #include <type_traits>
 #include <cmath>
@@ -19,121 +20,86 @@
 namespace takum {
 
 /**
- * Add two takum values.
- * @note Uses host double intermediate; NaR propagates.
+ * @brief Add two takum values (Phase‑4 Φ path with fallback).
+ * Primary path: Gaussian‑log helper Φ to reduce double rounding.
+ * Fallback: exact log-sum-exp in ℓ space when budget exceeded.
  */
 template <size_t N>
 inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
-    // Phase-4 Gaussian-log (Φ) addition.
     if (a.is_nar() || b.is_nar()) return takum<N>::nar();
 
-    // Prefer quantized-double intermediate (matches Phase‑3 behavior/tests):
-    double da = a.to_double();
-    double db = b.to_double();
-    if (std::isfinite(da) && std::isfinite(db)) {
-#if TAKUM_ENABLE_FAST_ADD
-        // Fast path heuristic: similar magnitudes produce cancellation in fallback log1p path.
-        double abs_da = std::fabs(da);
-        double abs_db = std::fabs(db);
-        if (abs_da != 0.0 && abs_db != 0.0) {
-            double maxv_d = abs_da > abs_db ? abs_da : abs_db;
-            double minv_d = abs_da > abs_db ? abs_db : abs_da;
-            double ratio = minv_d / maxv_d; // (0,1]
-            if (ratio >= 0.5) {
-                // Map ratio to centered domain: r in [0.5,1] -> t in [-0.5,0.5]
-                long double t = (static_cast<long double>(ratio) - 0.75L) * 2.0L;
-                auto ev = takum::internal::phi::phi_eval<N>(t);
-                long double w = ev.value; // monotone ~[0,1]
-                // Candidate forms:
-                //   linear: max*(1+ratio)
-                //   log1p:  max*std::exp(log1p(ratio)-ratio)  (placeholder future improved basis)
-                long double linear = 1.0L + static_cast<long double>(ratio);
-                // Use log1p for numerical stability near ratio~0.5..1 (still safe)
-                long double log1p_term = std::log1pl(static_cast<long double>(ratio));
-                long double refined = 1.0L + std::expl(log1p_term) - 1.0L; // = linear currently
-                // Blend weight w currently redundant; keep hook for future corrective term.
-                long double fused = linear + (refined - linear) * w;
-                long double approx = static_cast<long double>(maxv_d) * fused;
-                return takum<N>(static_cast<double>(approx));
-            }
-        }
-#endif // TAKUM_ENABLE_FAST_ADD
+    long double ell_a = a.get_exact_ell();
+    long double ell_b = b.get_exact_ell();
+    if (!std::isfinite((double)ell_a) || !std::isfinite((double)ell_b)) {
+        double da = a.to_double();
+        double db = b.to_double();
+        if (!std::isfinite(da) || !std::isfinite(db)) return takum<N>::nar();
         return takum<N>(da + db);
     }
 
-    // Fallback to Phase-4 Gaussian-log when double intermediates are non-finite
-    // (e.g., overflow) or unavailable.
-    // Extract signs and logits ℓ = 2*ln(|x|) in long double precision
-    long double ell_a = a.get_exact_ell();
-    long double ell_b = b.get_exact_ell();
-    if (!std::isfinite((double)ell_a) || !std::isfinite((double)ell_b)) return takum<N>::nar();
-
-    // Signs
     bool Sa = (ell_a < 0.0L);
     bool Sb = (ell_b < 0.0L);
-    long double abs_a = std::fabsl(ell_a);
-    long double abs_b = std::fabsl(ell_b);
+    long double mag_a = std::fabsl(ell_a);
+    long double mag_b = std::fabsl(ell_b);
+    if (mag_b > mag_a) { std::swap(mag_a, mag_b); std::swap(Sa, Sb); }
+    if (mag_a == mag_b && Sa != Sb) return takum<N>{}; // perfect cancellation
 
-    // Order so that abs_a >= abs_b
-    if (abs_b > abs_a) {
-        std::swap(abs_a, abs_b);
-        std::swap(Sa, Sb);
+    long double ratio = (mag_a == 0.0L) ? 0.0L : (mag_b / mag_a);
+    if (ratio < 1e-6L) { // negligible addend
+        long double final_ell = (Sa ? -mag_a : mag_a);
+        return takum<N>::from_ell(Sa, final_ell);
     }
 
-    // If magnitudes are identical and signs cancel -> zero
-    if (abs_a == abs_b && Sa != Sb) return takum<N>{};
+    long double t = (ratio - 0.5L); // map to [-0.5,0.5]
+    // NOTE: inside namespace takum, qualifying again with takum:: would
+    // select the class template name (ambiguous with namespace). Use the
+    // relative qualification to reach internal::phi helpers.
+    auto phi_res = internal::phi::phi_eval<N>(t);
+    bool ok = internal::phi::within_phi_budget<N>(phi_res);
+    internal::phi::record_phi<N>(phi_res, ok);
 
-    // Compute ell_result = sign * (max + log(1 + sign*exp(min-max)))
-    long double maxv = abs_a;
-    long double minv = abs_b;
-    long double s = (Sa == Sb) ? 1.0L : -1.0L; // sign factor for addition
-    long double diff = minv - maxv; // <= 0
-
-    // Compute log1p in high precision: log1p(s*exp(diff)) but ensure argument positive
-    long double z = s * std::expl(diff);
-    // If |z| is tiny, result ~ maxv
-    long double addterm;
-    if (std::fabsl(z) < 1e-18L) addterm = 0.0L;
-    else {
-        long double arg = 1.0L + z;
-        if (arg <= 0.0L) {
-            // Numerical cancellation -> results in zero or NaR
-            if (arg == 0.0L) return takum<N>{};
-            return takum<N>::nar();
+    long double ell_res_mag;
+    bool force_fallback = false;
+    if (ok) {
+        long double s = (Sa == Sb) ? 1.0L : -1.0L;
+        long double adj = s * ratio - 0.5L * ratio * ratio; // 2nd-order
+        long double blended = adj * phi_res.value;
+        ell_res_mag = mag_a + blended;
+        if (ell_res_mag < 0.0L) force_fallback = true;
+    }
+    if (!ok || force_fallback) {
+        long double maxv = mag_a;
+        long double minv = mag_b;
+        long double s = (Sa == Sb) ? 1.0L : -1.0L;
+        long double diff = minv - maxv;
+        long double z = s * std::expl(diff);
+        if (std::fabsl(z) < 1e-24L) ell_res_mag = maxv; else {
+            long double arg = 1.0L + z;
+            if (arg <= 0.0L) return (arg == 0.0L) ? takum<N>{} : takum<N>::nar();
+            ell_res_mag = maxv + std::logl(arg);
         }
-        addterm = std::logl(arg);
     }
-    long double ell_res_mag = maxv + addterm;
-    long double ell_res = (Sa ? -ell_res_mag : ell_res_mag);
-
-    // Future optimization: re-route long double path via Φ hybrid evaluator for large N.
-
-    // Use from_ell to encode result with proper rounding and canonicalization
-    return takum<N>::from_ell(Sa, ell_res);
+    long double final_ell = (Sa ? -ell_res_mag : ell_res_mag);
+    return takum<N>::from_ell(Sa, final_ell);
 }
 
 /**
- * Subtract two takum values.
+ * @brief Subtract two takum values (a - b) via addition with sign flip.
  */
 template <size_t N>
 inline takum<N> operator-(const takum<N>& a, const takum<N>& b) noexcept {
-    // Prefer double-intermediate subtraction when possible
     if (a.is_nar() || b.is_nar()) return takum<N>::nar();
-    double da = a.to_double();
-    double db = b.to_double();
-    if (std::isfinite(da) && std::isfinite(db)) {
+    long double eb = b.get_exact_ell();
+    if (!std::isfinite((double)eb)) {
+        double da = a.to_double();
+        double db = b.to_double();
+        if (!std::isfinite(da) || !std::isfinite(db)) return takum<N>::nar();
         return takum<N>(da - db);
     }
-
-    // Fallback: treat as addition with flipped sign via from_ell
-    takum<N> nb = b;
-    long double ell_b = b.get_exact_ell();
-    if (!std::isfinite((double)ell_b)) return takum<N>::nar();
-    bool Sb = (ell_b < 0.0L);
-    long double mag_b = std::fabsl(ell_b);
-    bool Sb_flipped = !Sb;
-    nb = takum<N>::from_ell(Sb_flipped, (Sb_flipped ? -mag_b : mag_b));
-    return a + nb;
+    bool Sb = (eb < 0.0L);
+    long double mb = std::fabsl(eb);
+    takum<N> negb = takum<N>::from_ell(!Sb, (Sb ? mb : -mb));
+    return a + negb;
 }
 
 /**
@@ -203,6 +169,14 @@ inline std::expected<takum<N>, takum_error> safe_add(const takum<N>& a, const ta
     return r;
 }
 
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    takum<N> r = a - b;
+    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
+    return r;
+}
+
 /**
  * @brief Safe multiplication with explicit error handling.
  * 
@@ -218,6 +192,36 @@ template <size_t N>
 inline std::expected<takum<N>, takum_error> safe_mul(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
     takum<N> r = a * b;
+    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
+    return r;
+}
+
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    if (b.to_double() == 0.0) return std::unexpected(takum_error{takum_error::Kind::DomainError, "division by zero"});
+    takum<N> r = a / b;
+    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
+    return r;
+}
+
+/**
+ * @brief Safe absolute value.
+ */
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_abs(const takum<N>& a) noexcept {
+    if (a.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    return takum<N>(std::fabs(a.to_double()));
+}
+
+/**
+ * @brief Safe reciprocal (reports domain error on zero or NaR input).
+ */
+template <size_t N>
+inline std::expected<takum<N>, takum_error> safe_recip(const takum<N>& a) noexcept {
+    if (a.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
+    if (a.to_double() == 0.0) return std::unexpected(takum_error{takum_error::Kind::DomainError, "reciprocal of zero"});
+    takum<N> r = a.reciprocal();
     if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
     return r;
 }
@@ -241,6 +245,14 @@ inline std::optional<takum<N>> safe_add(const takum<N>& a, const takum<N>& b) no
     return r;
 }
 
+template <size_t N>
+inline std::optional<takum<N>> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
+    if (a.is_nar() || b.is_nar()) return std::nullopt;
+    takum<N> r = a - b;
+    if (r.is_nar()) return std::nullopt;
+    return r;
+}
+
 /**
  * @brief Safe multiplication for older C++ standards (returns optional).
  * 
@@ -259,86 +271,33 @@ inline std::optional<takum<N>> safe_mul(const takum<N>& a, const takum<N>& b) no
     if (r.is_nar()) return std::nullopt;
     return r;
 }
-#endif
 
-// Safe subtraction and division variants
-#if __cplusplus >= 202302L
-/**
- * @brief Safe subtraction with explicit error handling.
- * 
- * Performs subtraction of two takum values with explicit error reporting
- * instead of NaR propagation. Returns std::unexpected on error conditions.
- *
- * @tparam N Bit width of the takum format
- * @param a Minuend
- * @param b Subtrahend
- * @return std::expected containing result or error information
- */
-template <size_t N>
-inline std::expected<takum<N>, takum_error> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
-    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
-    takum<N> r = a - b;
-    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
-    return r;
-}
-
-/**
- * @brief Safe division with explicit error handling.
- * 
- * Performs division of two takum values with explicit error reporting
- * instead of NaR propagation. Returns std::unexpected on error conditions
- * including division by zero.
- *
- * @tparam N Bit width of the takum format
- * @param a Dividend
- * @param b Divisor
- * @return std::expected containing result or error information
- */
-template <size_t N>
-inline std::expected<takum<N>, takum_error> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
-    if (a.is_nar() || b.is_nar()) return std::unexpected(takum_error{takum_error::Kind::InvalidOperation, "NaR operand"});
-    takum<N> r = a / b;
-    if (r.is_nar()) return std::unexpected(takum_error{takum_error::Kind::Overflow, "result NaR/overflow"});
-    return r;
-}
-#else
-/**
- * @brief Safe subtraction for older C++ standards (returns optional).
- * 
- * Performs subtraction of two takum values with error checking, returning
- * std::nullopt on error conditions instead of propagating NaR.
- *
- * @tparam N Bit width of the takum format
- * @param a Minuend
- * @param b Subtrahend
- * @return std::optional containing result or nullopt on error
- */
-template <size_t N>
-inline std::optional<takum<N>> safe_sub(const takum<N>& a, const takum<N>& b) noexcept {
-    if (a.is_nar() || b.is_nar()) return std::nullopt;
-    takum<N> r = a - b;
-    if (r.is_nar()) return std::nullopt;
-    return r;
-}
-
-/**
- * @brief Safe division for older C++ standards (returns optional).
- * 
- * Performs division of two takum values with error checking, returning
- * std::nullopt on error conditions including division by zero.
- *
- * @tparam N Bit width of the takum format
- * @param a Dividend
- * @param b Divisor
- * @return std::optional containing result or nullopt on error
- */
 template <size_t N>
 inline std::optional<takum<N>> safe_div(const takum<N>& a, const takum<N>& b) noexcept {
     if (a.is_nar() || b.is_nar()) return std::nullopt;
+    if (b.to_double() == 0.0) return std::nullopt;
     takum<N> r = a / b;
     if (r.is_nar()) return std::nullopt;
     return r;
 }
-#endif
+#endif // __cplusplus >= 202302L
+
+// Optional path (pre-C++23) safe_abs & safe_recip equivalents
+#if __cplusplus < 202302L
+template <size_t N>
+inline std::optional<takum<N>> safe_abs(const takum<N>& a) noexcept {
+    if (a.is_nar()) return std::nullopt;
+    return takum<N>(std::fabs(a.to_double()));
+}
+
+template <size_t N>
+inline std::optional<takum<N>> safe_recip(const takum<N>& a) noexcept {
+    if (a.is_nar()) return std::nullopt;
+    if (a.to_double() == 0.0) return std::nullopt;
+    takum<N> r = a.reciprocal();
+    if (r.is_nar()) return std::nullopt;
+    return r;
+}
+#endif // __cplusplus >= 202302L
 
 } // namespace takum

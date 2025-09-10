@@ -124,12 +124,38 @@ if ($build.ExitCode -ne 0) {
 Write-Host "[INFO] Running tests..."
 Push-Location $BuildDir
 $env:CTEST_OUTPUT_ON_FAILURE="1"
-$test = Start-Process ctest -ArgumentList "--output-on-failure" -NoNewWindow -Wait -PassThru
+$testLog = Join-Path (Get-Location) "test_results.log"
+$junitLog = Join-Path (Get-Location) "junit_results.xml"
+
+# Run ctest capturing stdout to test_results.log while still echoing to console.
+# Use Tee-Object for PowerShell pipeline capture.
+$ctestCmd = "ctest --output-on-failure"
+Write-Host "[INFO] Executing: $ctestCmd (logging to $testLog)"
+cmd /c $ctestCmd 2>&1 | Tee-Object -FilePath $testLog
+$exitCode = $LASTEXITCODE
+
+# Attempt JUnit if supported (CTest >=3.20). We don't fail if not produced.
+if (Test-Path $testLog) {
+    $ctestVersionLine = (& ctest --version 2>$null | Select-Object -First 1)
+    if ($ctestVersionLine -match "([0-9]+)\.([0-9]+)\.([0-9]+)") {
+        $major = [int]$matches[1]; $minor = [int]$matches[2]
+        if ($major -gt 3 -or ($major -eq 3 -and $minor -ge 20)) {
+            Write-Host "[INFO] Generating JUnit report..."
+            & ctest --output-junit $junitLog *> "$junitLog.tmp"
+            if (Test-Path "$junitLog.tmp") { Remove-Item "$junitLog.tmp" -Force -ErrorAction SilentlyContinue }
+        } else {
+            Write-Host "[INFO] CTest version does not support --output-junit (found $ctestVersionLine)"
+        }
+    }
+}
 Pop-Location
-if ($test.ExitCode -ne 0) {
+if ($exitCode -ne 0) {
     Write-Error "[FAIL] Some tests failed."
+    Write-Host "[INFO] Test log saved to: $BuildDir/test_results.log"
     exit 2
 }
+Write-Host "[INFO] Test log saved to: $BuildDir/test_results.log"
+if (Test-Path (Join-Path $BuildDir "junit_results.xml")) { Write-Host "[INFO] JUnit report: $BuildDir/junit_results.xml" }
 Write-Host "[SUCCESS] Build + tests completed successfully in '$BuildDir' ($BuildType)."
 
 # --- optional: run Doxygen if available ---

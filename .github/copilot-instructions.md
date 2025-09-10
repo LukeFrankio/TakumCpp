@@ -10,7 +10,7 @@ Purpose: Make AI coding agents immediately productive when contributing to Takum
 
 ## Arithmetic Layer (`include/takum/arithmetic.h`)
 - Phase‑3 implementation: + − * / use double intermediates; addition has an optional fast Φ heuristic guarded by `TAKUM_ENABLE_FAST_ADD` macro.
-- Safe variants: `safe_add/mul/sub/div` return `std::expected` (C++26/23) or `std::optional` fallback; never throw.
+- Safe variants: `safe_add/sub/mul/div/abs/recip` return `std::expected` (C++26/23) or `std::optional` fallback; never throw.
 - Negation flips sign bit; division by zero -> NaR; any NaR operand -> NaR.
 
 ## Gaussian‑log (Φ) Infrastructure
@@ -52,6 +52,9 @@ Purpose: Make AI coding agents immediately productive when contributing to Takum
 
 ## Performance Hooks
 - `TAKUM_ENABLE_FAST_ADD` macro gate for experimental faster addition path; keep code guarded and side‑effect free.
+- `TAKUM_ENABLE_CUBIC_PHI_LUT` enables Catmull‑Rom cubic interpolation for small Φ LUTs.
+- `TAKUM_COARSE_LUT_SIZE` controls hybrid coarse LUT size (default 256) for takum64+ Φ path.
+- `TAKUM_ENABLE_PHI_DIAGNOSTICS` gathers lightweight per‑precision counters (non‑atomic); do not introduce heavy instrumentation.
 - Future SIMD/residual optimizations will go into `optimized.h` (not yet present); keep new perf work isolated and trivially removable.
 
 ## Typical Change Workflow (AI)

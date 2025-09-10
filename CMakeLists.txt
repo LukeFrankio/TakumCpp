@@ -81,6 +81,11 @@ endif()
 include(CTest)
 enable_testing()
 
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
+option(TAKUM_ENABLE_AUTOTEST_LOGS "Run tests automatically after build of 'tests' target and write log + JUnit files" ON)
+
 # Tests (depend on generated header)
 add_subdirectory(test)
 add_dependencies(tests phi_coeffs_gen)

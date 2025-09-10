@@ -18,6 +18,30 @@ target_link_libraries(tests PRIVATE TakumCpp gtest gtest_main)
 include(GoogleTest)
 gtest_discover_tests(tests)
 
+# ---------------------------------------------------------------------------
+# Unified test logging
+# Produces:
+#  - test_results.log : human readable ctest --output-on-failure
+#  - junit_results.xml : (if ctest supports) JUnit XML for CI tools
+# The top-level build directory will receive copies for convenience.
+# ---------------------------------------------------------------------------
+set(TEST_LOG_DIR ${CMAKE_BINARY_DIR})
+set(TEST_LOG_FILE ${TEST_LOG_DIR}/test_results.log)
+set(TEST_JUNIT_FILE ${TEST_LOG_DIR}/junit_results.xml)
+
+set(CTEST_LOG_SCRIPT ${CMAKE_SOURCE_DIR}/scripts/ctest_log.cmake)
+
+add_custom_target(test_log
+	COMMAND ${CMAKE_COMMAND} -DBUILD_DIR=${CMAKE_BINARY_DIR} -DLOG_FILE=${TEST_LOG_FILE} -DJUNIT_FILE=${TEST_JUNIT_FILE} -P ${CTEST_LOG_SCRIPT}
+	DEPENDS tests
+	COMMENT "Running tests (non-fatal) and capturing output to ${TEST_LOG_FILE}"
+	VERBATIM
+)
+
+if(TAKUM_ENABLE_AUTOTEST_LOGS)
+	add_custom_target(auto_tests ALL DEPENDS test_log)
+endif()
+
 # CI wrapper: run tests and export `test_failures.log` (if created) to the build root
 add_custom_target(ci_test_wrapper
 	COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
@@ -25,3 +49,6 @@ add_custom_target(ci_test_wrapper
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMENT "Run tests and copy test_failures.log to build root for CI"
 )
+
+# Aggregate target for convenience
+add_custom_target(test_reports DEPENDS test_log)
