@@ -11,6 +11,7 @@
 #pragma once
 
 #include "takum/core.h"
+#include "takum/internal/phi_eval.h" // Phase-4 Φ evaluator (currently polynomial placeholder)
 
 #include <type_traits>
 #include <cmath>
@@ -80,6 +81,13 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
     }
     long double ell_res_mag = maxv + addterm;
     long double ell_res = (Sa ? -ell_res_mag : ell_res_mag);
+
+    // Future optimization hook: use internal::phi to approximate log1p path.
+    // Example (disabled until full Φ formula constants integrated):
+    // if constexpr (true /* placeholder toggle */) {
+    //     using takum::internal::phi::phi;
+    //     // Transform diff to Φ domain (t) if required and reconstruct addterm.
+    // }
 
     // Use from_ell to encode result with proper rounding and canonicalization
     return takum<N>::from_ell(Sa, ell_res);
