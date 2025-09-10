@@ -39,8 +39,8 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
 
     bool Sa = (ell_a < 0.0L);
     bool Sb = (ell_b < 0.0L);
-    long double mag_a = std::fabsl(ell_a);
-    long double mag_b = std::fabsl(ell_b);
+    long double mag_a = fabsl(ell_a);
+    long double mag_b = fabsl(ell_b);
     if (mag_b > mag_a) { std::swap(mag_a, mag_b); std::swap(Sa, Sb); }
     if (mag_a == mag_b && Sa != Sb) return takum<N>{}; // perfect cancellation
 
@@ -72,11 +72,11 @@ inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
         long double minv = mag_b;
         long double s = (Sa == Sb) ? 1.0L : -1.0L;
         long double diff = minv - maxv;
-        long double z = s * std::expl(diff);
-        if (std::fabsl(z) < 1e-24L) ell_res_mag = maxv; else {
+        long double z = s * expl(diff);
+        if (fabsl(z) < 1e-24L) ell_res_mag = maxv; else {
             long double arg = 1.0L + z;
             if (arg <= 0.0L) return (arg == 0.0L) ? takum<N>{} : takum<N>::nar();
-            ell_res_mag = maxv + std::logl(arg);
+            ell_res_mag = maxv + logl(arg);
         }
     }
     long double final_ell = (Sa ? -ell_res_mag : ell_res_mag);
@@ -97,7 +97,7 @@ inline takum<N> operator-(const takum<N>& a, const takum<N>& b) noexcept {
         return takum<N>(da - db);
     }
     bool Sb = (eb < 0.0L);
-    long double mb = std::fabsl(eb);
+    long double mb = fabsl(eb);
     takum<N> negb = takum<N>::from_ell(!Sb, (Sb ? mb : -mb));
     return a + negb;
 }

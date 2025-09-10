@@ -68,7 +68,7 @@ namespace detail {
         long double v1 = q16_to_ld(lut[i+1]);
         long double value = v0 + (v1 - v0) * frac;
         // Conservative linear interpolation error bound: half interval slope magnitude
-        long double eb = std::fabsl(v1 - v0) * 0.5L + 1e-7L; // small slack
+        long double eb = fabsl(v1 - v0) * 0.5L + 1e-7L; // small slack
         return { value, eb, static_cast<int>(i) };
     }
 
@@ -104,11 +104,11 @@ namespace detail {
                             (2.0L*y0 - 5.0L*y1 + 4.0L*y2 - y3) * f2 +
                             (-y0 + 3.0L*y1 - 3.0L*y2 + y3) * f3);
         // Estimate error: use second finite difference magnitude
-        long double d2 = std::fabsl(y2 - 2.0L*y1 + y0) + std::fabsl(y3 - 2.0L*y2 + y1);
-        long double linear_seg = std::fabsl(y2 - y1);
+        long double d2 = fabsl(y2 - 2.0L*y1 + y0) + fabsl(y3 - 2.0L*y2 + y1);
+        long double linear_seg = fabsl(y2 - y1);
         long double eb = (d2 * 0.125L) + (linear_seg * 0.05L) + 5e-7L;
         // Sanity: ensure not tighter than linear bound times 0.3 unless extremely smooth
-        long double linear_bound = std::fabsl(y2 - y1) * 0.5L + 1e-7L;
+        long double linear_bound = fabsl(y2 - y1) * 0.5L + 1e-7L;
         if (eb < linear_bound * 0.3L) eb = linear_bound * 0.3L;
         return { value, eb, static_cast<int>(i) };
 #endif

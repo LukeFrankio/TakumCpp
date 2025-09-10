@@ -1,5 +1,10 @@
 #pragma once
 
+// Enable long double math functions
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 /**
  * @file tau_ref.h
  * @brief Reference (readable, unoptimized) tapered-log encoder/decoder used by tests.
@@ -191,7 +196,7 @@ template <size_t N>
 inline long double high_precision_decode(uint64_t bits) noexcept {
     static_assert(N >= 12 && N <= 64, "Takum high-precision decoder supports 12..64 bits");
 
-    const long double sqrt_e_ld = std::sqrtl(std::expl(1.0L));
+    const long double sqrt_e_ld = sqrtl(expl(1.0L));
 
     // NaR check
     bool is_nar = (bits & (1ULL << (N-1))) != 0; // S=1
@@ -233,7 +238,7 @@ inline long double high_precision_decode(uint64_t bits) noexcept {
     long double ell = static_cast<long double>(c) + m;
     if (S) ell = -ell;
 
-    long double y = std::powl(sqrt_e_ld, ell);
+    long double y = powl(sqrt_e_ld, ell);
     return S ? -y : y;
 }
 

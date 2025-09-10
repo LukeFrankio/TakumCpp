@@ -24,7 +24,7 @@ constexpr size_t effective_p() noexcept {
 template <size_t N>
 constexpr long double lambda_p() noexcept {
   constexpr size_t p = effective_p<N>();
-  return 0.66L * std::ldexpl(1.0L, -static_cast<int>(p));
+  return 0.66L * ldexpl(1.0L, -static_cast<int>(p));
 }
 
 /// Helper combining two absolute error sources and a rounding step (ulp ~ 2^{-p}).

@@ -96,7 +96,7 @@ inline PhiEvalResult phi_hybrid_eval(long double t) noexcept {
     auto poly_res = phi_poly_eval(t);
     long double residual = poly_res.value - coarse_interp;
     // Conservative combined error: poly_res.abs_error + interpolation diff scaling
-    long double eb = poly_res.abs_error + std::fabsl(residual) * 0.25L + 5e-6L;
+    long double eb = poly_res.abs_error + fabsl(residual) * 0.25L + 5e-6L;
     return { coarse_interp + residual, eb, ci };
 }
 } // namespace detail
