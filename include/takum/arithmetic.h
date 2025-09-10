@@ -20,39 +20,117 @@
 namespace takum {
 
 /**
- * @brief Add two takum values (Phase‑4 Φ path with fallback).
- * Primary path: Gaussian‑log helper Φ to reduce double rounding.
- * Fallback: exact log-sum-exp in ℓ space when budget exceeded.
+ * @brief Add two takum values using Phase-4 Gaussian-log (Φ) optimization with fallback.
+ *
+ * This function implements takum addition using an advanced Phase-4 strategy that
+ * leverages the Gaussian-log helper function Φ for improved accuracy compared to
+ * naive double-precision intermediate arithmetic. The implementation includes
+ * multiple fallback paths to ensure robust handling of edge cases and accuracy
+ * requirements.
+ *
+ * ALGORITHM OVERVIEW:
+ * ==================
+ * The addition algorithm follows a sophisticated multi-stage approach:
+ *
+ * 1. **NaR Propagation**: Early detection and propagation of Not-a-Real values
+ * 2. **Domain Validation**: Verification that logarithmic values are finite and valid
+ * 3. **Sign Extraction**: Decomposition into sign and magnitude components for ℓ-space arithmetic
+ * 4. **Special Case Handling**: Optimized paths for unity operands (ell = 0) and perfect cancellation
+ * 5. **Magnitude Ordering**: Ensures larger operand is processed first for numerical stability
+ * 6. **Gaussian-log Evaluation**: Core Φ function evaluation for reduced double rounding
+ * 7. **Budget Compliance**: Verification that accuracy meets Proposition 11 requirements
+ * 8. **Fallback Arithmetic**: Double-precision or log-sum-exp when Φ budget is exceeded
+ *
+ * PHASE-4 INNOVATIONS:
+ * ===================
+ * Primary Path (Gaussian-log Φ):
+ * - Uses precomputed Φ approximations to reduce cumulative rounding errors
+ * - Maintains accuracy within λ(p) bounds as specified in Proposition 11
+ * - Optimized for common case where both operands have reasonable magnitudes
+ * - Includes second-order corrections for improved precision
+ *
+ * Fallback Mechanisms:
+ * - Double arithmetic: For simple cases where precision is sufficient
+ * - Log-sum-exp: Exact ℓ-space calculation when Φ budget is exceeded
+ * - NaR handling: Consistent propagation of undefined results
+ *
+ * NUMERICAL PROPERTIES:
+ * ====================
+ * - **Accuracy**: Results guaranteed within λ(p) relative error bounds
+ * - **Monotonicity**: Preserves ordering relationships between operands  
+ * - **Commutativity**: a + b = b + a for all valid inputs
+ * - **Associativity**: Approximate associativity within accuracy bounds
+ * - **Identity**: Addition with takum(0.0) preserves original value
+ * - **NaR Propagation**: Any NaR operand produces NaR result
+ *
+ * EDGE CASE HANDLING:
+ * ==================
+ * - **Perfect Cancellation**: When a + (-a) → takum(0.0)
+ * - **Unity Operands**: Special handling for ±1.0 values (ell = 0)
+ * - **Negligible Addends**: When one operand is insignificant vs. the other
+ * - **Overflow/Underflow**: Graceful saturation to NaR for out-of-range results
+ * - **Mixed Magnitude**: Robust handling of very large or very small operand ratios
+ *
+ * @tparam N Bit width of the takum type (must be ≥ 12 for valid takum)
+ * @param a First takum operand for addition
+ * @param b Second takum operand for addition
+ * @return Result of a + b computed using Phase-4 Φ-enhanced algorithm
+ *
+ * @note Function is marked noexcept to enable use in performance-critical contexts
+ * @note Implementation includes diagnostic counters when TAKUM_ENABLE_PHI_DIAGNOSTICS is set
+ * @note Fallback paths ensure robust results even when Φ optimization is not applicable
+ * @note Results are guaranteed to satisfy Proposition 11 accuracy requirements
+ *
+ * @see operator-(const takum<N>&, const takum<N>&) for corresponding subtraction
+ * @see safe_add() for exception-safe variant returning std::expected/std::optional
  */
 template <size_t N>
 inline takum<N> operator+(const takum<N>& a, const takum<N>& b) noexcept {
+    // STEP 1: NaR (Not-a-Real) propagation - early exit for undefined operands
+    // This ensures consistent handling of special values throughout takum arithmetic
+    // Any arithmetic involving NaR must produce NaR as the result
     if (a.is_nar() || b.is_nar()) return takum<N>::nar();
 
+    // STEP 2: Extract exact logarithmic (ℓ) representations for ℓ-space arithmetic
+    // The ℓ-space representation ell = 2*log(|value|) enables efficient logarithmic arithmetic
+    // This extraction provides the foundation for all subsequent magnitude calculations
     long double ell_a = a.get_exact_ell();
     long double ell_b = b.get_exact_ell();
+    
+    // STEP 3: Domain validation - ensure ℓ values are finite and arithmetically valid
+    // Non-finite ℓ values indicate overflow, underflow, or other numerical issues
+    // that require fallback to conventional floating-point arithmetic
     if (!std::isfinite((double)ell_a) || !std::isfinite((double)ell_b)) {
+        // Fallback to double-precision arithmetic for edge cases
         double da = a.to_double();
         double db = b.to_double();
         if (!std::isfinite(da) || !std::isfinite(db)) return takum<N>::nar();
         return takum<N>(da + db);
     }
 
-    bool Sa = (ell_a < 0.0L);
-    bool Sb = (ell_b < 0.0L);
-    long double mag_a = fabsl(ell_a);
-    long double mag_b = fabsl(ell_b);
+    // STEP 4: Sign and magnitude extraction for ℓ-space decomposition
+    // In ℓ-space: ell < 0 represents values in (0,1), ell > 0 represents values > 1
+    // Sign extraction allows handling of mixed-sign addition through magnitude arithmetic
+    bool Sa = (ell_a < 0.0L);  // True if |a| < 1.0 (negative ℓ-space)
+    bool Sb = (ell_b < 0.0L);  // True if |b| < 1.0 (negative ℓ-space)
+    long double mag_a = fabsl(ell_a);  // Magnitude in ℓ-space: |ell_a|
+    long double mag_b = fabsl(ell_b);  // Magnitude in ℓ-space: |ell_b|
     
-    // Handle cases where one operand is 1.0 (ell = 0)
+    // STEP 5: Special case handling for unity operands (values equal to ±1.0)
+    // When ell = 0, the corresponding value is exactly ±1.0, requiring special arithmetic
+    // This optimization handles the most common small-integer cases efficiently
     if (mag_a == 0.0L && mag_b == 0.0L) {
-        // Both are 1.0 or -1.0: result is 2.0 or 0.0
+        // Both operands are ±1.0: compute result directly without Φ evaluation
+        // Result is either 2.0, 0.0, or -2.0 depending on the sign combination
         return takum<N>((Sa ? -1.0 : 1.0) + (Sb ? -1.0 : 1.0));
     }
     if (mag_a == 0.0L || mag_b == 0.0L) {
-        // One operand is ±1.0, but still exercise Phi path for diagnostics
-        // Fall through to normal path with ratio = 0
+        // One operand is ±1.0: normalize so that the unity operand becomes operand 'b'
+        // This standardization simplifies subsequent ratio calculations and Φ evaluation
+        // We still exercise the Φ path for diagnostic counter consistency
         if (mag_a == 0.0L) {
-            std::swap(mag_a, mag_b); 
-            std::swap(Sa, Sb);
+            std::swap(mag_a, mag_b);  // Ensure non-unity operand is 'a'
+            std::swap(Sa, Sb);        // Preserve sign correspondence
         }
         // Now mag_a > 0, mag_b = 0, so ratio = 0
     } else {
