@@ -1,0 +1,14 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Find dependencies
+# find_dependency(SomePackage REQUIRED)
+
+# Include targets
+if(NOT TARGET TakumCpp::TakumCpp)
+    include("${CMAKE_CURRENT_LIST_DIR}/TakumCppTargets.cmake")
+endif()
+
+# Check required components
+check_required_components(TakumCpp)

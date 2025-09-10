@@ -13,25 +13,51 @@ project(TakumCpp
 # Modern C++ Standard Detection
 # =============================================================================
 
-# Simplified C++ standard detection
-include(CheckCXXCompilerFlag)
-
-# Test for C++23 support
-check_cxx_compiler_flag("-std=c++23" COMPILER_SUPPORTS_CXX23)
-if(COMPILER_SUPPORTS_CXX23)
-    set(CMAKE_CXX_STANDARD 23)
-    message(STATUS "Using C++23 standard")
-else()
-    # Fallback to C++20 
-    check_cxx_compiler_flag("-std=c++20" COMPILER_SUPPORTS_CXX20)
-    if(COMPILER_SUPPORTS_CXX20)
-        set(CMAKE_CXX_STANDARD 20)
-        message(STATUS "Using C++20 standard")
-    else()
-        message(FATAL_ERROR "Compiler does not support C++20 or later")
+# Simplified feature-based C++ standard detection
+function(detect_cxx_standard)
+    # Try C++26 first (preferred)
+    set(CMAKE_CXX_STANDARD 26)
+    set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+    
+    try_compile(CXX26_WORKS
+        ${CMAKE_BINARY_DIR}/cxx_test
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_cxx26.cpp
+        CXX_STANDARD 26
+        CXX_STANDARD_REQUIRED ON
+    )
+    
+    if(CXX26_WORKS)
+        set(CMAKE_CXX_STANDARD 26 PARENT_SCOPE)
+        message(STATUS "Using C++26 standard")
+        return()
     endif()
-endif()
+    
+    # Fallback to C++23
+    try_compile(CXX23_WORKS
+        ${CMAKE_BINARY_DIR}/cxx_test
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_cxx23.cpp
+        CXX_STANDARD 23
+        CXX_STANDARD_REQUIRED ON
+    )
+    
+    if(CXX23_WORKS)
+        set(CMAKE_CXX_STANDARD 23 PARENT_SCOPE)
+        message(STATUS "Using C++23 standard")
+        return()
+    endif()
+    
+    # Minimum fallback to C++20
+    set(CMAKE_CXX_STANDARD 20 PARENT_SCOPE)
+    message(STATUS "Falling back to C++20 standard")
+endfunction()
 
+# Create test files for standard detection
+file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_cxx26.cpp 
+    "#include <expected>\nint main() { std::expected<int, int> e{42}; return 0; }")
+file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_cxx23.cpp 
+    "#include <optional>\nint main() { std::optional<int> o{42}; return 0; }")
+
+detect_cxx_standard()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -187,6 +213,26 @@ if(TAKUM_BUILD_EXAMPLES)
 endif()
 
 # =============================================================================
+# Benchmark Configuration
+# =============================================================================
+
+if(TAKUM_BUILD_BENCHMARKS)
+    find_package(benchmark REQUIRED)
+    
+    file(GLOB BENCHMARK_SOURCES "benchmarks/*.cpp")
+    
+    foreach(benchmark_source ${BENCHMARK_SOURCES})
+        get_filename_component(benchmark_name ${benchmark_source} NAME_WE)
+        add_executable(${benchmark_name} ${benchmark_source})
+        target_link_libraries(${benchmark_name} 
+            PRIVATE 
+                TakumCpp::TakumCpp
+                benchmark::benchmark
+        )
+    endforeach()
+endif()
+
+# =============================================================================
 # Documentation Configuration
 # =============================================================================
 
@@ -206,6 +252,54 @@ if(TAKUM_BUILD_DOCS)
 endif()
 
 # =============================================================================
+# Installation Configuration
+# =============================================================================
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+# Install headers
+install(DIRECTORY include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.h"
+)
+
+# Install targets
+install(TARGETS TakumCpp
+    EXPORT TakumCppTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Export targets
+install(EXPORT TakumCppTargets
+    FILE TakumCppTargets.cmake
+    NAMESPACE TakumCpp::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/TakumCpp
+)
+
+# Create package config
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/TakumCppConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/TakumCppConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/TakumCpp
+)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/TakumCppConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/TakumCppConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/TakumCppConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/TakumCpp
+)
+
+# =============================================================================
 # Status Summary
 # =============================================================================
 
@@ -221,3 +315,98 @@ message(STATUS "  Build Benchmarks:     ${TAKUM_BUILD_BENCHMARKS}")
 message(STATUS "  Build Documentation:  ${TAKUM_BUILD_DOCS}")
 message(STATUS "  Warnings as Errors:   ${TAKUM_ENABLE_WARNINGS_AS_ERRORS}")
 message(STATUS "")
+  # Unix/Linux-specific settings
+endif()
+
+include(FetchContent)
+
+# ---------------------------------------------------------------------------
+# Generated Φ polynomial coefficients
+# ---------------------------------------------------------------------------
+set(PHI_COEFF_HEADER ${CMAKE_SOURCE_DIR}/include/takum/internal/generated/phi_coeffs.h)
+set(PHI_GEN_SCRIPT   ${CMAKE_SOURCE_DIR}/scripts/gen_poly_coeffs.py)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND AND EXISTS ${PHI_GEN_SCRIPT})
+  add_custom_command(
+    OUTPUT ${PHI_COEFF_HEADER}
+    COMMAND ${Python3_EXECUTABLE} ${PHI_GEN_SCRIPT} ${PHI_COEFF_HEADER}
+    DEPENDS ${PHI_GEN_SCRIPT}
+    COMMENT "Generating Φ polynomial coefficient header"
+    VERBATIM
+  )
+  add_custom_target(phi_coeffs_gen DEPENDS ${PHI_COEFF_HEADER})
+else()
+  add_custom_target(phi_coeffs_gen
+    COMMAND ${CMAKE_COMMAND} -E echo "Python3 or script missing; using existing phi_coeffs.h if present"
+  )
+endif()
+
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        v1.15.2
+)
+
+FetchContent_MakeAvailable(googletest)
+
+# Provide an INTERFACE target for header-only library usage
+add_library(TakumCpp INTERFACE)
+target_include_directories(TakumCpp INTERFACE ${CMAKE_SOURCE_DIR}/include)
+
+# Use the detected standard for target features - be conservative about C++26
+if(CMAKE_CXX_STANDARD EQUAL 26)
+  # Only use cxx_std_26 if we're sure it's supported
+  # For now, fall back to setting standard directly for C++26
+  set_target_properties(TakumCpp PROPERTIES 
+    CXX_STANDARD 26
+    CXX_STANDARD_REQUIRED ON)
+  message(STATUS "Using C++26 with direct standard setting (avoiding cxx_std_26 feature)")
+elseif(CMAKE_CXX_STANDARD EQUAL 23)
+  target_compile_features(TakumCpp INTERFACE cxx_std_23)
+elseif(CMAKE_CXX_STANDARD EQUAL 20)
+  target_compile_features(TakumCpp INTERFACE cxx_std_20)
+endif()
+
+# Enable CTest
+include(CTest)
+enable_testing()
+
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
+option(TAKUM_ENABLE_AUTOTEST_LOGS "Run tests automatically after build of 'tests' target and write log + JUnit files" ON)
+
+# Tests (depend on generated header)
+add_subdirectory(test)
+add_dependencies(tests phi_coeffs_gen)
+
+# Examples
+file(GLOB EXAMPLE_SOURCES "${CMAKE_SOURCE_DIR}/examples/*.cpp")
+foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+    get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
+    add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
+    target_link_libraries(${EXAMPLE_NAME} PRIVATE TakumCpp)
+  add_dependencies(${EXAMPLE_NAME} phi_coeffs_gen)
+    if(BUILD_TESTING)
+        add_test(NAME ${EXAMPLE_NAME} COMMAND ${EXAMPLE_NAME})
+    endif()
+endforeach()
+
+# Doxygen documentation: try to find a doxygen executable either in PATH
+# or at a common installation location on Windows. If not found we still
+# expose a `docs` target that will show an informative error when built.
+find_program(DOXYGEN_EXECUTABLE NAMES doxygen HINTS "C:/Program Files/doxygen/bin" "C:/Program Files (x86)/doxygen/bin")
+if(DOXYGEN_EXECUTABLE)
+  add_custom_target(docs
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/Doxyfile"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+  )
+else()
+  add_custom_target(docs
+    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen executable not found. Install Doxygen or add it to PATH to build docs."
+    COMMENT "Doxygen not found: docs target is a no-op"
+  )
+  message(WARNING "Doxygen not found; 'docs' target will be a no-op. Install doxygen to enable documentation generation.")
+endif()

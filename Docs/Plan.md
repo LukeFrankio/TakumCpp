@@ -1,8 +1,22 @@
-### Extensive Incremental Phased Plan for Creating a Takum Arithmetic Library in C++ (Updated with Constraints and Technical Decisions)
+### TakumCpp Modular Architecture Implementation Plan
 
-This updated plan incorporates the specified constraints and technical decisions for the **TakumCpp** library (GitHub repo: TakumCpp). Minimum C++ standard is C++26, leveraging `std::expected` for error handling (NaR propagation), `<stdfloat>` interop where available, and full constexpr support. Gaussian-log (Φ_b^±) uses LUT + interpolation for takum16/takum32 (sizes: 1024/4096 entries, linear/cubic fixed-point interp). For takum64+, hybrid: coarse LUT (256 entries) + degree-5..7 minimax polynomials (pre-generated coeffs via offline script). Storage: Packed integers (uint32_t/uint64_t/array<uint64_t,K> for N>64) for speed/SIMD; optional debug std::bitset<N> view. NaR handling: `std::expected<takum<N>, takum_error>` APIs with optional fallback; helpers `is_nar()`/`to_expected()`. Compatibility: `include/takum/compatibility.h` with shims emitting compile-time warnings (e.g., #pragma message).
+Following comprehensive refactoring analysis, this plan implements a modern modular architecture for the TakumCpp library that addresses the identified structural issues and establishes a foundation for long-term scalability.
 
-The plan ensures 100% coverage of C++ floating-point features up to C++26 (including deprecations like `<math.h>` aliases, reverted `<cmath>` NaN behaviors). Takum follows the paper: logarithmic tapered format, base √e, dynamic range [√e^{-255}, √e^{255}], bitwise props (Props 3-11), NaR (Definition 7), saturation (Algorithm 1). FP principles: Immutability, purity, composability (lambdas/ranges). Timeline: 6-12 months. Tools: CMake, Google Test, Doxygen. LNS refs: [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/8268821/) for Φ approx, [ieeexplore.ieee.org](https://ieeexplore.ieee.org/document/9458421) for low-precision.
+**Architectural Principles:**
+- Separation of concerns: Core encoding, arithmetic engines, and configuration systems
+- Runtime configurability replacing compile-time macros
+- Modular Φ evaluation strategies with pluggable implementations
+- Thread-safe operations with immutable value semantics
+- Comprehensive error handling and type safety
+
+**Implementation Status:**
+✅ Core encoding/decoding separation (`include/takum/core/encoding.h`)
+✅ Modular arithmetic engine with strategy pattern (`include/takum/arithmetic/arithmetic_engine.h`)
+✅ Runtime configuration system (`include/takum/config/runtime_config.h`)
+✅ Refactored main takum type (`include/takum/takum.h`)
+🔄 Mathematical documentation restructuring (in progress)
+🔄 Build system modernization (in progress)
+🔄 Testing infrastructure enhancement (in progress)
 
 #### Phase 1: Research and Specification (2-4 weeks, Low Effort)
   - **Goals**: Deepen understanding of Takum from the paper and map to C++ floating-point features (from prior responses: types, operators, `<cmath>`, etc.). Define library scope, FP constraints, and edge cases (e.g., NaR propagation per Gustafson criteria). Ensure 100% coverage by auditing all features, including deprecations (e.g., `<math.h>` aliases, C++26 reverted deprecations like certain `<cmath>` quiet NaN behaviors). Incorporate constraints: C++26 min, packed storage rationale, Φ approaches (LUT for <64-bit, hybrid for >32-bit), `std::expected` for NaR, compatibility shims with warnings.
