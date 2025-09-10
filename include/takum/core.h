@@ -194,12 +194,12 @@ struct takum {
             // Words are stored little-endian (word 0 is least-significant). Determine
             // the index and bit of the sign and perform comparison starting from
             // the most-significant word.
-            size_t words = storage.size();
+            [[maybe_unused]] size_t words = storage.size();
             // compute msb word index
             size_t msb_word = (N - 1) / 64;
             // Sign bits assumed stored in msb_word at position msb_bit
-            uint64_t self_msw = storage[msb_word];
-            uint64_t other_msw = other.storage[msb_word];
+            [[maybe_unused]] uint64_t self_msw = storage[msb_word];
+            [[maybe_unused]] uint64_t other_msw = other.storage[msb_word];
             // Signed compare by lexicographic order with top word sign extension
             for (size_t wi = msb_word + 1; wi-- > 0;) {
                 uint64_t a = storage[wi];

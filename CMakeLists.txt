@@ -78,6 +78,14 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
     message(STATUS "Clang 12+ detected: full C++20/23 support available")
   endif()
+  # Workaround: libstdc++ + clang < 16 has incomplete std::format / ranges / unicode interaction
+  # that triggers massive constraint failures when building googletest (uses <format> internally).
+  # Disable std::format usage in gtest by defining GTEST_INTERNAL_HAS_STD_FORMAT=0 when we detect
+  # a problematic toolchain variant (clang < 16).
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16.0")
+    add_compile_definitions(GTEST_INTERNAL_HAS_STD_FORMAT=0)
+    message(STATUS "Disabling std::format in GoogleTest for clang <16 (GTEST_INTERNAL_HAS_STD_FORMAT=0)")
+  endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   message(STATUS "Detected AppleClang compiler version ${CMAKE_CXX_COMPILER_VERSION}")
   # AppleClang-specific flags - more conservative with C++ standards
