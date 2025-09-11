@@ -8,6 +8,15 @@
  * older consumers migrate to the core `takum<N>` types. It includes deprecated
  * type aliases and fallback implementations for older C++ standards.
  *
+ * @deprecated Items in this header are deprecated. Use core takum<N> types directly.
+ *
+ * **Namespace Usage Guidance:**
+ * Some test files use `using namespace takum::types;` while others use explicit 
+ * qualification like `takum::types::takum32`. Both patterns are acceptable:
+ * - Use `using namespace` for brevity when no ambiguity exists
+ * - Use explicit qualification to avoid naming conflicts or improve clarity
+ * - Choose consistently within each translation unit
+ *
  * @note Prefer using the core `takum<N>` types directly in new code
  * @note This header may be removed in future versions after deprecation periods
  */
@@ -33,6 +42,9 @@ using float8_t = takum::takum<8>;
 /**
  * @brief Compatibility shim for std::expected when C++23 is not available.
  *
+ * @deprecated This compatibility shim will be removed when C++23 becomes
+ * the minimum supported standard. Use std::expected directly when available.
+ *
  * Provides a minimal expected-like interface for use with takum types on
  * older C++ standards. Only implements the subset of functionality needed
  * by the takum library.
@@ -40,6 +52,9 @@ using float8_t = takum::takum<8>;
 namespace takum {
 /**
  * @brief Lightweight std::expected-like type for pre-C++23 compatibility.
+ *
+ * @deprecated This compatibility type will be removed when C++23 becomes
+ * the minimum supported standard. Use std::expected directly when available.
  *
  * Provides basic expected/error handling functionality when std::expected
  * is not available. Supports the core operations needed by takum library.

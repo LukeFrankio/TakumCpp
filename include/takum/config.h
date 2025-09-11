@@ -1,6 +1,9 @@
 /**
  * @file config.h
- * @brief Central configuration and feature toggles for TakumCpp Phase-4 implementation.
+ * @brief Central configuration and feature toggles for TakumCpp implementation.
+ *
+ * @deprecated The term "Phase-4 implementation" is deprecated. This header
+ * provides configuration for the current takum arithmetic implementation.
  *
  * This header provides compile-time configuration options that control various
  * performance and accuracy trade-offs in the takum arithmetic library. All

@@ -5,7 +5,11 @@
  * This header provides constexpr utilities for analyzing precision characteristics
  * and managing error budgets in takum arithmetic operations. The implementation
  * follows the theoretical framework from Proposition 11 analogues and provides
- * conservative bounds suitable for Phase-4 Φ-based addition algorithms.
+ * conservative bounds suitable for Φ-based addition algorithms in the current
+ * takum implementation.
+ *
+ * @deprecated The term "Phase-4 Φ-based addition algorithms" is deprecated.
+ * This refers to the current takum arithmetic implementation.
  *
  * @details
  * The precision model accounts for:

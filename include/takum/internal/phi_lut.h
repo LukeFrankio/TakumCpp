@@ -19,7 +19,12 @@
  * Cubic mode produces smoother derivatives and typically halves maximum error
  * compared to linear interpolation for the same LUT size.
  *
- * @note This is a Phase-4 interim implementation that can be replaced by offline
+ * @deprecated The term "Phase-4 interim implementation" is deprecated. This
+ * provides the current takum Φ function implementation using on-demand lookup
+ * tables and can be replaced by offline generated headers for improved
+ * reproducibility in production builds.
+ *
+ * @note This is an interim implementation that can be replaced by offline
  *       generated headers for improved reproducibility in production builds.
  *
  * @see takum::config::cubic_phi_lut() for runtime configuration queries
