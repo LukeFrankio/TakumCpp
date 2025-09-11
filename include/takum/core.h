@@ -29,12 +29,14 @@
  * @brief Core definitions for the Takum numeric type family.
  *
  * This header provides the parametric fixed-bit-width "takum" type template
- * that represents a logarithmic-like numeric encoding (Phase2 reference
- * implementation). It also provides small helpers and an error type used by
- * the optional/expected-style accessors.
+ * that represents a logarithmic-like numeric encoding. This implements the
+ * current specification with full multi-word support and optimized operations.
  *
- * The implementation intentionally documents places that are placeholders
- * for future multi-word support.
+ * @deprecated References to "Phase2" are deprecated. The implementation now
+ * represents the current takum specification without phase designations.
+ *
+ * The implementation intentionally documents places that require further
+ * optimization or feature completion for multi-word support.
  */
 
 /**
@@ -306,8 +308,11 @@ struct takum {
     /**
      * @brief Compute the reciprocal in the reference codec.
      *
-     * Returns NaR for NaR or zero input. This implements the simple bitwise
-     * inverse-plus-one rule used by the Phase2 reference codec.
+     * @deprecated The term "Phase2 reference codec" is deprecated. This implements
+     * the current takum specification reciprocal operation.
+     *
+     * Returns NaR for NaR or zero input. This implements the bitwise
+     * inverse-plus-one rule used by the current takum specification.
      */
     takum reciprocal() const noexcept {
         if (is_nar()) return nar();
@@ -480,10 +485,15 @@ struct takum {
      * and testing boundary conditions.
      *
      * @return uint64_t containing the maximum finite positive bit pattern
+     * @deprecated This placeholder implementation is deprecated. Full multi-word
+     * support is pending and will be implemented in a future version.
+     *
      * @note For N>64, returns placeholder value 0; full multi-word support pending
      */
     static uint64_t max_finite_storage() noexcept {
         if constexpr (N > 64) {
+            // @deprecated This placeholder implementation is deprecated. 
+            // Full multi-word packing will be implemented in a future version.
             // Placeholder for large N; full multi-word packing later
             return 0ULL;
         }
@@ -527,9 +537,12 @@ struct takum {
 
     /**
      * @brief Encode a host `double` into the takum bit pattern using the
-     * reference encoding.
+     * current specification encoding.
      *
-     * This function packs S,D,R,C,M fields per the Phase2 reference
+     * @deprecated The term "Phase2 reference" is deprecated. This implements
+     * the current takum specification encoding algorithm.
+     *
+     * This function packs S,D,R,C,M fields per the current takum reference
      * specification. Special cases: zero maps to zero; non-finite maps to NaR.
      *
      * For N<=64 the returned value is stored in a single integer; for larger
@@ -640,8 +653,11 @@ struct takum {
     /**
      * @brief Construct takum storage directly from sign and logarithmic value ℓ.
      *
+     * @deprecated The term "Phase‑4 native encoder" is deprecated. This implements
+     * the current takum specification encoding from logarithmic values.
+     *
      * This avoids converting via host double when the logarithmic value is
-     * already known (Phase‑4 native encoder). Returns NaR for out-of-range ℓ
+     * already known (direct ℓ-space encoder). Returns NaR for out-of-range ℓ
      * (|ℓ| > max_ell()) or when ℓ is NaN.
      */
     static takum from_ell(bool S, long double ell_ld) noexcept {

@@ -1,59 +1,175 @@
+/**
+ * @file phi_lut.h
+ * @brief Lightweight on-demand generated lookup tables for Φ (Gaussian-log) approximation.
+ *
+ * This header provides optimized lookup table generation and interpolation for the
+ * Gaussian-log function Φ used in takum addition operations. The implementation
+ * supports both linear and cubic Catmull-Rom interpolation modes for different
+ * accuracy/performance trade-offs.
+ *
+ * @details
+ * The lookup tables operate over the domain [-0.5, 0.5] with uniform sampling
+ * including both endpoints. Values are stored in Q16 fixed-point format (uint32_t)
+ * for deterministic cross-platform representation.
+ *
+ * **Interpolation Modes:**
+ * - **Linear (default)**: Always enabled, conservative error bounds, fastest
+ * - **Cubic Catmull-Rom**: Enable with TAKUM_ENABLE_CUBIC_PHI_LUT, higher quality
+ *
+ * Cubic mode produces smoother derivatives and typically halves maximum error
+ * compared to linear interpolation for the same LUT size.
+ *
+ * @deprecated The term "Phase-4 interim implementation" is deprecated. This
+ * provides the current takum Φ function implementation using on-demand lookup
+ * tables and can be replaced by offline generated headers for improved
+ * reproducibility in production builds.
+ *
+ * @note This is an interim implementation that can be replaced by offline
+ *       generated headers for improved reproducibility in production builds.
+ *
+ * @see takum::config::cubic_phi_lut() for runtime configuration queries
+ * @see TAKUM_ENABLE_CUBIC_PHI_LUT for compile-time feature control
+ */
+
 #pragma once
+
 #include <array>
 #include <cstdint>
 #include <cmath>
 #include "takum/internal/phi_types.h"
 #include "takum/config.h"
 
-// Lightweight, on-demand generated LUTs for Φ approximation for small precisions.
-// Domain: [-0.5, 0.5]. Uniform samples including both endpoints.
-// Stored in Q16 fixed-point (uint32_t) for deterministic representation.
-// NOTE: This is a Phase‑4 interim implementation; can be replaced by an
-// offline generated header for reproducibility.
-//
-// Interpolation modes:
-//  - Linear (default)   : always enabled, conservative error bound.
-//  - Cubic Catmull-Rom  : enable with TAKUM_ENABLE_CUBIC_PHI_LUT (higher quality).
-//
-// Cubic mode produces a smoother derivative and typically halves the max error
-// vs linear for the same LUT size. A conservative error bound is derived from
-// local finite differences (falls back to linear bound * 0.6 + slack).
-
+/**
+ * @namespace takum::internal::phi
+ * @brief Internal implementation namespace for Φ (Gaussian-log) function evaluation.
+ *
+ * This namespace contains the core implementation details for computing the
+ * Gaussian-log function Φ used in high-precision takum addition operations.
+ * The implementation provides multiple strategies including lookup tables,
+ * polynomial approximation, and hybrid approaches.
+ */
 namespace takum::internal::phi {
 
+/**
+ * @namespace takum::internal::phi::detail
+ * @brief Implementation details for Φ lookup table generation and management.
+ *
+ * Contains low-level utilities for generating, storing, and accessing lookup
+ * tables used in Φ function approximation. These components are not intended
+ * for direct use outside the phi evaluation system.
+ */
 namespace detail {
+    /// @brief Minimum value of the Φ function domain [-0.5, 0.5]
     constexpr long double domain_min = -0.5L;
+    /// @brief Maximum value of the Φ function domain [-0.5, 0.5]  
     constexpr long double domain_max =  0.5L;
+    /// @brief Total span of the Φ function domain (always 1.0)
     constexpr long double span = domain_max - domain_min; // 1.0
 
+    /**
+     * @brief Reference implementation of the Φ (Gaussian-log) function.
+     *
+     * Computes Φ(x) = 0.5 * (1 + erf(x/√2)) using the standard library's
+     * error function. This serves as the ground truth for lookup table
+     * generation and validation.
+     *
+     * @param x Input value, typically in domain [-0.5, 0.5]
+     * @return Φ(x) value in range [0, 1]
+     *
+     * @note Uses long double precision for maximum accuracy in LUT generation
+     */
     inline long double phi_ref(long double x) {
         return 0.5L * (1.0L + std::erfl(x / std::sqrt(2.0L)));
     }
 
+    /**
+     * @brief Compile-time lookup table holder for Φ function values.
+     *
+     * Generates and stores a lookup table with S+1 uniformly spaced samples
+     * of the Φ function over the domain [-0.5, 0.5]. Values are stored in
+     * Q16 fixed-point format for deterministic cross-platform behavior.
+     *
+     * @tparam S Number of LUT intervals (total entries = S+1)
+     *
+     * @details
+     * The lookup table is generated at compile time using a constexpr constructor.
+     * Values are clamped to [0, 1] for safety and converted to Q16 fixed-point
+     * using round-to-nearest for optimal precision within the 16-bit range.
+     */
     template <size_t S>
     struct LutHolder {
+        /// @brief Storage for Q16 fixed-point Φ function values
         std::array<uint32_t, S+1> data{}; // Q16 values
+        
+        /**
+         * @brief Compile-time constructor that generates the lookup table.
+         *
+         * Samples the Φ function at S+1 uniformly spaced points over [-0.5, 0.5]
+         * and stores the results as Q16 fixed-point values for deterministic
+         * cross-platform behavior.
+         */
         constexpr LutHolder() : data{} {
             for (size_t i = 0; i <= S; ++i) {
                 long double t = domain_min + (span * static_cast<long double>(i) / static_cast<long double>(S));
                 long double v = phi_ref(t);
-                if (v < 0) v = 0; if (v > 1) v = 1; // clamp safety
+                if (v < 0) v = 0; // clamp safety: floor
+                if (v > 1) v = 1; // clamp safety: ceiling
                 uint32_t q = static_cast<uint32_t>(std::llround(v * (1ull << 16)));
                 data[i] = q;
             }
         }
     };
 
+    /**
+     * @brief Retrieves a static lookup table for the specified size.
+     *
+     * Returns a reference to a statically allocated lookup table with S+1 entries.
+     * The table is generated once per template instantiation and reused across
+     * all calls for the same size parameter.
+     *
+     * @tparam S Number of LUT intervals (total entries = S+1)
+     * @return Const reference to the lookup table array
+     *
+     * @note Thread-safe due to static initialization guarantees in C++11+
+     */
     template <size_t S>
     inline const std::array<uint32_t, S+1>& get_lut() {
         static const LutHolder<S> holder{}; // constexpr ctor
         return holder.data;
     }
 
+    /**
+     * @brief Converts Q16 fixed-point value to long double.
+     *
+     * @param q Q16 fixed-point value (16 fractional bits)
+     * @return Equivalent long double value in range [0, 1]
+     */
     inline long double q16_to_ld(uint32_t q) {
         return static_cast<long double>(q) / static_cast<long double>(1ull << 16);
     }
 
+    /**
+     * @brief Linear interpolation-based Φ function evaluation using lookup table.
+     *
+     * Evaluates Φ(t) using linear interpolation between precomputed lookup table
+     * values. Provides good accuracy with minimal computational cost.
+     *
+     * @tparam S Number of LUT intervals (total LUT size = S+1)
+     * @param t Input value for Φ evaluation, automatically clamped to [-0.5, 0.5]
+     * @return PhiEvalResult containing interpolated value, error bound, and metadata
+     *
+     * @details
+     * The function maps input t to lookup table coordinates, performs linear
+     * interpolation between adjacent table entries, and computes a conservative
+     * error bound based on local slope magnitude.
+     *
+     * **Error Bound Calculation:**
+     * - Conservative estimate: half of local slope magnitude plus small slack
+     * - Accounts for linear interpolation truncation error
+     * - Guaranteed to be an upper bound for smooth functions
+     *
+     * @note Input values outside [-0.5, 0.5] are automatically clamped to domain bounds
+     */
     template <size_t S>
     inline PhiEvalResult phi_lut_linear(long double t) noexcept {
         if (t < domain_min) t = domain_min;
@@ -72,7 +188,36 @@ namespace detail {
         return { value, eb, static_cast<int>(i) };
     }
 
-    // Cubic Catmull-Rom interpolation (uniform parameterization). Enabled via macro.
+    /**
+     * @brief Cubic Catmull-Rom interpolation-based Φ function evaluation.
+     *
+     * Evaluates Φ(t) using cubic Catmull-Rom spline interpolation for higher
+     * accuracy than linear interpolation. Falls back to linear interpolation
+     * if TAKUM_ENABLE_CUBIC_PHI_LUT is not defined.
+     *
+     * @tparam S Number of LUT intervals (total LUT size = S+1)  
+     * @param t Input value for Φ evaluation, automatically clamped to [-0.5, 0.5]
+     * @return PhiEvalResult containing interpolated value, error bound, and metadata
+     *
+     * @details
+     * Uses uniform Catmull-Rom spline interpolation that typically provides
+     * significantly better accuracy than linear interpolation for smooth functions.
+     * The implementation uses 4 adjacent points for interpolation with proper
+     * boundary handling.
+     *
+     * **Catmull-Rom Spline Formula:**
+     * - Uses centripetal parameterization equivalent for uniform spacing
+     * - Requires 4 control points: y₀, y₁, y₂, y₃
+     * - Interpolates between y₁ and y₂ using cubic polynomial
+     *
+     * **Error Bound Estimation:**
+     * - Based on second finite difference magnitude
+     * - Accounts for cubic interpolation truncation error
+     * - Includes sanity check against linear bound for robustness
+     *
+     * @note Compilation will use linear fallback if TAKUM_ENABLE_CUBIC_PHI_LUT is not defined
+     * @note Input values outside [-0.5, 0.5] are automatically clamped to domain bounds
+     */
     template <size_t S>
     inline PhiEvalResult phi_lut_cubic(long double t) noexcept {
 #ifndef TAKUM_ENABLE_CUBIC_PHI_LUT

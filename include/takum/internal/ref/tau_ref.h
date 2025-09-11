@@ -9,10 +9,18 @@
  * @file tau_ref.h
  * @brief Reference (readable, unoptimized) tapered-log encoder/decoder used by tests.
  *
+ * @deprecated This reference implementation is deprecated in favor of the optimized
+ * core takum<N> encoding/decoding methods. Use takum<N>::encode_from_double() and
+ * takum<N>::decode_to_double() instead. This file is maintained only for test
+ * validation and will be removed in a future version.
+ *
  * This header provides simple, auditable encode/decode helpers that mirror the
  * library's packing format. The implementations are intentionally clear, not
  * optimized, and are intended to be used by unit tests and spec-reference
  * validations.
+ *
+ * @warning These functions should not be used in production code
+ * @note Prefer takum<N> methods for all new development
  */
 
 #include <cstdint>
@@ -24,6 +32,10 @@ namespace takum::internal::ref {
 
 /**
  * @brief Reference implementation to encode a double into takum<N> bit pattern.
+ *
+ * @deprecated Use takum<N>::encode_from_double() instead. This reference
+ * implementation is maintained only for test validation and specification
+ * compliance checking. It will be removed in a future version.
  *
  * This function provides a clear, auditable encoding that mirrors the library's
  * packing format. It is intentionally readable rather than optimized and is
@@ -38,6 +50,7 @@ namespace takum::internal::ref {
  *       - NaN and infinity map to canonical NaR (sign bit set, rest zero)
  *       - Underflow/overflow also maps to appropriate patterns
  * @note The encoding follows the tapered logarithmic format per the reference specification
+ * @warning This is a test-only function; use takum<N> constructors in production
  */
 template <size_t N>
 inline uint64_t encode_double_to_bits(double x) noexcept {
@@ -116,6 +129,10 @@ inline uint64_t encode_double_to_bits(double x) noexcept {
 /**
  * @brief Reference implementation to decode takum<N> bit pattern to double.
  *
+ * @deprecated Use takum<N>::decode_to_double() or takum<N>::to_double() instead.
+ * This reference implementation is maintained only for test validation and
+ * specification compliance checking. It will be removed in a future version.
+ *
  * This function provides a clear, auditable decoding that mirrors the library's
  * unpacking format. It reconstructs the original double value from the
  * S,D,R,C,M fields following the tapered logarithmic specification.
@@ -127,6 +144,7 @@ inline uint64_t encode_double_to_bits(double x) noexcept {
  * @note NaR patterns (canonical: sign bit set, rest zero) decode to quiet NaN
  * @note Zero patterns decode to exactly 0.0 
  * @note The decoding follows eq. (24) from the reference specification
+ * @warning This is a test-only function; use takum<N> methods in production
  */
 template <size_t N>
 inline double decode_bits_to_double(uint64_t bits) noexcept {
@@ -179,6 +197,10 @@ inline double decode_bits_to_double(uint64_t bits) noexcept {
 /**
  * @brief High-precision reference decoder using long double arithmetic.
  *
+ * @deprecated Use takum<N>::get_exact_ell() for high-precision logarithmic values
+ * or the standard takum<N> methods for most use cases. This reference decoder
+ * is maintained only for test validation and will be removed in a future version.
+ *
  * This function provides higher precision decoding than the standard 
  * decode_bits_to_double function by using long double internally for
  * calculations. Useful for testing and validation where extra precision
@@ -191,6 +213,7 @@ inline double decode_bits_to_double(uint64_t bits) noexcept {
  * @note Uses long double sqrt and exp functions for higher precision
  * @note Follows the same specification as decode_bits_to_double but with extended precision
  * @note Primarily intended for testing and reference validation purposes
+ * @warning This is a test-only function; use takum<N> methods in production
  */
 template <size_t N>
 inline long double high_precision_decode(uint64_t bits) noexcept {

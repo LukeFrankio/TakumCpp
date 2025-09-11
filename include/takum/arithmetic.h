@@ -2,16 +2,19 @@
  * @file arithmetic.h
  * @brief Basic arithmetic operators and safe variants for takum<N>.
  *
- * This header provides simple, correct Phase‑3 arithmetic implementations
- * that use host `double` intermediates to compute results. Phase‑4 will
- * replace addition/subtraction with a Takum-native Gaussian-log (Φ)
- * implementation for better accuracy and performance.
+ * @deprecated References to "Phase‑3" and "Phase‑4" are deprecated. This header
+ * provides the current takum arithmetic implementation with optimized Φ-based
+ * addition and standard floating-point fallbacks.
+ *
+ * This header provides arithmetic implementations that use host `double`
+ * intermediates for multiplication and division, with specialized Gaussian-log (Φ)
+ * evaluation for addition and subtraction to improve accuracy and performance.
  */
 
 #pragma once
 
 #include "takum/core.h"
-#include "takum/internal/phi_eval.h" // Phase-4 Φ evaluator
+#include "takum/internal/phi_eval.h" // Φ evaluator for enhanced addition
 #include "takum/config.h"
 
 #include <type_traits>
@@ -20,7 +23,11 @@
 namespace takum {
 
 /**
- * @brief Add two takum values (Phase‑4 Φ path with fallback).
+ * @brief Add two takum values (Φ-enhanced path with fallback).
+ * 
+ * @deprecated The term "Phase‑4 Φ path" is deprecated. This implements the
+ * current takum addition algorithm using Gaussian‑log (Φ) evaluation.
+ * 
  * Primary path: Gaussian‑log helper Φ to reduce double rounding.
  * Fallback: exact log-sum-exp in ℓ space when budget exceeded.
  */
