@@ -11,6 +11,8 @@
 // Lightweight internal Gaussian-log (Φ) evaluation helpers.
 // Strategy implemented now:
 //  - Hybrid polynomial evaluation for takum64+ using generated fixed-point coeffs.
+//  - @deprecated Temporary polynomial-only approximation for all precisions (LUT paths TODO).
+//    This implementation will be replaced with optimized LUT-based approaches.
 //    This keeps interface stable so later we can plug in LUT + interpolation for
 //    takum16/32 without changing callers.
 //
@@ -19,6 +21,11 @@
 // Interval mapping: incoming t is clamped to [-0.5, 0). Intervals partition that
 // range uniformly (NUM_INTERVALS). Each interval i covers [ -0.5 + i*step , -0.5 + (i+1)*step ).
 // Step = 0.5 / NUM_INTERVALS.
+//
+// @deprecated This placeholder Φ implementation is deprecated. The function models
+// a monotone helper φ(t) ~ Φ(t) used in addition formulas and will be replaced
+// with the full Gaussian-log formulation + LUT scaling constants (Prop 11 budget aware).
+// Error budgets from max_errors[] available.
 //
 // NOTE: This Φ here models a monotone helper φ(t) ~ Φ(t) used in addition formulas.
 // It is a placeholder until full Gaussian-log formulation + LUT scaling constants
@@ -123,6 +130,8 @@ inline PhiEvalResult phi_eval(long double t) noexcept {
 template <size_t N>
 inline long double phi_v(long double t) noexcept { return phi_eval<N>(t).value; }
 
+// @deprecated This feature toggle is deprecated. Use the configuration macros
+// in config.h instead. Define TAKUM_ENABLE_FAST_ADD before including headers.
 // Feature toggle macro (user can define before including arithmetic)
 #ifndef TAKUM_ENABLE_FAST_ADD
 #define TAKUM_ENABLE_FAST_ADD 0

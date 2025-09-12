@@ -19,6 +19,7 @@
 #include <variant>  // Fallback shim if needed, but use optional for now
 #endif
 
+#include "takum/internal/ref/tau_ref.h"
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -30,6 +31,9 @@
  * This header provides the parametric fixed-bit-width "takum" type template
  * that represents a logarithmic-like numeric encoding. This implements the
  * current specification with full multi-word support and optimized operations.
+ *
+ * @deprecated References to "Phase2" are deprecated. The implementation now
+ * represents the current takum specification without phase designations.
  *
  * The implementation intentionally documents places that require further
  * optimization or feature completion for multi-word support.
@@ -304,6 +308,9 @@ struct takum {
     /**
      * @brief Compute the reciprocal in the reference codec.
      *
+     * @deprecated The term "Phase2 reference codec" is deprecated. This implements
+     * the current takum specification reciprocal operation.
+     *
      * Returns NaR for NaR or zero input. This implements the bitwise
      * inverse-plus-one rule used by the current takum specification.
      */
@@ -478,11 +485,15 @@ struct takum {
      * and testing boundary conditions.
      *
      * @return uint64_t containing the maximum finite positive bit pattern
+     * @deprecated This placeholder implementation is deprecated. Full multi-word
+     * support is pending and will be implemented in a future version.
      *
      * @note For N>64, returns placeholder value 0; full multi-word support pending
      */
     static uint64_t max_finite_storage() noexcept {
         if constexpr (N > 64) {
+            // @deprecated This placeholder implementation is deprecated. 
+            // Full multi-word packing will be implemented in a future version.
             // Placeholder for large N; full multi-word packing later
             return 0ULL;
         }
@@ -527,6 +538,9 @@ struct takum {
     /**
      * @brief Encode a host `double` into the takum bit pattern using the
      * current specification encoding.
+     *
+     * @deprecated The term "Phase2 reference" is deprecated. This implements
+     * the current takum specification encoding algorithm.
      *
      * This function packs S,D,R,C,M fields per the current takum reference
      * specification. Special cases: zero maps to zero; non-finite maps to NaR.
@@ -639,7 +653,8 @@ struct takum {
     /**
      * @brief Construct takum storage directly from sign and logarithmic value ℓ.
      *
-     * This implements the current takum specification encoding from logarithmic values.
+     * @deprecated The term "Phase‑4 native encoder" is deprecated. This implements
+     * the current takum specification encoding from logarithmic values.
      *
      * This avoids converting via host double when the logarithmic value is
      * already known (direct ℓ-space encoder). Returns NaR for out-of-range ℓ
@@ -1034,7 +1049,7 @@ struct numeric_limits<takum::takum<N>> {
     static constexpr bool has_signaling_NaN = false;
     static constexpr float_denorm_style has_denorm = denorm_absent;
     static constexpr bool has_denorm_loss = false;
-    static constexpr bool is_iec559 = false; // not IEC 559 compliant
+    static constexpr bool is_iec559 = false; // Deprecated traits: not IEC 559 compliant
     static constexpr bool is_modulo = false;
     static constexpr bool traps = false;
     static constexpr bool tinyness_before = false;
