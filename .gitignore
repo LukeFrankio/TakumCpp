@@ -26,6 +26,7 @@ cmake-build-*
 .idea/
 *.swp
 *.swo
+.vs/
 
 # Tests
 *.test
