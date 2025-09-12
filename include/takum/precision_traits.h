@@ -8,9 +8,6 @@
  * conservative bounds suitable for Φ-based addition algorithms in the current
  * takum implementation.
  *
- * @deprecated The term "Phase-4 Φ-based addition algorithms" is deprecated.
- * This refers to the current takum arithmetic implementation.
- *
  * @details
  * The precision model accounts for:
  * - Structural bit overhead (sign, discriminator, regime encoding)
