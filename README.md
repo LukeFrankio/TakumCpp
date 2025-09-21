@@ -38,6 +38,47 @@ The following features from C++98 to C++26 (including deprecations) have not yet
 - Full deprecations: `<math.h>` C-style aliases (`sinf`, `logl`), reverted C++26 behaviors (e.g., `pow(NaN,0)=1` → NaR), subnormals (saturate to bounds), old NaN comparisons (`NaN != NaN`), hex literals (`0x1.2p3`), old rounding modes, `valarray` legacy ops, `bind1st` binders.
 - Advanced: Functional abstractions (monads, pipelines), optimizations (SIMD/LUT), linear Takum variant, full `<stdfloat>` interop (e.g., `std::float16_t` → `takum16`).
 
+## Post-Parity Extensions and Advanced Features
+
+Upon achieving full feature parity with the C++ floating-point standard up to C++26, TakumCpp will be extended to incorporate a rich set of advanced mathematical constructs for numerical exploration. These features will move beyond standard arithmetic to provide a comprehensive toolkit for theoretical and applied mathematics.
+
+### Hypercomplex Number Systems
+The library will introduce a variety of hypercomplex number systems, allowing for operations in higher-dimensional algebras. The planned implementations include:
+-   **Quaternions:** For 4D rotations and mechanics.
+-   **Octonions:** An 8-dimensional non-associative algebra.
+-   **Sedenions:** A 16-dimensional algebra.
+-   **Trigintaduonions:** A 32-dimensional algebra.
+-   **Cayley-Dickson Construction:** The underlying mechanism to generate higher-order algebras like octonions and sedenions.
+-   **Split-complex numbers:** An alternative 2D number system with a non-real unit `j` where `j² = +1`.
+-   **Multicomplex numbers:** A system built by applying the complex number construction recursively.
+-   **Modified Cayley-Dickson construction:** A variation of the construction process.
+-   **Dual numbers:** Used in automatic differentiation and kinematics.
+-   **Generalized complex numbers:** A broader classification of 2D number systems.
+-   **Clifford algebras:** A framework that generalizes complex numbers and quaternions.
+-   **Quotient rings:** To formally construct number systems like complex and dual numbers.
+
+### Hyperoperations
+The library will explore the sequence of arithmetic operations beyond exponentiation, known as hyperoperations. This will include:
+-   **Tetration:** Iterated exponentiation.
+-   **Pentation:** Iterated tetration.
+-   **Higher Hyperoperations:** Hexation, Heptation, Octation, Enneation, Decation, and generalized n-ation.
+-   **Infinite hyperoperations:** Circulation (the limit of hyperoperations at infinity) and Omegation (using transfinite ordinals).
+-   **Lower-order hyperoperations:** Including Zeration and the successor function.
+-   **Fractional hyperoperations:** Such as Sesquation (level 1.5).
+-   **Lower hyperoperations:** Including lower tetration, lower pentation, etc.
+-   **Mixed hyperoperations:** Combining left-to-right and right-to-left evaluation orders.
+-   **Balanced hyperoperations:** Defining operations with a balanced evaluation order.
+-   **Commutative hyperoperations:** A separate hierarchy of operations that retain commutativity.
+
+### Mathematical Constants
+A comprehensive suite of mathematical constants will be provided with Takum precision.
+-   **Core Constants:** Pi (π), Tau (τ), Euler's number (e), Imaginary Unit (i).
+-   **Sequence-based Constants:** Reciprocal Fibonacci constant (ψ), Golden ratio (φ), Supergolden ratio (ψ), Silver ratio (δs), Plastic ratio (ρ), Tribonacci constant, Viswanath's constant, Embree-Trefethen constant, Conway's constant (λ).
+-   **Geometric Constants:** Golden Angle (α), Magic Angle (θm), Pythagoras constant (√2), Polygon Circumscribing Constant (R), Kepler-Bouwkamp constant (ρ).
+-   **Analysis Constants:** Euler-Mascheroni constant (γ), Meissel-Mertens constant (M), Prime constant (ρ), Kolakoski constant, Mills' constant (A), Erdős–Borwein constant (E), Brun's constant (for twin primes, B₂), Brun's constant for prime quadruplets (B₄), Niven's constant (C), Catalan's constant (G), Apéry's constant (ζ(3)), Wallis constant, Somos' quadratic recurrence constant (σ), Dottie number, Foias constant (α), Landau–Ramanujan constant (b), Cahen's constant (C).
+
+These extensions will establish TakumCpp as a powerful and versatile library for both conventional high-performance computing and advanced numerical research.
+
 ## Requirements
 - C++26 capable compiler recommended (GCC/Clang recent, MSVC 2022+); guarded fallbacks support C++23 toolchains.
 - CMake 3.20+.
