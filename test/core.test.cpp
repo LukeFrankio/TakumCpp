@@ -149,8 +149,8 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     EXPECT_FALSE(uniqueness_violation) << "Uniqueness violation: Distinct bit patterns 0x" << std::hex << colliding_ui1
                                        << " and 0x" << colliding_ui2 << " map to same exact (S=" << std::get<0>(colliding_tuple)
                                        << ", c=" << std::get<1>(colliding_tuple) << ", m_int=" << std::dec << std::get<3>(colliding_tuple)
-                                       << ") tuple. Decoded τ values: " << "value1"
-                                       << " and " << "value2";
+                                       << ") tuple. Decoded τ values: " << takum::takum<n>(colliding_ui1).to_double()
+                                       << " and " << takum::takum<n>(colliding_ui2).to_double();
 }
 
 // Extend to N=16: full monotonicity and uniqueness
