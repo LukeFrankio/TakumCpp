@@ -29,7 +29,6 @@ jobs:
       - name: Test with MSVC
         timeout-minutes: 3
         run: cmake --build build --target ci_test_wrapper --config Release
-        continue-on-error: true
 
       - name: Upload MSVC failure log if present
         uses: actions/upload-artifact@v4
@@ -50,7 +49,7 @@ jobs:
         timeout-minutes: 5
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-13 g++-13 ninja-build python3
+          sudo apt-get install -y gcc-14 g++-14 ninja-build python3
 
       - name: Generate polynomial coefficients
         timeout-minutes: 3
@@ -59,8 +58,8 @@ jobs:
       - name: Configure with GCC
         timeout-minutes: 2
         env:
-          CC: gcc-13
-          CXX: g++-13
+          CC: gcc-14
+          CXX: g++-14
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build with GCC
@@ -70,7 +69,6 @@ jobs:
       - name: Test with GCC
         timeout-minutes: 2
         run: cmake --build build --target ci_test_wrapper
-        continue-on-error: true
 
       - name: Upload failure log if present
         uses: actions/upload-artifact@v4
@@ -91,7 +89,7 @@ jobs:
         timeout-minutes: 5
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-15 ninja-build python3
+          sudo apt-get install -y clang-18 ninja-build python3
 
       - name: Generate polynomial coefficients
         timeout-minutes: 3
@@ -100,8 +98,8 @@ jobs:
       - name: Configure with Clang
         timeout-minutes: 2
         env:
-          CC: clang-15
-          CXX: clang++-15
+          CC: clang-18
+          CXX: clang++-18
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build with Clang
@@ -111,7 +109,6 @@ jobs:
       - name: Test with Clang
         timeout-minutes: 2
         run: cmake --build build --target ci_test_wrapper
-        continue-on-error: true
 
       - name: Upload failure log if present
         uses: actions/upload-artifact@v4
