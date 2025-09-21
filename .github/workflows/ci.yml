@@ -6,13 +6,10 @@ permissions:
 on: [push, pull_request]
 
 jobs:
-  # Windows with MSVC
+  # Windows with MSVC - cheapest GitHub Actions runner
   windows-msvc:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        build_type: [Debug, Release]
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -23,186 +20,102 @@ jobs:
 
       - name: Configure with MSVC
         timeout-minutes: 3
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build with MSVC
-        timeout-minutes: 12
-        run: cmake --build build --config ${{ matrix.build_type }}
+        timeout-minutes: 10
+        run: cmake --build build --config Release
 
       - name: Test with MSVC
         timeout-minutes: 3
-        run: cmake --build build --target ci_test_wrapper --config ${{ matrix.build_type }}
+        run: cmake --build build --target ci_test_wrapper --config Release
         continue-on-error: true
 
       - name: Upload MSVC failure log if present
         uses: actions/upload-artifact@v4
         with:
-          name: test-failures-msvc-${{ matrix.build_type }}
+          name: test-failures-msvc-release
           path: build/test_failures.log
           if-no-files-found: ignore
 
-  # Windows with MinGW (existing workflow)
-  windows-mingw:
-    runs-on: windows-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install MSYS2 and Ninja (minimal)
-        timeout-minutes: 8
-        run: choco install msys2 --no-progress; choco install ninja -y
-
-      - name: Install MinGW-w64 toolchain and update MSYS2
-        timeout-minutes: 12
-        shell: bash
-        run: |
-          "C:/msys64/usr/bin/bash.exe" -lc "pacman -Syu --noconfirm"
-          "C:/msys64/usr/bin/bash.exe" -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake"
-
-      - name: Add MinGW to PATH
-        run: echo "C:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-      - name: Check CMake version
-        run: cmake --version
-
-      - name: Debug environment
-        run: |
-          echo "PATH: $env:PATH"
-          echo "Python version:"
-          python --version 2>$null || echo "Python not found"
-          python3 --version 2>$null || echo "Python3 not found"
-          echo "Environment check completed"
-
-      - name: Generate polynomial coefficients
-        timeout-minutes: 3
-        run: |
-          python3 scripts/gen_poly_coeffs.py || python scripts/gen_poly_coeffs.py
-
-      - name: Configure and build (Ninja + GCC, CMake all the way)
-        timeout-minutes: 12
-        run: |
-          cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="C:/msys64/mingw64/bin/gcc.exe" -DCMAKE_CXX_COMPILER="C:/msys64/mingw64/bin/g++.exe"
-          cmake --build build --config Debug
-
-      - name: Run tests and capture failures
-        timeout-minutes: 5
-        run: cmake --build build --target ci_test_wrapper --config Debug
-        continue-on-error: true
-
-      - name: Upload MinGW failure log if present
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-failures-mingw
-          path: build/test_failures.log
-          if-no-files-found: ignore
-
-  # Linux with GCC and Clang - updated to newer compiler versions
-  linux:
+  # Linux with GCC - cheapest GitHub Actions runner
+  linux-gcc:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: 
-          - { cc: gcc-14, cxx: g++-14, name: gcc-14 }
-          - { cc: clang-18, cxx: clang++-18, name: clang-18 }
-        build_type: [Debug, Release]
-    timeout-minutes: 25
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install GCC and dependencies
         timeout-minutes: 5
-
-      - name: Debug initial environment
-        timeout-minutes: 2
         run: |
-          echo "Starting Linux CI job at $(date)"
-          echo "Runner: $(uname -a)"
-          echo "Available space: $(df -h /)"
-          echo "Network connectivity test:"
-          ping -c 3 archive.ubuntu.com || echo "Network test failed"
-
-      - name: Install compilers with retries
-        timeout-minutes: 12
-        run: |
-          echo "Starting package installation at $(date)"
-          for attempt in 1 2 3; do
-            echo "Attempt $attempt: Updating package lists..."
-            if timeout 300 sudo apt-get update; then
-              echo "Package list update successful"
-              break
-            else
-              echo "Attempt $attempt failed, waiting 30 seconds..."
-              sleep 30
-            fi
-          done
-          
-          echo "Installing compilers and dependencies..."
-          timeout 600 sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }} ninja-build python3
-          echo "Package installation completed at $(date)"
+          sudo apt-get update
+          sudo apt-get install -y gcc-13 g++-13 ninja-build python3
 
       - name: Generate polynomial coefficients
         timeout-minutes: 3
-        run: |
-          python3 scripts/gen_poly_coeffs.py || python scripts/gen_poly_coeffs.py
+        run: python3 scripts/gen_poly_coeffs.py
 
-      - name: Configure with ${{ matrix.compiler.name }}
-        timeout-minutes: 3
+      - name: Configure with GCC
+        timeout-minutes: 2
         env:
-          CC: ${{ matrix.compiler.cc }}
-          CXX: ${{ matrix.compiler.cxx }}
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          CC: gcc-13
+          CXX: g++-13
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build with ${{ matrix.compiler.name }}
-        timeout-minutes: 10
+      - name: Build with GCC
+        timeout-minutes: 4
         run: cmake --build build
 
-      - name: Test with ${{ matrix.compiler.name }}
-        timeout-minutes: 5
+      - name: Test with GCC
+        timeout-minutes: 2
         run: cmake --build build --target ci_test_wrapper
         continue-on-error: true
 
       - name: Upload failure log if present
         uses: actions/upload-artifact@v4
         with:
-          name: test-failures-${{ matrix.compiler.name }}-${{ matrix.build_type }}
+          name: test-failures-gcc-release
           path: build/test_failures.log
           if-no-files-found: ignore
 
-  # macOS with Clang
-  macos:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        build_type: [Debug, Release]
-    timeout-minutes: 20
+  # Linux with Clang - cheapest GitHub Actions runner  
+  linux-clang:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
-        timeout-minutes: 8
+      - name: Install Clang and dependencies
+        timeout-minutes: 5
         run: |
-          brew install ninja python3
+          sudo apt-get update
+          sudo apt-get install -y clang-15 ninja-build python3
 
       - name: Generate polynomial coefficients
         timeout-minutes: 3
-        run: |
-          python3 scripts/gen_poly_coeffs.py || python scripts/gen_poly_coeffs.py
+        run: python3 scripts/gen_poly_coeffs.py
 
       - name: Configure with Clang
-        timeout-minutes: 3
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        timeout-minutes: 2
+        env:
+          CC: clang-15
+          CXX: clang++-15
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build with Clang
-        timeout-minutes: 10
+        timeout-minutes: 4
         run: cmake --build build
 
       - name: Test with Clang
-        timeout-minutes: 5
+        timeout-minutes: 2
         run: cmake --build build --target ci_test_wrapper
         continue-on-error: true
 
       - name: Upload failure log if present
         uses: actions/upload-artifact@v4
         with:
-          name: test-failures-macos-${{ matrix.build_type }}
+          name: test-failures-clang-release
           path: build/test_failures.log
           if-no-files-found: ignore
