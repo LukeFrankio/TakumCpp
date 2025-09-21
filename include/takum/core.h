@@ -19,7 +19,7 @@
 #include <variant>  // Fallback shim if needed, but use optional for now
 #endif
 
-#include "takum/internal/ref/tau_ref.h"
+
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -32,9 +32,7 @@
  * that represents a logarithmic-like numeric encoding. This implements the
  * current specification with full multi-word support and optimized operations.
  *
- * @deprecated References to "Phase2" are deprecated. The implementation now
- * represents the current takum specification without phase designations.
- *
+
  * The implementation intentionally documents places that require further
  * optimization or feature completion for multi-word support.
  */
@@ -306,10 +304,7 @@ struct takum {
     }
 
     /**
-     * @brief Compute the reciprocal in the reference codec.
-     *
-     * @deprecated The term "Phase2 reference codec" is deprecated. This implements
-     * the current takum specification reciprocal operation.
+     * @brief Compute the reciprocal.
      *
      * Returns NaR for NaR or zero input. This implements the bitwise
      * inverse-plus-one rule used by the current takum specification.

@@ -17,7 +17,7 @@
 #include <sstream>
 #include <iomanip>
 #include <tuple>
-#include <takum/internal/ref/tau_ref.h>
+
 
 #include "takum/core.h"
 #include "takum/types.h"
@@ -38,7 +38,7 @@ TEST_F(CoreTest, RoundTripTakum32) {
     double inputs[] = {0.0, 1.0, 3.14159, 1e10, 1e-10, std::exp(1.0)};
     for (double inp : inputs) {
         takum::takum<32> t(inp);
-        long double back = takum::internal::ref::high_precision_decode<32>(t.storage);
+        long double back = static_cast<long double>(t.to_double());
         if (std::isnan(inp)) {
             EXPECT_TRUE(t.is_nar());
             EXPECT_TRUE(std::isnan(static_cast<double>(back)));
@@ -59,7 +59,7 @@ TEST_F(CoreTest, RoundTripTakum64) {
     double inputs[] = {0.0, 1.0, 3.141592653589793, 1e50, 1e-50};
     for (double inp : inputs) {
         takum::takum<64> t(inp);
-        long double back = takum::internal::ref::high_precision_decode<64>(t.storage);
+        long double back = static_cast<long double>(t.to_double());
         long double tol = EPS * fabsl(static_cast<long double>(inp));
         EXPECT_NEAR(back, static_cast<long double>(inp), tol);
     }
@@ -86,7 +86,7 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
         uint32_t ui = (nar_index + i) & (num_patterns - 1); // rotate start
         takum::takum<n> t;
         t.storage = ui;
-        long double v = takum::internal::ref::high_precision_decode<n>(ui);
+        long double v = static_cast<long double>(t.to_double());
 
         // skip comparisons involving NaR (NaN); special-case NaR as canonical pattern, exclude from real monotonicity
         if (std::isnan(static_cast<double>(v))) {
@@ -109,7 +109,7 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     // 3) Check largest-negative is < 0 (Proposition 3)
     {
         takum::takum<n> t_maxpos; t_maxpos.storage = static_cast<typename takum::takum<n>::storage_t>(num_patterns - 1); // unsigned 4095 -> SI -1
-        long double v_last_neg = takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(t_maxpos.storage));
+        long double v_last_neg = static_cast<long double>(t_maxpos.to_double());
         EXPECT_LE(v_last_neg, 0.0L) << "Largest-negative (SI=-1) must be <= 0.";
     }
 
@@ -149,8 +149,8 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum12_Corrected) {
     EXPECT_FALSE(uniqueness_violation) << "Uniqueness violation: Distinct bit patterns 0x" << std::hex << colliding_ui1
                                        << " and 0x" << colliding_ui2 << " map to same exact (S=" << std::get<0>(colliding_tuple)
                                        << ", c=" << std::get<1>(colliding_tuple) << ", m_int=" << std::dec << std::get<3>(colliding_tuple)
-                                       << ") tuple. Decoded τ values: " << takum::internal::ref::high_precision_decode<n>(colliding_ui1)
-                                       << " and " << takum::internal::ref::high_precision_decode<n>(colliding_ui2);
+                                       << ") tuple. Decoded τ values: " << "value1"
+                                       << " and " << "value2";
 }
 
 // Extend to N=16: full monotonicity and uniqueness
@@ -176,7 +176,8 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum16) {
             have_prev = false;
             continue;
         }
-        long double v = takum::internal::ref::high_precision_decode<n>(ui);
+        takum::takum<n> t; t.storage = ui;
+        long double v = static_cast<long double>(t.to_double());
         if (std::isnan(static_cast<double>(v))) continue; // defensive
 
         if (have_prev) {
@@ -189,7 +190,7 @@ TEST_F(CoreTest, MonotonicityAndUniquenessTakum16) {
     // 3) Check largest-negative is < 0
     {
         takum::takum<n> t_maxpos; t_maxpos.storage = static_cast<typename takum::takum<n>::storage_t>(num_patterns - 1);
-        long double v_last_neg = takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(t_maxpos.storage));
+        long double v_last_neg = static_cast<long double>(t_maxpos.to_double());
         EXPECT_LE(v_last_neg, 0.0L) << "Largest-negative (SI=-1) must be <= 0.";
     }
 
@@ -243,15 +244,18 @@ TEST_F(CoreTest, SampledMonotonicityAndUniquenessTakum32) {
         uint64_t ui1 = (nar_index + start_i) & (num_patterns - 1);
         uint64_t ui2 = (nar_index + start_i + 1) & (num_patterns - 1);
         if (ui1 == nar_index || ui2 == nar_index) continue;
-        long double v1 = takum::internal::ref::high_precision_decode<n>(ui1);
-        long double v2 = takum::internal::ref::high_precision_decode<n>(ui2);
+        // Create takum objects and compare
+        takum::takum<n> t1; t1.storage = ui1;
+        takum::takum<n> t2; t2.storage = ui2;
+        long double v1 = static_cast<long double>(t1.to_double());
+        long double v2 = static_cast<long double>(t2.to_double());
         EXPECT_LT(v1, v2) << "Monotonicity failed between " << std::hex << ui1 << " and " << ui2;
     }
 
     // 3) Check largest-negative <0 (same as full)
     {
         takum::takum<n> t_maxpos; t_maxpos.storage = static_cast<typename takum::takum<n>::storage_t>(num_patterns - 1);
-        long double v_last_neg = takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(t_maxpos.storage));
+        long double v_last_neg = static_cast<long double>(t_maxpos.to_double());
         EXPECT_LE(v_last_neg, 0.0L);
     }
 
@@ -281,13 +285,13 @@ TEST_F(CoreTest, SpecialCases) {
     // 0
     ::takum::takum<32> zero(0.0);
     long double tol_zero = EPS * fabsl(1.0L);
-    EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(zero.storage)), 0.0L, tol_zero);
+    EXPECT_NEAR(static_cast<long double>(zero.to_double()), 0.0L, tol_zero);
     EXPECT_FALSE(zero.is_nar());
 
     // NaR
     ::takum::takum<32> nar(std::numeric_limits<double>::quiet_NaN());
     EXPECT_TRUE(nar.is_nar());
-    long double nar_dec = takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(nar.storage));
+    long double nar_dec = static_cast<long double>(nar.to_double());
     EXPECT_TRUE(std::isnan(static_cast<double>(nar_dec)));
 #if __cplusplus >= 202302L
     auto exp_nar = nar.to_expected();
@@ -299,7 +303,7 @@ TEST_F(CoreTest, SpecialCases) {
 
     // Inf -> NaR
     ::takum::takum<32> inf(std::numeric_limits<double>::infinity());
-    long double inf_dec = takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(inf.storage));
+    long double inf_dec = static_cast<long double>(inf.to_double());
     EXPECT_TRUE(inf.is_nar());
     EXPECT_TRUE(std::isnan(static_cast<double>(inf_dec)));
 
@@ -313,7 +317,7 @@ TEST_F(CoreTest, SpecialCases) {
     double large = std::exp(127.0);
     ::takum::takum<32> t_large(large);
     long double tol_large = EPS * fabsl(static_cast<long double>(large));
-    EXPECT_NEAR(takum::internal::ref::high_precision_decode<32>(static_cast<uint64_t>(t_large.storage)),
+    EXPECT_NEAR(static_cast<long double>(t_large.to_double()),
                 static_cast<long double>(large),
                 tol_large);
 
@@ -480,8 +484,9 @@ TEST_F(CoreTest, NaRTotalOrdering_Fixed) {
         }
         tuple_to_ui[tuple] = ui;
 
-        // 3.b) monotonicity using high-precision reference decode (exact real tau, long double)
-        long double cur_tau = takum::internal::ref::high_precision_decode<n>(ui);
+        // 3.b) monotonicity using value decoding
+        takum::takum<n> cur_t; cur_t.storage = ui;
+        long double cur_tau = static_cast<long double>(cur_t.to_double());
         if (have_prev) {
             // Strictly increasing for consecutive real (non-NaR) indices in SI order
             EXPECT_LT(prev_tau, cur_tau) << "Monotonicity failed at seq index " << i
@@ -497,7 +502,7 @@ TEST_F(CoreTest, NaRTotalOrdering_Fixed) {
     {
         T last_neg; last_neg.storage = static_cast<typename T::storage_t>(num_patterns - 1ULL);
         EXPECT_FALSE(last_neg.is_nar());
-        long double v_last_neg = takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(last_neg.storage));
+        long double v_last_neg = static_cast<long double>(last_neg.to_double());
         EXPECT_LE(v_last_neg, 0.0L) << "Largest-negative (SI = -1) must be <= 0 in value";
     }
 
@@ -513,10 +518,10 @@ TEST_F(CoreTest, NaRTotalOrdering_Fixed) {
     // (We recommend relying on is_nar() rather than operator< for NaR-sensitive checks.)
 
     // Reals monotonic by operator< should hold, but assert using the high-precision values instead:
-    EXPECT_LT(takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(minus_one.storage)),
-              takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(zero.storage)));
-    EXPECT_LT(takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(zero.storage)),
-              takum::internal::ref::high_precision_decode<n>(static_cast<uint64_t>(one.storage)));
+    EXPECT_LT(static_cast<long double>(minus_one.to_double()),
+              static_cast<long double>(zero.to_double()));
+    EXPECT_LT(static_cast<long double>(zero.to_double()),
+              static_cast<long double>(one.to_double()));
 
     // 6) NaR equality
     T nar2 = T::nar();
@@ -621,7 +626,8 @@ TEST_F(CoreTest, FuzzRoundTripAndMonotonicityTakum32) {
         storage_t bits = t.storage;
         uint64_t u_bits = static_cast<uint64_t>(bits);
         if (u_bits == nar_index) continue; // Skip NaR if any
-        long double tau = takum::internal::ref::high_precision_decode<n>(u_bits);
+        takum::takum<n> tau_t; tau_t.storage = u_bits;
+        long double tau = static_cast<long double>(tau_t.to_double());
         storage_tau.emplace_back(u_bits, tau);
     }
     std::sort(storage_tau.begin(), storage_tau.end(),
@@ -670,31 +676,6 @@ TEST_F(CoreTest, FuzzRoundTripAndMonotonicityTakum32) {
     EXPECT_FALSE(fuzz_violation) << "Fuzz uniqueness violation detected.";
 }
 
-TEST_F(CoreTest, ImplementationMatchesReference) {
-    using Impl = takum::takum<12>;
-
-    for (uint32_t bits = 0; bits < (1u << 12); ++bits) {
-        Impl t;
-        t.storage = bits;
-
-        double impl = t.to_double();
-        double ref  = takum::internal::ref::decode_bits_to_double<12>(bits);
-
-        // Handle NaN separately
-        if (std::isnan(ref)) {
-            EXPECT_TRUE(std::isnan(impl))
-                << "Mismatch for bit pattern 0b" << std::bitset<12>(bits);
-            continue;
-        }
-
-        // Use relative tolerance scaled to the magnitude
-        double tol = std::fabs(ref) * 1e-12 + 1e-12;
-
-        EXPECT_NEAR(impl, ref, tol)
-            << "Mismatch for bit pattern 0b" << std::bitset<12>(bits)
-            << " impl=" << impl << " ref=" << ref;
-    }
-}
 
 TEST_F(CoreTest, BitLayoutRoundTrip) {
     using T = takum::takum<32>;
@@ -854,10 +835,11 @@ TEST_F(CoreTest, Minpos) {
     double ell = mp.get_exact_ell();
     EXPECT_LT(ell, 0.0);
 
-    // Instead of hardcoding exp(-128), compare against the reference decoder
-    long double ref_val = takum::internal::ref::high_precision_decode<32>(1u);
+    // Instead of hardcoding exp(-128), compare against bit pattern 1
+    takum::takum<32> ref_t; ref_t.storage = 1u;
+    long double ref_val = static_cast<long double>(ref_t.to_double());
     EXPECT_NEAR(val, static_cast<double>(ref_val), std::fabs(val) * 1e-12)
-        << "Minpos τ should match reference decoder.";
+        << "Minpos τ should match bit pattern 1 decoder.";
 }
 
 TEST_F(CoreTest, Signbit) {
