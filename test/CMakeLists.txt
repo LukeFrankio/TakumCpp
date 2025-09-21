@@ -43,13 +43,26 @@ if(TAKUM_ENABLE_AUTOTEST_LOGS)
 endif()
 
 # CI wrapper: run tests and export `test_failures.log` (if created) to the build root
-add_custom_target(ci_test_wrapper
-	COMMAND ${CMAKE_COMMAND} -E echo "Starting CI test wrapper..."
-	COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --timeout 600
-	COMMAND ${CMAKE_COMMAND} -E echo "CI test wrapper completed successfully"
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	COMMENT "Run tests with extended timeout and provide detailed logging for CI"
-)
+# For multi-config generators (like Visual Studio), we need to specify the config
+if(CMAKE_CONFIGURATION_TYPES)
+    # Multi-config generator - use Release as default for CI
+    add_custom_target(ci_test_wrapper
+        COMMAND ${CMAKE_COMMAND} -E echo "Starting CI test wrapper..."
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --timeout 600 -C Release
+        COMMAND ${CMAKE_COMMAND} -E echo "CI test wrapper completed successfully"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Run tests with extended timeout and provide detailed logging for CI"
+    )
+else()
+    # Single-config generator
+    add_custom_target(ci_test_wrapper
+        COMMAND ${CMAKE_COMMAND} -E echo "Starting CI test wrapper..."
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --timeout 600
+        COMMAND ${CMAKE_COMMAND} -E echo "CI test wrapper completed successfully"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Run tests with extended timeout and provide detailed logging for CI"
+    )
+endif()
 
 # Aggregate target for convenience
 add_custom_target(test_reports DEPENDS test_log)

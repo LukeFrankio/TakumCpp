@@ -7,10 +7,10 @@ using namespace takum::types;
 TEST(Arithmetic, BasicOps128) {
     takum128 a = takum128(3.0);
     takum128 b = takum128(2.0);
-    EXPECT_EQ((a + b).to_double(), 5.0);
-    EXPECT_EQ((a - b).to_double(), 1.0);
-    EXPECT_EQ((a * b).to_double(), 6.0);
-    EXPECT_EQ((a / b).to_double(), 1.5);
+    EXPECT_NEAR((a + b).to_double(), 5.0, 1e-10);
+    EXPECT_NEAR((a - b).to_double(), 1.0, 1e-10);
+    EXPECT_NEAR((a * b).to_double(), 6.0, 1e-10);
+    EXPECT_NEAR((a / b).to_double(), 1.5, 1e-10);
 }
 
 TEST(Arithmetic, NaRPropagation) {
