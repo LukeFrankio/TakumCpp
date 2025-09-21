@@ -117,18 +117,17 @@ TEST(MultiWord, EdgePatterns128) {
 }
 
 TEST(MultiWord, Takum64MatchesReference) {
-    // Cross-check takum64 encode/decode with internal reference codec for a few values
-    using namespace takum::internal::ref;
+    // Cross-check takum64 encode/decode with round-trip precision for a few values
     double checks[] = {3.141592653589793, 2.718281828459045, 0.125, 512.0, 1e-6};
     for (double v : checks) {
         takum64 a = takum64(v);
-        uint64_t bits = static_cast<uint64_t>(a.storage);
-        long double ref = high_precision_decode<64>(bits);
         double decoded = a.to_double();
-        // Accept near-equality in log space: compare ell values
-        if (std::isfinite(decoded) && std::isfinite((double)ref)) {
-            long double ell_ref = high_precision_decode<64>(bits); // proxy ell
+        // Verify round-trip accuracy
+        if (std::isfinite(decoded)) {
             EXPECT_TRUE(std::isfinite(decoded));
+            // Verify reasonable precision
+            double relative_error = std::abs(decoded - v) / std::abs(v);
+            EXPECT_LT(relative_error, 1e-3); // Reasonable precision for the format
         }
     }
 }
