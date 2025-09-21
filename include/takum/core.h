@@ -534,8 +534,7 @@ struct takum {
      * @brief Encode a host `double` into the takum bit pattern using the
      * current specification encoding.
      *
-     * @deprecated The term "Phase2 reference" is deprecated. This implements
-     * the current takum specification encoding algorithm.
+     * This implements the current takum specification encoding algorithm.
      *
      * This function packs S,D,R,C,M fields per the current takum reference
      * specification. Special cases: zero maps to zero; non-finite maps to NaR.
