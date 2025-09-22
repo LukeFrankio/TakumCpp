@@ -414,7 +414,7 @@ inline takum<N> pow(const takum<N>& x, const takum<N>& y) noexcept {
     // Handle special cases that differ from C++26 (where pow(NaN,0)=1)
     // In takum arithmetic, we use NaR for undefined operations
     if (dx == 0.0 && dy <= 0.0) return takum<N>::nar();
-    if (dx < 0.0 && std::abs(dy - std::round(dy)) > 1e-10) return takum<N>::nar(); // Non-integer power of negative
+    if (dx < 0.0 && std::floor(dy) != dy) return takum<N>::nar(); // Non-integer power of negative
     
     double result = std::pow(dx, dy);
     if (!std::isfinite(result)) return takum<N>::nar();
