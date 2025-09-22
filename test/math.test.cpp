@@ -1,0 +1,443 @@
+/**
+ * @file math.test.cpp
+ * @brief Tests for mathematical functions in takum<N> (Phase 4 deliverable).
+ *
+ * This test suite validates:
+ * - Accuracy vs host IEEE for representative functions within λ(p)
+ * - Domain/error handling (e.g., log(0), sqrt(negative), pow edge cases)
+ * - Safe variants: success and error paths
+ * - Deprecation shims behavior for sinf/logl etc.
+ * - NaR propagation and edge case handling
+ */
+
+#include <gtest/gtest.h>
+#include "takum/math.h"
+#include "takum/math_constants.h"
+#include "takum/core.h"
+#include "takum/arithmetic.h"
+#include "takum/types.h"
+#include "takum/precision_traits.h"
+
+#include <cmath>
+#include <numbers>
+
+using namespace takum::types;
+
+class MathTest : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+    
+    // Helper to check relative error within precision bounds
+    template<size_t N>
+    bool within_precision_bound(const takum<N>& computed, double expected) {
+        if (computed.is_nar()) return false;
+        double actual = computed.to_double();
+        if (!std::isfinite(expected) || !std::isfinite(actual)) return false;
+        
+        double rel_error = std::abs((actual - expected) / expected);
+        // Use precision traits to get lambda(p) bound as per Proposition 11
+        auto lambda_p = precision_traits<N>::lambda();
+        return rel_error <= lambda_p;
+    }
+    
+    // Helper for safe variant error checking
+    template<typename T>
+    bool is_error_type(const std::expected<T, takum_error>& result, takum_error::Kind expected_kind) {
+        return !result.has_value() && result.error().kind == expected_kind;
+    }
+};
+
+// ============================================================================
+// BASIC FUNCTION TESTS
+// ============================================================================
+
+TEST_F(MathTest, BasicTrigonometric) {
+    takum32 x(0.5);
+    takum32 pi_4 = takum32(std::numbers::pi / 4.0);
+    
+    // Basic trigonometric functions
+    auto sin_x = takum::sin(x);
+    auto cos_x = takum::cos(x);
+    auto tan_x = takum::tan(x);
+    
+    EXPECT_FALSE(sin_x.is_nar());
+    EXPECT_FALSE(cos_x.is_nar());
+    EXPECT_FALSE(tan_x.is_nar());
+    
+    // Check against expected values within precision bounds
+    EXPECT_TRUE(within_precision_bound(sin_x, std::sin(0.5)));
+    EXPECT_TRUE(within_precision_bound(cos_x, std::cos(0.5)));
+    EXPECT_TRUE(within_precision_bound(tan_x, std::tan(0.5)));
+    
+    // Test special value: sin(π/4) ≈ √2/2
+    auto sin_pi4 = sin(pi_4);
+    EXPECT_TRUE(within_precision_bound(sin_pi4, std::sqrt(2.0) / 2.0));
+}
+
+TEST_F(MathTest, BasicExponentialLogarithmic) {
+    takum<32> x(1.0);
+    takum<32> e_val(std::numbers::e);
+    
+    // Basic exp/log functions
+    auto exp_x = exp(x);
+    auto log_e = log(e_val);
+    auto log10_10 = log10(takum<32>(10.0));
+    
+    EXPECT_FALSE(exp_x.is_nar());
+    EXPECT_FALSE(log_e.is_nar());
+    EXPECT_FALSE(log10_10.is_nar());
+    
+    // Check exp(1) ≈ e
+    EXPECT_TRUE(within_precision_bound(exp_x, std::numbers::e));
+    
+    // Check log(e) ≈ 1
+    EXPECT_TRUE(within_precision_bound(log_e, 1.0));
+    
+    // Check log10(10) ≈ 1  
+    EXPECT_TRUE(within_precision_bound(log10_10, 1.0));
+}
+
+TEST_F(MathTest, BasicPowerRoot) {
+    takum<32> x(4.0);
+    takum<32> y(2.0);
+    
+    // Power and root functions
+    auto pow_xy = pow(x, y);
+    auto sqrt_x = sqrt(x);
+    auto cbrt_8 = cbrt(takum<32>(8.0));
+    
+    EXPECT_FALSE(pow_xy.is_nar());
+    EXPECT_FALSE(sqrt_x.is_nar());
+    EXPECT_FALSE(cbrt_8.is_nar());
+    
+    // Check 4^2 = 16
+    EXPECT_TRUE(within_precision_bound(pow_xy, 16.0));
+    
+    // Check sqrt(4) = 2
+    EXPECT_TRUE(within_precision_bound(sqrt_x, 2.0));
+    
+    // Check cbrt(8) = 2
+    EXPECT_TRUE(within_precision_bound(cbrt_8, 2.0));
+}
+
+// ============================================================================
+// NaR PROPAGATION TESTS
+// ============================================================================
+
+TEST_F(MathTest, NaRPropagation) {
+    takum<32> nar = takum<32>::nar();
+    takum<32> finite(1.0);
+    
+    // All functions should propagate NaR
+    EXPECT_TRUE(sin(nar).is_nar());
+    EXPECT_TRUE(cos(nar).is_nar());
+    EXPECT_TRUE(tan(nar).is_nar());
+    EXPECT_TRUE(asin(nar).is_nar());
+    EXPECT_TRUE(acos(nar).is_nar());
+    EXPECT_TRUE(atan(nar).is_nar());
+    EXPECT_TRUE(atan2(nar, finite).is_nar());
+    EXPECT_TRUE(atan2(finite, nar).is_nar());
+    
+    EXPECT_TRUE(sinh(nar).is_nar());
+    EXPECT_TRUE(cosh(nar).is_nar());
+    EXPECT_TRUE(tanh(nar).is_nar());
+    EXPECT_TRUE(asinh(nar).is_nar());
+    EXPECT_TRUE(acosh(nar).is_nar());
+    EXPECT_TRUE(atanh(nar).is_nar());
+    
+    EXPECT_TRUE(exp(nar).is_nar());
+    EXPECT_TRUE(log(nar).is_nar());
+    EXPECT_TRUE(log10(nar).is_nar());
+    EXPECT_TRUE(log1p(nar).is_nar());
+    EXPECT_TRUE(expm1(nar).is_nar());
+    EXPECT_TRUE(log2(nar).is_nar());
+    EXPECT_TRUE(exp2(nar).is_nar());
+    
+    EXPECT_TRUE(pow(nar, finite).is_nar());
+    EXPECT_TRUE(pow(finite, nar).is_nar());
+    EXPECT_TRUE(sqrt(nar).is_nar());
+    EXPECT_TRUE(cbrt(nar).is_nar());
+    EXPECT_TRUE(hypot(nar, finite).is_nar());
+    
+    EXPECT_TRUE(floor(nar).is_nar());
+    EXPECT_TRUE(ceil(nar).is_nar());
+    EXPECT_TRUE(round(nar).is_nar());
+    EXPECT_TRUE(trunc(nar).is_nar());
+    EXPECT_TRUE(fmod(nar, finite).is_nar());
+    EXPECT_TRUE(remainder(nar, finite).is_nar());
+}
+
+// ============================================================================
+// DOMAIN ERROR TESTS  
+// ============================================================================
+
+TEST_F(MathTest, DomainErrors) {
+    // asin/acos domain: [-1, 1]
+    EXPECT_TRUE(asin(takum<32>(2.0)).is_nar());
+    EXPECT_TRUE(asin(takum<32>(-2.0)).is_nar());
+    EXPECT_TRUE(acos(takum<32>(2.0)).is_nar());
+    EXPECT_TRUE(acos(takum<32>(-2.0)).is_nar());
+    
+    // acosh domain: [1, ∞)
+    EXPECT_TRUE(acosh(takum<32>(0.5)).is_nar());
+    
+    // atanh domain: (-1, 1)
+    EXPECT_TRUE(atanh(takum<32>(1.0)).is_nar());
+    EXPECT_TRUE(atanh(takum<32>(-1.0)).is_nar());
+    EXPECT_TRUE(atanh(takum<32>(2.0)).is_nar());
+    
+    // log domain: (0, ∞)
+    EXPECT_TRUE(log(takum<32>(0.0)).is_nar());
+    EXPECT_TRUE(log(takum<32>(-1.0)).is_nar());
+    EXPECT_TRUE(log10(takum<32>(0.0)).is_nar());
+    EXPECT_TRUE(log2(takum<32>(-1.0)).is_nar());
+    
+    // log1p domain: (-1, ∞)
+    EXPECT_TRUE(log1p(takum<32>(-1.0)).is_nar());
+    EXPECT_TRUE(log1p(takum<32>(-2.0)).is_nar());
+    
+    // sqrt domain: [0, ∞)
+    EXPECT_TRUE(sqrt(takum<32>(-1.0)).is_nar());
+    
+    // pow special cases (takum differs from C++26 pow(NaN,0)=1)
+    EXPECT_TRUE(pow(takum<32>(0.0), takum<32>(-1.0)).is_nar()); // 0^(-1)
+    EXPECT_TRUE(pow(takum<32>(-1.0), takum<32>(0.5)).is_nar()); // (-1)^(0.5)
+    
+    // Division by zero in fmod/remainder
+    EXPECT_TRUE(fmod(takum<32>(1.0), takum<32>(0.0)).is_nar());
+    EXPECT_TRUE(remainder(takum<32>(1.0), takum<32>(0.0)).is_nar());
+}
+
+// ============================================================================
+// CLASSIFICATION FUNCTION TESTS
+// ============================================================================
+
+TEST_F(MathTest, ClassificationFunctions) {
+    takum<32> finite(1.0);
+    takum<32> nar = takum<32>::nar();
+    
+    // isfinite: true for finite values, false for NaR
+    EXPECT_TRUE(isfinite(finite));
+    EXPECT_FALSE(isfinite(nar));
+    
+    // isnan: false for finite values, true for NaR
+    EXPECT_FALSE(isnan(finite));
+    EXPECT_TRUE(isnan(nar));
+    
+    // isinf: always false (takum has no infinity)
+    EXPECT_FALSE(isinf(finite));
+    EXPECT_FALSE(isinf(nar));
+    
+    // isnormal: true for finite values, false for NaR
+    EXPECT_TRUE(isnormal(finite));
+    EXPECT_FALSE(isnormal(nar));
+    
+    // fpclassify
+    EXPECT_EQ(fpclassify(finite), FP_NORMAL);
+    EXPECT_EQ(fpclassify(nar), FP_NAN);
+    
+    // signbit
+    EXPECT_FALSE(signbit(takum<32>(1.0)));
+    EXPECT_TRUE(signbit(takum<32>(-1.0)));
+    EXPECT_FALSE(signbit(nar)); // NaR is neither positive nor negative
+}
+
+// ============================================================================
+// SAFE VARIANTS TESTS
+// ============================================================================
+
+TEST_F(MathTest, SafeVariantsSuccess) {
+    takum<32> x(0.5);
+    takum<32> positive(4.0);
+    
+    // Safe variants should succeed for valid inputs
+    auto safe_sin_x = safe_sin(x);
+    auto safe_cos_x = safe_cos(x);
+    auto safe_log_pos = safe_log(positive);
+    auto safe_sqrt_pos = safe_sqrt(positive);
+    auto safe_pow_valid = safe_pow(positive, takum<32>(2.0));
+    
+    EXPECT_TRUE(safe_sin_x.has_value());
+    EXPECT_TRUE(safe_cos_x.has_value());
+    EXPECT_TRUE(safe_log_pos.has_value());
+    EXPECT_TRUE(safe_sqrt_pos.has_value());
+    EXPECT_TRUE(safe_pow_valid.has_value());
+    
+    // Values should match unsafe variants for valid inputs
+    EXPECT_EQ(safe_sin_x.value().to_double(), sin(x).to_double());
+    EXPECT_EQ(safe_cos_x.value().to_double(), cos(x).to_double());
+    EXPECT_EQ(safe_log_pos.value().to_double(), log(positive).to_double());
+    EXPECT_EQ(safe_sqrt_pos.value().to_double(), sqrt(positive).to_double());
+}
+
+TEST_F(MathTest, SafeVariantsErrors) {
+    takum<32> nar = takum<32>::nar();
+    takum<32> negative(-1.0);
+    takum<32> zero(0.0);
+    
+    // Safe variants should return errors for invalid inputs
+    auto safe_sin_nar = safe_sin(nar);
+    auto safe_log_neg = safe_log(negative);
+    auto safe_sqrt_neg = safe_sqrt(negative);
+    auto safe_pow_invalid = safe_pow(zero, negative);
+    
+    EXPECT_FALSE(safe_sin_nar.has_value());
+    EXPECT_FALSE(safe_log_neg.has_value());
+    EXPECT_FALSE(safe_sqrt_neg.has_value());
+    EXPECT_FALSE(safe_pow_invalid.has_value());
+    
+    // Check error types
+    EXPECT_TRUE(is_error_type(safe_sin_nar, takum_error::Kind::InvalidOperation));
+    EXPECT_TRUE(is_error_type(safe_log_neg, takum_error::Kind::DomainError));
+    EXPECT_TRUE(is_error_type(safe_sqrt_neg, takum_error::Kind::DomainError));
+    EXPECT_TRUE(is_error_type(safe_pow_invalid, takum_error::Kind::DomainError));
+}
+
+// ============================================================================
+// MATHEMATICAL CONSTANTS TESTS
+// ============================================================================
+
+TEST_F(MathTest, MathConstants) {
+    using namespace takum::math_constants;
+    
+    // Test π constant
+    auto pi32 = pi_v<takum<32>>;
+    auto pi64 = pi_v<takum<64>>;
+    
+    EXPECT_FALSE(pi32.is_nar());
+    EXPECT_FALSE(pi64.is_nar());
+    
+    // Check values are close to mathematical π
+    EXPECT_TRUE(within_precision_bound(pi32, std::numbers::pi));
+    EXPECT_TRUE(within_precision_bound(pi64, std::numbers::pi));
+    
+    // Test e constant
+    auto e32 = e_v<takum<32>>;
+    auto e64 = e_v<takum<64>>;
+    
+    EXPECT_FALSE(e32.is_nar());
+    EXPECT_FALSE(e64.is_nar());
+    
+    EXPECT_TRUE(within_precision_bound(e32, std::numbers::e));
+    EXPECT_TRUE(within_precision_bound(e64, std::numbers::e));
+    
+    // Test other constants
+    auto sqrt2_32 = sqrt2_v<takum<32>>;
+    auto ln2_32 = ln2_v<takum<32>>;
+    
+    EXPECT_TRUE(within_precision_bound(sqrt2_32, std::numbers::sqrt2));
+    EXPECT_TRUE(within_precision_bound(ln2_32, std::numbers::ln2));
+}
+
+// ============================================================================
+// ACCURACY TESTS (Proposition 11: λ(p) bounds)
+// ============================================================================
+
+TEST_F(MathTest, AccuracyBounds) {
+    // Test accuracy of key functions within λ(p) bounds
+    takum<32> x(0.5);
+    takum<64> x64(0.5);
+    
+    // For takum<32>, precision should be better than λ(p) = 2/3 * ε(p)
+    auto sin_32 = sin(x);
+    auto exp_32 = exp(x);
+    auto log_32 = log(takum<32>(2.0));
+    
+    EXPECT_TRUE(within_precision_bound(sin_32, std::sin(0.5)));
+    EXPECT_TRUE(within_precision_bound(exp_32, std::exp(0.5)));
+    EXPECT_TRUE(within_precision_bound(log_32, std::log(2.0)));
+    
+    // For takum<64>, precision should be even better
+    auto sin_64 = sin(x64);
+    auto exp_64 = exp(x64);
+    auto log_64 = log(takum<64>(2.0));
+    
+    EXPECT_TRUE(within_precision_bound(sin_64, std::sin(0.5)));
+    EXPECT_TRUE(within_precision_bound(exp_64, std::exp(0.5)));
+    EXPECT_TRUE(within_precision_bound(log_64, std::log(2.0)));
+}
+
+// ============================================================================
+// FUNCTION COMPOSITION TESTS
+// ============================================================================
+
+TEST_F(MathTest, FunctionComposition) {
+    // Test function composition as mentioned in Plan.md
+    takum<32> x(0.5);
+    
+    // Test sin(exp(x))
+    auto exp_x = exp(x);
+    auto sin_exp_x = sin(exp_x);
+    
+    EXPECT_FALSE(exp_x.is_nar());
+    EXPECT_FALSE(sin_exp_x.is_nar());
+    
+    // Compare with host computation
+    double expected = std::sin(std::exp(0.5));
+    EXPECT_TRUE(within_precision_bound(sin_exp_x, expected));
+    
+    // Test log(sqrt(x))
+    auto sqrt_x = sqrt(x);
+    auto log_sqrt_x = log(sqrt_x);
+    
+    EXPECT_FALSE(sqrt_x.is_nar());
+    EXPECT_FALSE(log_sqrt_x.is_nar());
+    
+    // log(sqrt(x)) = 0.5 * log(x)
+    auto half_log_x = takum<32>(0.5) * log(x);
+    EXPECT_NEAR(log_sqrt_x.to_double(), half_log_x.to_double(), 1e-6);
+}
+
+// ============================================================================
+// EDGE CASE TESTS
+// ============================================================================
+
+TEST_F(MathTest, EdgeCases) {
+    // Test function behavior at edge values
+    takum<32> zero(0.0);
+    takum<32> one(1.0);
+    takum<32> neg_one(-1.0);
+    
+    // atan2 special cases
+    EXPECT_FALSE(atan2(zero, one).is_nar()); // atan2(0, 1) = 0
+    EXPECT_FALSE(atan2(one, zero).is_nar()); // atan2(1, 0) = π/2
+    
+    // hypot with zeros
+    auto hypot_result = hypot(takum<32>(3.0), takum<32>(4.0));
+    EXPECT_TRUE(within_precision_bound(hypot_result, 5.0)); // 3-4-5 triangle
+    
+    // pow edge cases
+    EXPECT_TRUE(within_precision_bound(pow(one, takum<32>(100.0)), 1.0)); // 1^anything = 1
+    EXPECT_TRUE(within_precision_bound(pow(takum<32>(2.0), zero), 1.0)); // anything^0 = 1
+}
+
+// ============================================================================
+// MULTIWORD TESTS (takum<128>)
+// ============================================================================
+
+TEST_F(MathTest, MultiwordOperations) {
+    // Test that functions work correctly with takum<128>
+    takum<128> x128(0.5);
+    takum<128> pi128 = takum<128>(std::numbers::pi);
+    
+    auto sin_128 = sin(x128);
+    auto cos_128 = cos(x128);
+    auto exp_128 = exp(x128);
+    auto log_128 = log(takum<128>(std::numbers::e));
+    
+    EXPECT_FALSE(sin_128.is_nar());
+    EXPECT_FALSE(cos_128.is_nar());
+    EXPECT_FALSE(exp_128.is_nar());
+    EXPECT_FALSE(log_128.is_nar());
+    
+    // Check accuracy for higher precision
+    EXPECT_TRUE(within_precision_bound(sin_128, std::sin(0.5)));
+    EXPECT_TRUE(within_precision_bound(cos_128, std::cos(0.5)));
+    EXPECT_TRUE(within_precision_bound(exp_128, std::exp(0.5)));
+    EXPECT_TRUE(within_precision_bound(log_128, 1.0));
+}
+
+// Note: Deprecation shim tests are intentionally omitted from this test file
+// to avoid the pragma message warnings during testing. The shims are tested
+// separately in compatibility.test.cpp.
