@@ -1,3 +1,4 @@
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/LukeFrankio/skyrim-community-shaders?utm_source=oss&utm_medium=github&utm_campaign=LukeFrankio%2Fskyrim-community-shaders&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 # TakumCpp: A Logarithmic Tapered Floating-Point Arithmetic Library
 
 TakumCpp is a C++ library implementing the Takum arithmetic format as described in the research paper. It provides a high-performance, logarithmic tapered floating-point system with properties like monotonicity, total-ordering, and NaR (Not a Real) handling. The library prefers C++26 and leverages `std::expected` for error propagation, packed integer storage for efficiency, and full coverage of C++ floating-point features including deprecations; guarded fallbacks keep the project usable on C++23 toolchains.
