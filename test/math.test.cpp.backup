@@ -76,13 +76,13 @@ TEST_F(MathTest, BasicTrigonometric) {
 }
 
 TEST_F(MathTest, BasicExponentialLogarithmic) {
-    takum<32> x(1.0);
-    takum<32> e_val(std::numbers::e);
+    takum32 x(1.0);
+    takum32 e_val(std::numbers::e);
     
     // Basic exp/log functions
-    auto exp_x = exp(x);
-    auto log_e = log(e_val);
-    auto log10_10 = log10(takum<32>(10.0));
+    auto exp_x = takum::exp(x);
+    auto log_e = takum::log(e_val);
+    auto log10_10 = takum::log10(takum32(10.0));
     
     EXPECT_FALSE(exp_x.is_nar());
     EXPECT_FALSE(log_e.is_nar());
