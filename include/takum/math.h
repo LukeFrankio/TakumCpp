@@ -48,7 +48,13 @@ inline takum<N> sin(const takum<N>& x) noexcept {
     double dx = x.to_double();
     if (!std::isfinite(dx)) return takum<N>::nar();
     
-    return takum<N>(std::sin(dx));
+    double result = std::sin(dx);
+    
+    // Clamp to [-1, 1] to maintain mathematical properties
+    if (result > 1.0) result = 1.0;
+    if (result < -1.0) result = -1.0;
+    
+    return takum<N>(result);
 }
 
 /**
@@ -64,7 +70,13 @@ inline takum<N> cos(const takum<N>& x) noexcept {
     double dx = x.to_double();
     if (!std::isfinite(dx)) return takum<N>::nar();
     
-    return takum<N>(std::cos(dx));
+    double result = std::cos(dx);
+    
+    // Clamp to [-1, 1] to maintain mathematical properties
+    if (result > 1.0) result = 1.0;
+    if (result < -1.0) result = -1.0;
+    
+    return takum<N>(result);
 }
 
 /**
@@ -79,6 +91,9 @@ inline takum<N> tan(const takum<N>& x) noexcept {
     
     double dx = x.to_double();
     if (!std::isfinite(dx)) return takum<N>::nar();
+    
+    // Special case: tan(0) = 0 exactly
+    if (dx == 0.0) return takum<N>(0.0);
     
     double result = std::tan(dx);
     if (!std::isfinite(result)) return takum<N>::nar();
@@ -300,7 +315,15 @@ inline takum<N> log(const takum<N>& x) noexcept {
     double dx = x.to_double();
     if (!std::isfinite(dx) || dx <= 0.0) return takum<N>::nar();
     
-    return takum<N>(std::log(dx));
+    // Handle very small positive values - they should give finite negative results
+    // Standard floating-point log handles this correctly
+    double result = std::log(dx);
+    if (!std::isfinite(result)) {
+        // Only return NaR if the standard math function genuinely failed
+        return takum<N>::nar();
+    }
+    
+    return takum<N>(result);
 }
 
 /**
@@ -557,6 +580,9 @@ inline takum<N> floor(const takum<N>& x) noexcept {
     double dx = x.to_double();
     if (!std::isfinite(dx)) return takum<N>::nar();
     
+    // For integer values, return the value itself
+    if (dx == std::floor(dx)) return x;
+    
     return takum<N>(std::floor(dx));
 }
 
@@ -572,6 +598,9 @@ inline takum<N> ceil(const takum<N>& x) noexcept {
     
     double dx = x.to_double();
     if (!std::isfinite(dx)) return takum<N>::nar();
+    
+    // For integer values, return the value itself
+    if (dx == std::ceil(dx)) return x;
     
     return takum<N>(std::ceil(dx));
 }
