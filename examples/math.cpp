@@ -244,6 +244,30 @@ int main() {
     std::cout << "TakumCpp Mathematical Functions Demonstration\n";
     std::cout << "============================================\n";
     
+    // === Debug pow(-2, 3) ===
+    std::cout << "\n=== Debug pow(-2, 3) ===" << std::endl;
+    takum64 base(-2.0);
+    takum64 exp(3.0);
+    
+    std::cout << "Base takum64(-2.0) is_nar: " << base.is_nar() << std::endl;
+    std::cout << "Base to_double: " << base.to_double() << std::endl;
+    std::cout << "Exp takum64(3.0) is_nar: " << exp.is_nar() << std::endl;
+    std::cout << "Exp to_double: " << exp.to_double() << std::endl;
+    
+    auto result = takum::pow(base, exp);
+    std::cout << "Result is_nar: " << result.is_nar() << std::endl;
+    std::cout << "Result to_double: " << result.to_double() << std::endl;
+    
+    std::cout << "Expected std::pow(-2.0, 3.0): " << std::pow(-2.0, 3.0) << std::endl;
+    std::cout << std::endl;
+    
+    // Test pow(0,0)
+    takum64 zero(0.0);
+    auto result_00 = takum::pow(zero, zero);
+    std::cout << "pow(0,0) is_nar: " << result_00.is_nar() << std::endl;
+    std::cout << "pow(0,0): " << result_00.to_double() << std::endl;
+    std::cout << std::endl;
+    
     try {
         demonstrate_basic_functions();
         demonstrate_function_composition();

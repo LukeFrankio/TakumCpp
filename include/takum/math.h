@@ -411,11 +411,35 @@ inline takum<N> pow(const takum<N>& x, const takum<N>& y) noexcept {
     double dy = y.to_double();
     if (!std::isfinite(dx) || !std::isfinite(dy)) return takum<N>::nar();
     
-    // Handle special cases that differ from C++26 (where pow(NaN,0)=1)
-    // In takum arithmetic, we use NaR for undefined operations
-    if (dx == 0.0 && dy <= 0.0) return takum<N>::nar();
-    if (dx < 0.0 && std::floor(dy) != dy) return takum<N>::nar(); // Non-integer power of negative
+    // Handle special cases following C++ standard behavior
+    // pow(0, 0) = 1 (C++ standard)
+    if (dx == 0.0 && dy == 0.0) return takum<N>(1.0);
     
+    // Handle zero base with negative exponent
+    if (dx == 0.0 && dy < 0.0) return takum<N>::nar();
+    
+    // Special handling for negative base with integer exponent
+    // to work around potential std::pow domain issues
+    if (dx < 0.0) {
+        double dy_rounded = std::round(dy);
+        if (std::abs(dy - dy_rounded) < 1e-10) {
+            // It's effectively an integer exponent - compute manually for safety
+            if (dy_rounded == 0.0) return takum<N>(1.0);
+            
+            double abs_result = std::pow(-dx, dy_rounded);
+            if (!std::isfinite(abs_result)) return takum<N>::nar();
+            
+            // Apply sign: negative result if odd exponent
+            bool is_odd = (static_cast<long long>(dy_rounded) % 2 != 0);
+            double result = is_odd ? -abs_result : abs_result;
+            return takum<N>(result);
+        } else {
+            // Non-integer power of negative - undefined
+            return takum<N>::nar();
+        }
+    }
+    
+    // For non-negative base, use std::pow directly
     double result = std::pow(dx, dy);
     if (!std::isfinite(result)) return takum<N>::nar();
     
